@@ -1,0 +1,412 @@
+---
+title: Promise长什么样？
+tags: 
+	- 前端 
+	- JavaScript
+date: 2019-03-18
+---
+
+## 一、先来使用一下 Promise
+```js
+let Promise = 
+let p = new Promise((resolve, reject) => {
+	resolve('成功')
+})
+p.then(value => {
+	console.log('成功的值：', value)
+}, reason => {
+	console.log('失败的原因：', reason)
+})
+```
+<!-- more -->
+这里定义了一个 Promsie p，并立即执行成功的方法，那么 p 实例在调用 then 方法的时候，会触发成功的回调，并将传入 resolve 函数的参数传出。在同级目录下创建一个 promise.js 文件，并在 index.js 引入这个 promise。
+
+这里先采用 es5 的语法来实现，实例的方法是定义在类的原型上，所以，代码呈上：
+
+
+```js
+function Promise(){
+
+}
+
+Promise.prototype.then = function(){
+    console.log('then');
+}
+
+module.exports = Promise
+```
+我们在 index.js下试着能打印出 then ，说明我们引用成功了。
+
+## 二、同步方法的调用
+从 Promise 的执行机制我们可以看出，在 new 一个 Pormise 实例的时候，会传入一个立即执行的函数，参数为成功的方法和失败的方法。我们首先会把成功与失败的方法传入的参数先保存起来，等到实例调用 then 方法的时候，根据当前是 Promsie 是调用了成功还是失败，来决定实例 p 的 then 方法触发成功或者失败的回调。那么，我们可以这样实现：
+
+```js
+function Promise(executor){
+
+    function resolve(){
+        console.log('resolve');
+    }
+
+    function reject(){
+        console.log('reject');
+    }
+
+    executor(resolve, reject)
+}
+
+Promise.prototype.then = function(){
+    console.log('then');
+}
+
+module.exports = Promise
+```
+
+执行，能正常运行。不过此时如果在 index.js 里面同时调用 resolve 和 reject，会发现成功和失败的方法都能执行，这显然是不符合 Promise 的规定的。
+> 一个 Promise 如果成功了就不能失败，如果失败了就不能成功。
+
+所以我们需要添加一个 promise 的状态标记 status，默认是等待态度的 promise，并且只在等待态的情况下，才能执行成功或者失败的方法，同时将当前的状态改为成功或者失败，并保存传入的参数。然后在then方法里根据当前 pomise 的状态去执行成功还是失败的回调，同时将参数传出，代码呈上：
+
+```js
+
+function Promise(executor){
+    let that = this
+    that.status = 'pending'
+    that.value = ''
+    that.reason = ''
+    function resolve(value){
+        if(that.status === 'pending'){
+            that.status = 'resolve'
+            that.value = value
+        }
+    }
+
+    function reject(reason){
+        if(that.status === 'pending'){
+            that.status = 'reject'
+            that.reason = reason
+        }
+    }
+
+    executor(resolve, reject)
+}
+
+Promise.prototype.then = function(onFulfilled, onRejected){
+    let that = this
+    if(that.status === 'resolve'){
+        onFulfilled(that.value)
+    }
+    if(that.status === 'reject'){
+        onRejected(that.reason)
+    }
+}
+
+module.exports = Promise
+```
+
+## 三、异步方法的调用
+一般来说，promise 里面成功与失败的方法都会是异步执行的，那我们用定时器来模拟一下异步请求，在 index.js 文件里面： 
+```js
+let Promise = require('./promise.js')
+let p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        resolve('成功')
+    }, 1000);
+    // reject('失败')
+})
+p.then(value => {
+	console.log('成功的值：', value)
+}, reason => {
+	console.log('失败的原因：', reason)
+})
+```
+
+这个时候我们会发现代码就不能正常执行了。在 p 实例调用 then 方法的时候，我们现在的代码中只判断了两种状态，那么如果 promsie 里面是异步代码的话，当前的状态毫无疑问是 pending，所以我们可以添加一个等待态的判断。既然是等待态，就说明当前还没有到执行成功或者失败回调的时机，那么我们可以先将它们保存起来，然后在 promise 执行成功的方法  resolve 或者失败的方法 reject 的时候，执行它们：
+
+```js
+
+function Promise(executor){
+    let that = this
+    that.status = 'pending'
+    that.value = ''
+    that.reason = ''
+    that.onFulfilledCallbacks = []
+    that.onRejectedCallbacks = []
+    function resolve(value){
+        if(that.status === 'pending'){
+            that.status = 'resolve'
+            that.value = value
+            that.onFulfilledCallbacks.forEach(fn => fn())
+        }
+    }
+
+    function reject(reason){
+        if(that.status === 'pending'){
+            that.status = 'reject'
+            that.reason = reason
+            that.onRejectedCallbacks.forEach(fn => fn())
+        }
+    }
+
+    executor(resolve, reject)
+}
+
+Promise.prototype.then = function(onFulfilled, onRejected){
+    let that = this
+    if(that.status === 'resolve'){
+        onFulfilled(that.value)
+    }
+    if(that.status === 'reject'){
+        onRejected(that.reason)
+    }
+    if(that.status === 'pending'){
+        that.onFulfilledCallbacks.push(function(){
+            onFulfilled(that.value)
+        })
+        that.onRejectedCallbacks.push(function(){
+            onRejected(that.value)
+        })
+    }
+}
+
+module.exports = Promise
+```
+
+## 四、Promsie的链式调用
+我们在使用原生 Promsie 的时候，是能链式调用的，代码呈上：
+```js
+p.then().then(console.log)
+```
+
+这说明：
+> 1、如果一个 then 没有传入成功或者失败的回调的时候，我们要将这个 then 的结果直接传递给下一个 then
+
+> 2、一个 promise 调用完 then 方法之后，应该还是一个 promise，那它才有 then 方法
+
+那我们可以将在 then 里面抛出一个新的 Promise，代码呈上：
+
+```js
+
+function Promise(executor){
+    let that = this
+    that.status = 'pending'
+    that.value = ''
+    that.reason = ''
+    that.onFulfilledCallbacks = []
+    that.onRejectedCallbacks = []
+    function resolve(value){
+        if(that.status === 'pending'){
+            that.status = 'resolve'
+            that.value = value
+            that.onFulfilledCallbacks.forEach(fn => fn())
+        }
+    }
+
+    function reject(reason){
+        if(that.status === 'pending'){
+            that.status = 'reject'
+            that.reason = reason
+            that.onRejectedCallbacks.forEach(fn => fn())
+        }
+    }
+
+    executor(resolve, reject)
+}
+
+Promise.prototype.then = function(onFulfilled, onRejected){
+    let that = this
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : function(data){
+        return data
+    }
+    let promise2
+    promise2 = new Promise((resolve, reject) => {
+
+        if(that.status === 'resolve'){
+            let x = onFulfilled(that.value) // 定义第一个 then 的返回值
+            resolve(x)   // 这里先默认上个 then 返回的是一个普通值
+        }
+        if(that.status === 'reject'){
+            onRejected(that.reason)
+        }
+        if(that.status === 'pending'){
+            that.onFulfilledCallbacks.push(function(){
+                onFulfilled(that.value)
+            })
+            that.onRejectedCallbacks.push(function(){
+                onRejected(that.value)
+            })
+        }
+    })
+    return promise2
+}
+
+module.exports = Promise
+```
+然后我们在 index.js 测试一下：
+
+```js
+let Promise = require('./promise.js')
+let p = new Promise((resolve, reject) => {
+    resolve('成功')
+    // reject('失败')
+})
+p.then(() =>{
+    return '第一个then'
+}).then(value => {
+    console.log('第二个then：', value)
+})
+```
+
+## 五、then 的返回结果剖析
+then 的返回情况，可能是一个普通值，也可能是一个 promsie，上面默认处理的是返回普通值的情况。那么如果一个 promise 返回的是 promise ，我们应该让这个 promise 执行，并将成功的结果或者失败的原因作为返回值传递给下一个 then，如果抛出异常，我们应该执行 reject 方法。所以，我们可以写一个方法来判断 then 的返回情况：
+```js
+function resolvePromise(x, promise2, resolve, reject){
+    if(x !== null && (typeof x === 'fucntion' || typeof x === 'object')){
+        // 如果x是一个对象或者函数类型，那么有可能是一个promise
+        try {
+            let then = x.then
+            if(typeof then === 'function'){
+                then.call(x, function(y){
+                    //如果是 pormise仍需要递归调用 resolvePromise ，直到返回值是一个普通值
+                    resolvePromise(y, promise2, resolve, reject)
+                    // resolve(y)  // 这里默认 y 不是一个 promise
+                }, function(err){
+                    reject(err)
+                })
+            } else {
+                resolve(x)
+            }
+        } catch (err) {
+            reject(err)
+        }
+    } else {
+        // 如果是一个普通值，直接返回即可
+        resolve(x)
+    }
+}
+```
+
+然后我们可以在 index.js 测试一下：
+```js
+let Promise = require('./promise.js')
+let p = new Promise((resolve, reject) => {
+    resolve('成功')
+    // reject('失败')
+})
+
+p.then(() =>{
+    return new Promise((resolve) => {
+        resolve('返回的是一个Promsie')
+    })
+}).then(value => {
+    console.log('第二个then：', value)
+})
+```
+可以正常运行！！！但在实际的开发中，代码运行并不时时如我们所愿，有可能会报错。比如，
+在执行promise 传入的函数的时候可能出错，
+```js
+try {
+	executor(resolve, reject)
+} catch (err) {
+	reject(err)
+}
+```
+那么致此，一个简单的 promise 就实现了，呈上全部代码：
+```js
+
+function Promise(executor){
+    let that = this
+    that.status = 'pending'
+    that.value = ''
+    that.reason = ''
+    that.onFulfilledCallbacks = []
+    that.onRejectedCallbacks = []
+    function resolve(value){
+        if(that.status === 'pending'){
+            that.status = 'resolve'
+            that.value = value
+            that.onFulfilledCallbacks.forEach(fn => fn())
+        }
+    }
+
+    function reject(reason){
+        if(that.status === 'pending'){
+            that.status = 'reject'
+            that.reason = reason
+            that.onRejectedCallbacks.forEach(fn => fn())
+        }
+    }
+
+    try {
+        executor(resolve, reject)
+    } catch (err) {
+        reject(err)
+    }
+}
+
+function resolvePromise(x, promise2, resolve, reject){
+    if(x == promise2){
+        // 自己不能等待自己完成，循环引用错误
+        return reject(new TypeError('循环引用'))
+    }
+    if(x !== null && (typeof x === 'fucntion' || typeof x === 'object')){
+        // 如果x是一个对象或者函数类型，那么有可能是一个promise
+        try {
+            let then = x.then
+            if(typeof then === 'function'){
+                then.call(x, function(y){
+                    //如果是 pormise仍需要递归调用 resolvePromise ，直到返回值是一个普通值
+                    resolvePromise(y, promise2, resolve, reject)
+                    // resolve(y)  // 这里默认 y 不是一个 promise
+                }, function(err){
+                    reject(err)
+                })
+            } else {
+                resolve(x)
+            }
+        } catch (err) {
+            reject(err)
+        }
+    } else {
+        // 如果是一个普通值，直接返回即可
+        resolve(x)
+    }
+}
+
+Promise.prototype.then = function(onFulfilled, onRejected){
+    let that = this
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : function(data){
+        return data
+    }
+    onRejected = typeof onRejected === 'function' ? onRejected : function(err){
+        throw err
+    }
+    let promise2
+    promise2 = new Promise((resolve, reject) => {
+
+        if(that.status === 'resolve'){
+            let x = onFulfilled(that.value)
+            resolvePromise(x, promise2, resolve, reject)
+        }
+        if(that.status === 'reject'){
+            onRejected(that.reason)
+        }
+        if(that.status === 'pending'){
+            that.onFulfilledCallbacks.push(function(){
+                onFulfilled(that.value)
+            })
+            that.onRejectedCallbacks.push(function(){
+                onRejected(that.value)
+            })
+        }
+    })
+    return promise2
+}
+
+module.exports = Promise
+```
+
+
+
+
+
+
