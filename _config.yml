@@ -12,7 +12,7 @@ github_repo: "https://github.com/jeamn/jeamn.github.io.git" # you code repositor
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "Goals determine what you going to be!"
-sidebar-avatar: /img/about-BY-gentle.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/jeamn.png      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
@@ -102,7 +102,7 @@ service-worker: true
 #         title: "WY",
 #         href: "http://zhengwuyang.com"
 #     },{
-#         title: "简书·BY",
+#         title: "简书·Jeamn",
 #         href: "http://www.jianshu.com/u/e71990ada2fd"
 #     },{
 #         title: "Apple",
