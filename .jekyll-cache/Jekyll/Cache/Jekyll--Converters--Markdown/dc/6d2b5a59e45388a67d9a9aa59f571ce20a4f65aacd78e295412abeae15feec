@@ -1,4 +1,4 @@
-I"<h3 id="概念理解">概念理解</h3>
+I"<h3 id="概念理解">概念理解</h3>
 <p>对于闭包，不同的书有不同的解释。看看“红宝书”是怎么解释闭包的。</p>
 
 <p>闭包是指有权访问另一个函数作用域中的变量的函数。</p>
@@ -26,18 +26,18 @@
 <p>来看一个实际的例子：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-			<span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-			<span class="k">this</span><span class="p">.</span><span class="nx">a</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-				<span class="kd">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-				<span class="nx">i</span><span class="o">++</span><span class="p">;</span>
-				<span class="nx">j</span><span class="o">++</span><span class="p">;</span>
-				<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">,</span><span class="dl">"</span> <span class="o">+</span> <span class="nx">j</span><span class="p">);</span>
-			<span class="p">};</span>
-		<span class="p">}</span>
-		<span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">foo</span><span class="p">;</span>
-		<span class="nx">fn</span><span class="p">.</span><span class="nx">a</span><span class="p">();</span> <span class="c1">//1,1</span>
-		<span class="nx">fn</span><span class="p">.</span><span class="nx">a</span><span class="p">();</span> <span class="c1">//2,1</span>
-		<span class="nx">fn</span><span class="p">.</span><span class="nx">a</span><span class="p">();</span> <span class="c1">//3,1</span>
+	<span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="k">this</span><span class="p">.</span><span class="nx">a</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+		<span class="kd">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+		<span class="nx">i</span><span class="o">++</span><span class="p">;</span>
+		<span class="nx">j</span><span class="o">++</span><span class="p">;</span>
+		<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">,</span><span class="dl">"</span> <span class="o">+</span> <span class="nx">j</span><span class="p">);</span>
+	<span class="p">};</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">foo</span><span class="p">;</span>
+<span class="nx">fn</span><span class="p">.</span><span class="nx">a</span><span class="p">();</span> <span class="c1">//1,1</span>
+<span class="nx">fn</span><span class="p">.</span><span class="nx">a</span><span class="p">();</span> <span class="c1">//2,1</span>
+<span class="nx">fn</span><span class="p">.</span><span class="nx">a</span><span class="p">();</span> <span class="c1">//3,1</span>
 </code></pre></div></div>
 <p>可以看出，每调用一次 a 函数，j的值就变成1，而i的值会累加。</p>
 
