@@ -7,7 +7,7 @@ author:     Jeamn
 header-img: img/post-bg-ios9-web.jpg
 catalog: true
 tags:
-    - JavaScript
+    - TypeScript
 ---
 
 ## 一、接口
@@ -77,6 +77,7 @@ let p1 = {
 
 ### 2、接口的继承
 - 一个接口可以继承自另外一个接口
+
 ```js
 interface Speakable {
     speak(): void
@@ -110,6 +111,7 @@ tom.id = 1;
 
 ### 4、函数类型接口
 - 对方法传入的参数和返回值进行约束
+
 ```js
 interface discount{
   (price:number):number
@@ -123,6 +125,7 @@ let cost:discount = function(price:number):number{
 - 对数组和对象进行约束
 - userInterface 表示：只要 index 的类型是 number，那么值的类型必须是 string
 - UserInterface2 表示：只要 index 的类型是 string，那么值的类型必须是 string
+
 ```js
 interface UserInterface {
   [index:number]:string
@@ -138,6 +141,7 @@ let obj:UserInterface2 = {name:'jeamn'};
 
 ### 6、类接口
 - 对类的约束
+
 ```js
 interface Speakable {
     name: string;
@@ -156,6 +160,7 @@ dog.speak('汪汪汪');
 ### 7、构造函数的类型
 - 在 TypeScript 中，我们可以用 interface 来描述类
 - 同时也可以使用interface里特殊的new()关键字来描述类的构造函数类型
+
 ```js
 class Animal{
   constructor(public name:string){
@@ -203,6 +208,7 @@ console.log(result);
 
 ### 2、类数组
 - 类数组（Array-like Object）不是数组类型，比如 arguments
+
 ```js
 function sum(...parameters: number[]) {
     let args: IArguments = arguments;
@@ -244,6 +250,7 @@ console.log(ret);
 
 ### 4、泛型接口
 - 泛型接口可以用来约束函数
+
 ```js
 interface Calculate{
   <T>(a:T,b:T):T
@@ -254,6 +261,7 @@ let add:Calculate = function<T>(a:T,b:T){
 add<number>(1,2);
 ```
 - 定义接口的时候也可以指定泛型
+
 ```js
 interface Cart<T>{
   list:T[]
@@ -266,6 +274,7 @@ console.log(cart.list[0].name,cart.list[0].price);
 
 ### 5、多个类型参数
 - 泛型可以有多个
+
 ```js
 function swap<A,B>(tuple:[A,B]):[B,A]{
   return [tuple[1],tuple[0]];
@@ -291,6 +300,7 @@ console.log(result2);
 
 ### 7、泛型约束
 - 在函数中使用泛型的时候，由于预先并不知道泛型的类型，所以不能随意访问相应类型的属性或方法。
+
 ```js
 function logger<T>(val: T) {
     console.log(val.length); //直接访问会报错
@@ -309,6 +319,7 @@ logger2(1);
 
 ### 8、泛型类型别名
 - 泛型类型别名可以表达更复杂的类型
+
 ```js
 type Cart<T> = {list:T[]} | T[];
 let c1:Cart<string> = {list:['1']};

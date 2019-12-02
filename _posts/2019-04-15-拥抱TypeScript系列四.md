@@ -7,13 +7,14 @@ author:     Jeamn
 header-img: img/post-bg-ios9-web.jpg
 catalog: true
 tags:
-    - JavaScript
+    - TypeScript
 ---
 
 ## 一、结构类型系统
 ### 1、接口的兼容性
 - 如果传入的变量和声明的类型不匹配，TS就会进行兼容性检查
 - 原理是Duck-Check,就是说只要目标类型中声明的属性变量在源类型中都存在就是兼容的
+
 ```js
 interface Animal {
     name: string;
@@ -63,6 +64,7 @@ num2 = str2;
 
 ### 3、类的兼容性
 - 在TS中是结构类型系统，只会对比结构而不在意类型
+
 ```js
 class Animal{
     name:string
@@ -161,6 +163,7 @@ getPerson().age.toFixed();
 
 ### 5、函数参数的协变
 - 目标如果能够兼容源就是可以的
+
 ```js
 type LogFunc = (a:number|string)=>void;
 let log:LogFunc;
@@ -174,6 +177,7 @@ log = log1;
 
 ### 6、泛型的兼容性
 - 泛型在判断兼容性的时候会先判断具体的类型,然后再进行兼容性判断
+
 ```js
 //接口内容为空没用到泛型的时候是可以的
 //1.接口内容为空没用到泛型的时候是可以的
@@ -206,6 +210,7 @@ xx2 = yy2;
 ### 7、枚举的兼容性
 - 枚举类型与数字类型兼容，并且数字类型与枚举类型兼容
 - 不同枚举类型之间是不兼容的
+
 ```js
 //数字可以赋给枚举
 enum Colors {Red,Yellow}
@@ -258,6 +263,7 @@ function getName(animal: Animal) {
 
 ### 3、null保护
 - 如果开启了 strictNullChecks 选项，那么对于可能为 null 的变量不能调用它上面的方法和属性
+
 ```js
 function getFirstLetter(s: string | null) {
     //第一种方式是加上null判断
@@ -282,6 +288,7 @@ function getFirstLetter2(s: string | null) {
 ### 4、链判断运算符
 - 链判断运算符是一种先检查属性是否存在，再尝试访问该属性的运算符，其符号为 ?.
 - 如果运算符左侧的操作数 ?. 计算为 undefined 或 null，则表达式求值为 undefined 。否则，正常触发目标属性访问，方法或函数调用。
+
 ```js
 a?.b; //如果a是null/undefined,那么返回undefined，否则返回a.b的值.
 a == null ? undefined : a.b;
@@ -300,6 +307,7 @@ a == null ? undefined : a(); //如果A不是函数会抛出类型错误，否则
 ### 5、可辨识的联合类型
 - 就是利用联合类型中的共有字段进行类型保护的一种技巧
 - 相同字段的不同取值就是可辨识
+
 ```js
 interface WarningButton{
   class:'warning',
@@ -322,6 +330,7 @@ function getButton(button:Button){
 
 ### 6、in操作符
 - in 运算符可以被用于参数类型的判断
+
 ```js
 interface Bird {
     swing: number;

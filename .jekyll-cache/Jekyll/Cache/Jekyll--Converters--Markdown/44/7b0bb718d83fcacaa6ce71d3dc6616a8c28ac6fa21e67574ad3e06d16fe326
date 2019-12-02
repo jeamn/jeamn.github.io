@@ -1,0 +1,614 @@
+I"v�<h2 id="一类型变换">一、类型变换</h2>
+<h3 id="1交叉类型">1、交叉类型</h3>
+<ul>
+  <li>交叉类型（Intersection Types）表示将多个类型合并为一个类型</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Bird</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">,</span>
+  <span class="nx">fly</span><span class="p">():</span> <span class="k">void</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">Person</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">,</span>
+  <span class="nx">talk</span><span class="p">():</span> <span class="k">void</span>
+<span class="p">}</span>
+<span class="nx">type</span> <span class="nx">BirdPerson</span> <span class="o">=</span> <span class="nx">Bird</span> <span class="o">&amp;</span> <span class="nx">Person</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">p</span><span class="p">:</span> <span class="nx">BirdPerson</span> <span class="o">=</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span> <span class="nx">fly</span><span class="p">()</span> <span class="p">{</span> <span class="p">},</span> <span class="nx">talk</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span> <span class="p">};</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">fly</span><span class="p">;</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">name</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">talk</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="2typeof">2、typeof</h3>
+<ul>
+  <li>可以获取一个变量的类型</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//先定义类型，再定义变量</span>
+<span class="nx">type</span> <span class="nx">People</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span><span class="nx">string</span><span class="p">,</span>
+    <span class="na">age</span><span class="p">:</span><span class="nx">number</span><span class="p">,</span>
+    <span class="na">gender</span><span class="p">:</span><span class="nx">string</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">p1</span><span class="p">:</span><span class="nx">People</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">age</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+    <span class="na">gender</span><span class="p">:</span><span class="dl">'</span><span class="s1">male</span><span class="dl">'</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//先定义变量，再定义类型</span>
+<span class="kd">let</span> <span class="nx">p1</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">age</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+    <span class="na">gender</span><span class="p">:</span><span class="dl">'</span><span class="s1">male</span><span class="dl">'</span>
+<span class="p">}</span>
+<span class="nx">type</span> <span class="nx">People</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">p1</span><span class="p">;</span>
+<span class="kd">function</span> <span class="nx">getName</span><span class="p">(</span><span class="nx">p</span><span class="p">:</span><span class="nx">People</span><span class="p">):</span><span class="nx">string</span><span class="p">{</span>
+    <span class="k">return</span> <span class="nx">p</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">getName</span><span class="p">(</span><span class="nx">p1</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="3索引访问操作符">3、索引访问操作符</h3>
+<ul>
+  <li>可以通过[]获取一个类型的子类型</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Person</span><span class="p">{</span>
+    <span class="nl">name</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+    <span class="nl">age</span><span class="p">:</span><span class="nx">number</span><span class="p">;</span>
+    <span class="nl">job</span><span class="p">:{</span>
+        <span class="nl">name</span><span class="p">:</span><span class="nx">string</span>
+    <span class="p">};</span>
+    <span class="nl">interests</span><span class="p">:{</span><span class="nl">name</span><span class="p">:</span><span class="nx">string</span><span class="p">,</span><span class="nx">level</span><span class="p">:</span><span class="nx">number</span><span class="p">}[]</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">FrontEndJob</span><span class="p">:</span><span class="nx">Person</span><span class="p">[</span><span class="dl">'</span><span class="s1">job</span><span class="dl">'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">interestLevel</span><span class="p">:</span><span class="nx">Person</span><span class="p">[</span><span class="dl">'</span><span class="s1">interests</span><span class="dl">'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="dl">'</span><span class="s1">level</span><span class="dl">'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="4keyof">4、keyof</h3>
+<ul>
+  <li>索引类型查询操作符</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Person</span><span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+  <span class="nl">age</span><span class="p">:</span><span class="nx">number</span><span class="p">;</span>
+  <span class="nl">gender</span><span class="p">:</span><span class="dl">'</span><span class="s1">male</span><span class="dl">'</span><span class="o">|</span><span class="dl">'</span><span class="s1">female</span><span class="dl">'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//type PersonKey = 'name'|'age'|'gender';</span>
+<span class="nx">type</span> <span class="nx">PersonKey</span> <span class="o">=</span> <span class="nx">keyof</span> <span class="nx">Person</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">getValueByKey</span><span class="p">(</span><span class="nx">p</span><span class="p">:</span><span class="nx">Person</span><span class="p">,</span><span class="nx">key</span><span class="p">:</span><span class="nx">PersonKey</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">p</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">getValueByKey</span><span class="p">({</span><span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span><span class="na">age</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span><span class="na">gender</span><span class="p">:</span><span class="dl">'</span><span class="s1">male</span><span class="dl">'</span><span class="p">},</span><span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="5映射类型">5、映射类型</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Person</span><span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+  <span class="nl">age</span><span class="p">:</span><span class="nx">number</span><span class="p">;</span>
+  <span class="nl">gender</span><span class="p">:</span><span class="dl">'</span><span class="s1">male</span><span class="dl">'</span><span class="o">|</span><span class="dl">'</span><span class="s1">female</span><span class="dl">'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//批量把一个接口中的属性都变成可选的</span>
+<span class="nx">type</span> <span class="nx">PartPerson</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">Key</span> <span class="k">in</span> <span class="nx">keyof</span> <span class="nx">Person</span><span class="p">]?:</span><span class="nx">Person</span><span class="p">[</span><span class="nx">Key</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">p1</span><span class="p">:</span><span class="nx">PartPerson</span><span class="o">=</span><span class="p">{};</span>
+<span class="c1">//也可以使用泛型</span>
+<span class="nx">type</span> <span class="nx">Part</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">keyof</span> <span class="nx">T</span><span class="p">]?:</span><span class="nx">T</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">p2</span><span class="p">:</span><span class="nx">Part</span><span class="o">&lt;</span><span class="nx">Person</span><span class="o">&gt;=</span><span class="p">{};</span>
+</code></pre></div></div>
+
+<h3 id="6内置工具类型">6、内置工具类型</h3>
+<ul>
+  <li>TS 中内置了一些工具类型来帮助我们更好地使用类型系统
+    <h4 id="1partial">(1)Partial</h4>
+  </li>
+  <li>Partial 可以将传入的属性由非可选变为可选，具体使用如下：</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">type</span> <span class="nx">Partial</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="nx">P</span> <span class="k">in</span> <span class="nx">keyof</span> <span class="nx">T</span><span class="p">]?:</span> <span class="nx">T</span><span class="p">[</span><span class="nx">P</span><span class="p">]</span> <span class="p">};</span>
+
+<span class="kr">interface</span> <span class="nx">A</span> <span class="p">{</span>
+  <span class="nl">a1</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+  <span class="nl">a2</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span>
+  <span class="nl">a3</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">type</span> <span class="nx">aPartial</span> <span class="o">=</span> <span class="nx">Partial</span><span class="o">&lt;</span><span class="nx">A</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">a</span><span class="p">:</span> <span class="nx">aPartial</span> <span class="o">=</span> <span class="p">{};</span> <span class="c1">// 不会报错</span>
+</code></pre></div></div>
+
+<h4 id="2required">(2)Required</h4>
+<ul>
+  <li>Required 可以将传入的属性中的可选项变为必选项，这里用了 -? 修饰符来实现。</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//type Required&lt;T&gt; = { [P in keyof T]-?: T[P] };</span>
+
+<span class="kr">interface</span> <span class="nx">Person</span><span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+  <span class="nl">age</span><span class="p">:</span><span class="nx">number</span><span class="p">;</span>
+  <span class="nx">gender</span><span class="p">?:</span><span class="dl">'</span><span class="s1">male</span><span class="dl">'</span><span class="o">|</span><span class="dl">'</span><span class="s1">female</span><span class="dl">'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cm">/**
+ * type Require&lt;T&gt; = { [P in keyof T]-?: T[P] };
+ */</span>
+<span class="kd">let</span> <span class="nx">p</span><span class="p">:</span><span class="nx">Required</span><span class="o">&lt;</span><span class="nx">Person</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span>
+  <span class="na">age</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+  <span class="c1">//gender:'male'</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="3readonly">(3)Readonly</h4>
+<ul>
+  <li>Readonly 通过为传入的属性每一项都加上 readonly 修饰符来实现。</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Person</span><span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+  <span class="nl">age</span><span class="p">:</span><span class="nx">number</span><span class="p">;</span>
+  <span class="nx">gender</span><span class="p">?:</span><span class="dl">'</span><span class="s1">male</span><span class="dl">'</span><span class="o">|</span><span class="dl">'</span><span class="s1">female</span><span class="dl">'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//type Readonly&lt;T&gt; = { readonly [P in keyof T]: T[P] };</span>
+<span class="kd">let</span> <span class="nx">p</span><span class="p">:</span><span class="nx">Readonly</span><span class="o">&lt;</span><span class="nx">Person</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span>
+  <span class="na">age</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+  <span class="na">gender</span><span class="p">:</span><span class="dl">'</span><span class="s1">male</span><span class="dl">'</span>
+<span class="p">}</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="mi">11</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h4 id="4pick">(4)Pick</h4>
+<ul>
+  <li>Pick 能够帮助我们从传入的属性中摘取某一项返回</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Animal</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+  <span class="nl">age</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cm">/**
+ * From T pick a set of properties K
+ * type Pick&lt;T, K extends keyof T&gt; = { [P in K]: T[P] };
+ */</span>
+<span class="c1">// 摘取 Animal 中的 name 属性</span>
+<span class="nx">type</span> <span class="nx">AnimalSub</span> <span class="o">=</span> <span class="nx">Pick</span><span class="o">&lt;</span><span class="nx">Animal</span><span class="p">,</span> <span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="o">&gt;</span><span class="p">;</span> <span class="c1">//{ name: string; }</span>
+<span class="kd">let</span> <span class="nx">a</span><span class="p">:</span><span class="nx">AnimalSub</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">age</span><span class="p">:</span><span class="mi">10</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="5映射类型修饰符的控制">(5)映射类型修饰符的控制</h4>
+<ul>
+  <li>TypeScript中增加了对映射类型修饰符的控制</li>
+  <li>具体而言，一个 readonly 或 ? 修饰符在一个映射类型里可以用前缀 + 或-来表示这个修饰符应该被添加或移除</li>
+  <li>TS 中部分内置工具类型就利用了这个特性（Partial、Required、Readonly…），可以参考 Partial、Required 的实现</li>
+</ul>
+
+<h3 id="7交叉类型">7、交叉类型</h3>
+<ul>
+  <li>在定义泛型的时候能够添加进逻辑分支，以后泛型更加灵活
+    <h4 id="1定义条件类型">(1)定义条件类型</h4>
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Fish</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">Water</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">Bird</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">Sky</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span>
+<span class="p">}</span>
+<span class="c1">//三元运算符</span>
+<span class="nx">type</span> <span class="nx">Condition</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">T</span> <span class="kd">extends</span> <span class="nx">Fish</span> <span class="p">?</span> <span class="nx">Water</span> <span class="p">:</span> <span class="nx">Sky</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">condition</span><span class="p">:</span> <span class="nx">Condition</span><span class="o">&lt;</span><span class="nx">Fish</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">水</span><span class="dl">'</span> <span class="p">};</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="2条件类型的分发">(2)条件类型的分发</h4>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Fish</span> <span class="p">{</span>
+    <span class="nl">fish</span><span class="p">:</span> <span class="nx">string</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">Water</span> <span class="p">{</span>
+    <span class="nl">water</span><span class="p">:</span> <span class="nx">string</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">Bird</span> <span class="p">{</span>
+    <span class="nl">bird</span><span class="p">:</span> <span class="nx">string</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">Sky</span> <span class="p">{</span>
+    <span class="nl">sky</span><span class="p">:</span> <span class="nx">string</span>
+<span class="p">}</span>
+
+<span class="nx">type</span> <span class="nx">Condition</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">T</span> <span class="kd">extends</span> <span class="nx">Fish</span> <span class="p">?</span> <span class="nx">Water</span> <span class="p">:</span> <span class="nx">Sky</span><span class="p">;</span>
+<span class="c1">//(Fish extends Fish ? Water : Sky) | (Bird extends Fish ? Water : Sky)</span>
+<span class="c1">// Water|Sky</span>
+<span class="kd">let</span> <span class="nx">condition1</span><span class="p">:</span> <span class="nx">Condition</span><span class="o">&lt;</span><span class="nx">Fish</span> <span class="o">|</span> <span class="nx">Bird</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="na">water</span><span class="p">:</span> <span class="dl">'</span><span class="s1">水</span><span class="dl">'</span> <span class="p">};</span>
+<span class="kd">let</span> <span class="nx">condition2</span><span class="p">:</span> <span class="nx">Condition</span><span class="o">&lt;</span><span class="nx">Fish</span> <span class="o">|</span> <span class="nx">Bird</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="na">sky</span><span class="p">:</span> <span class="dl">'</span><span class="s1">天空</span><span class="dl">'</span> <span class="p">};</span>
+</code></pre></div></div>
+
+<h4 id="3内置条件类型">(3)内置条件类型</h4>
+<ul>
+  <li>TS 在内置了一些常用的条件类型，可以在 lib.es5.d.ts 中查看：</li>
+</ul>
+
+<h5 id="1-exclude">1) Exclude</h5>
+<p>从 T 可分配给的类型中排除 U
+type  E = Exclude&lt;string|number,string&gt;;
+let e:E = 10;</p>
+<h5 id="2-extract">2) Extract</h5>
+<p>从 T 可分配的类型中提取 U
+type  E = Extract&lt;string|number,string&gt;;
+let e:E = ‘1’;</p>
+<h5 id="3-nonnullable">3) NonNullable</h5>
+<p>从 T 中排除 null 和 undefined
+type  E = NonNullable&lt;string|number|null|undefined&gt;;
+let e:E = null;</p>
+<h5 id="4-returntype">4) ReturnType</h5>
+<ul>
+  <li>获取函数类型的返回类型</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">getUserInfo</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">"</span><span class="s2">jeamn</span><span class="dl">"</span><span class="p">,</span> <span class="na">age</span><span class="p">:</span> <span class="mi">10</span> <span class="p">};</span> <span class="p">}</span>
+<span class="c1">// 通过 ReturnType 将 getUserInfo 的返回值类型赋给了 UserInfo type UserInfo = ReturnType;</span>
+<span class="kd">const</span> <span class="nx">userA</span><span class="p">:</span> <span class="nx">UserInfo</span> <span class="o">=</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">"</span><span class="s2">jeamn</span><span class="dl">"</span><span class="p">,</span> <span class="na">age</span><span class="p">:</span> <span class="mi">10</span> <span class="p">};</span>
+</code></pre></div></div>
+
+<h5 id="5-instancetype">5) InstanceType<T></T></h5>
+<ul>
+  <li>获取构造函数类型的实例类型</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Person</span><span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">getName</span><span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">)}</span>
+<span class="p">}</span>
+
+<span class="nx">type</span>  <span class="nx">P</span> <span class="o">=</span> <span class="nx">InstanceType</span><span class="o">&lt;</span><span class="k">typeof</span> <span class="nx">Person</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">p</span><span class="p">:</span><span class="nx">P</span> <span class="o">=</span> <span class="p">{</span><span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span><span class="nx">getName</span><span class="p">(){}};</span>
+</code></pre></div></div>
+
+<h2 id="二类型声明">二、类型声明</h2>
+<ul>
+  <li>声明文件可以让我们不需要将JS重构为TS，只需要加上声明文件就可以使用系统</li>
+  <li>类型声明在编译的时候都会被删除，不会影响真正的代码</li>
+</ul>
+
+<h3 id="1普通类型声明">1、普通类型声明</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">declare</span> <span class="kd">const</span> <span class="nx">$</span><span class="p">:(</span><span class="nx">selector</span><span class="p">:</span><span class="nx">string</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">{</span> <span class="c1">//变量</span>
+    <span class="nx">click</span><span class="p">():</span><span class="k">void</span><span class="p">;</span>
+    <span class="nx">width</span><span class="p">(</span><span class="na">length</span><span class="p">:</span><span class="nx">number</span><span class="p">):</span><span class="k">void</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="nx">declare</span> <span class="kd">let</span> <span class="na">name</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>  <span class="c1">//变量</span>
+<span class="nx">declare</span> <span class="kd">let</span> <span class="na">age</span><span class="p">:</span><span class="nx">number</span><span class="p">;</span>  <span class="c1">//变量</span>
+<span class="nx">declare</span> <span class="kd">function</span> <span class="nx">getName</span><span class="p">():</span><span class="nx">string</span><span class="p">;</span>  <span class="c1">//方法</span>
+<span class="nx">declare</span> <span class="kd">class</span> <span class="nx">Animal</span><span class="p">{</span><span class="na">name</span><span class="p">:</span><span class="nx">string</span><span class="p">}</span>  <span class="c1">//类</span>
+
+<span class="kr">interface</span> <span class="nx">Person</span><span class="p">{</span> <span class="c1">//声明接口</span>
+    <span class="na">name</span><span class="p">:</span><span class="nx">string</span>
+<span class="p">}</span>
+
+<span class="nx">type</span> <span class="nx">Student</span> <span class="o">=</span> <span class="p">{</span> <span class="c1">//声明类型</span>
+    <span class="na">name</span><span class="p">:</span><span class="nx">string</span>
+<span class="p">}</span><span class="o">|</span><span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="2外部枚举">2、外部枚举</h3>
+<ul>
+  <li>外部枚举是使用declare enum定义的枚举类型</li>
+  <li>外部枚举用来描述已经存在的枚举类型的形状</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">外部枚举用来描述已经存在的枚举类型的形状</span>
+<span class="nx">declare</span> <span class="kr">enum</span> <span class="nx">Seasons</span> <span class="p">{</span>
+    <span class="nx">Spring</span><span class="p">,</span>
+    <span class="nx">Summer</span><span class="p">,</span>
+    <span class="nx">Autumn</span><span class="p">,</span>
+    <span class="nx">Winter</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">seasons</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Spring</span><span class="p">,</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Summer</span><span class="p">,</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Autumn</span><span class="p">,</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Winter</span>
+<span class="p">];</span>
+</code></pre></div></div>
+<ul>
+  <li>declare 定义的类型只会用于编译时的检查，编译结果中会被删除。上例的编译结果如下</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">seasons</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Spring</span><span class="p">,</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Summer</span><span class="p">,</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Autumn</span><span class="p">,</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Winter</span>
+<span class="p">];</span>
+</code></pre></div></div>
+<ul>
+  <li>也可以同时使用declare 和 const</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">declare</span> <span class="kd">const</span> <span class="kr">enum</span> <span class="nx">Seasons</span> <span class="p">{</span>
+    <span class="nx">Spring</span><span class="p">,</span>
+    <span class="nx">Summer</span><span class="p">,</span>
+    <span class="nx">Autumn</span><span class="p">,</span>
+    <span class="nx">Winter</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">seasons</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Spring</span><span class="p">,</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Summer</span><span class="p">,</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Autumn</span><span class="p">,</span>
+    <span class="nx">Seasons</span><span class="p">.</span><span class="nx">Winter</span>
+<span class="p">];</span>
+</code></pre></div></div>
+<p>编译结果</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">seasons</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="mi">0</span> <span class="cm">/* Spring */</span><span class="p">,</span>
+    <span class="mi">1</span> <span class="cm">/* Summer */</span><span class="p">,</span>
+    <span class="mi">2</span> <span class="cm">/* Autumn */</span><span class="p">,</span>
+    <span class="mi">3</span> <span class="cm">/* Winter */</span>
+<span class="p">];</span>
+</code></pre></div></div>
+
+<h3 id="3namespace">3、namespace</h3>
+<ul>
+  <li>如果一个全局变量包括了很多子属性，可能使用namespace</li>
+  <li>在声明文件中的namespace表示一个全局变量包含很多子属性</li>
+  <li>在命名空间内部不需要使用 declare 声明属性或方法</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">declare</span> <span class="nx">namespace</span> <span class="nx">$</span><span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">ajax</span><span class="p">(</span><span class="nx">url</span><span class="p">:</span><span class="nx">string</span><span class="p">,</span><span class="nx">settings</span><span class="p">:</span><span class="nx">any</span><span class="p">):</span><span class="k">void</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">name</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+    <span class="nx">namespace</span> <span class="nx">fn</span> <span class="p">{</span>
+        <span class="kd">function</span> <span class="nx">extend</span><span class="p">(</span><span class="nx">object</span><span class="p">:</span><span class="nx">any</span><span class="p">):</span><span class="k">void</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="dl">'</span><span class="s1">/api/users</span><span class="dl">'</span><span class="p">,{});</span>
+<span class="nx">$</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="na">log</span><span class="p">:</span><span class="kd">function</span><span class="p">(</span><span class="na">message</span><span class="p">:</span><span class="nx">any</span><span class="p">){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+<span class="k">export</span> <span class="p">{};</span>
+</code></pre></div></div>
+
+<h3 id="4类型声明文件">4、类型声明文件</h3>
+<ul>
+  <li>我们可以把类型声明放在一个单独的类型声明文件中</li>
+  <li>可以在类型声明文件中使用类型声明</li>
+  <li>文件命名规范为*.d.ts</li>
+  <li>观看类型声明文件有助于了解库的使用方式</li>
+</ul>
+
+<h4 id="1typingsjquerydts">(1)typings\jquery.d.ts</h4>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">declare</span> <span class="kd">const</span> <span class="nx">$</span><span class="p">:(</span><span class="nx">selector</span><span class="p">:</span><span class="nx">string</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">{</span>
+    <span class="nx">click</span><span class="p">():</span><span class="k">void</span><span class="p">;</span>
+    <span class="nx">width</span><span class="p">(</span><span class="na">length</span><span class="p">:</span><span class="nx">number</span><span class="p">):</span><span class="k">void</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="2tsconfigjson">(2)tsconfig.json</h4>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2015",  
+    "outDir":"lib"
+  },
+  "include": [
+    "src/**/*",
+    "typings/**/*"
+  ]
+}
+</code></pre></div></div>
+
+<h4 id="3testjs">(3)test.js</h4>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">#button</span><span class="dl">'</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+<span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">#button</span><span class="dl">'</span><span class="p">).</span><span class="nx">width</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+<span class="k">export</span> <span class="p">{};</span>
+</code></pre></div></div>
+
+<h3 id="5第三方声明文件">5、第三方声明文件</h3>
+<ul>
+  <li>可以安装使用第三方的声明文件</li>
+  <li>@types是一个约定的前缀，所有的第三方声明的类型库都会带有这样的前缀</li>
+  <li>JavaScript 中有很多内置对象，它们可以在 TypeScript 中被当做声明好了的类型</li>
+  <li>内置对象是指根据标准在全局作用域（Global）上存在的对象。这里的标准是指 ECMAScript 和其他环境（比如 DOM）的标准</li>
+  <li>这些内置对象的类型声明文件，就包含在TypeScript 核心库的类型声明文件中</li>
+</ul>
+
+<h4 id="1使用jquery">(1)使用jquery</h4>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//对于common.js风格的模块必须使用 import * as </span>
+<span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">jQuery</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">jquery</span><span class="dl">'</span><span class="p">;</span>
+<span class="nx">jQuery</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="dl">'</span><span class="s1">/user/1</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="2安装声明文件">(2)安装声明文件</h4>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">cnpm</span> <span class="nx">i</span> <span class="p">@</span><span class="nd">types</span><span class="sr">/jquery -</span><span class="err">S
+</span></code></pre></div></div>
+
+<h4 id="3自己编写声明文件">(3)自己编写声明文件</h4>
+<p>types\jquery\index.d.ts</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">declare</span> <span class="kd">function</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nx">selector</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span><span class="nx">HTMLElement</span><span class="p">;</span>
+<span class="nx">declare</span> <span class="nx">namespace</span> <span class="nx">jQuery</span><span class="p">{</span>
+  <span class="kd">function</span> <span class="nx">ajax</span><span class="p">(</span><span class="nx">url</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span><span class="k">void</span>
+<span class="p">}</span>
+<span class="k">export</span> <span class="k">default</span> <span class="nx">jQuery</span><span class="p">;</span>
+</code></pre></div></div>
+<p>tsconfig.json</p>
+<ul>
+  <li>如果配置了paths,那么在引入包的的时候会自动去paths目录里找类型声明文件</li>
+  <li>在 webpack 中，我们可以通过配置 alias 的形式来为项目里的文件做映射。在 tsconfig.json 中，我们同样也可以做路径的映射</li>
+  <li>在 tsconfig.json 中，我们通过 compilerOptions 里的 paths 属性来配置路径映射。 tsconfig.json</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+    <span class="dl">"</span><span class="s2">baseUrl</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">./</span><span class="dl">"</span><span class="p">,</span><span class="c1">// 使用 paths 属性的话必须要指定 baseUrl 的值</span>
+    <span class="dl">"</span><span class="s2">paths</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="dl">"</span><span class="s2">*</span><span class="dl">"</span><span class="p">:[</span><span class="dl">"</span><span class="s2">types/*</span><span class="dl">"</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="4-npm声明文件可能的位置">(4) npm声明文件可能的位置</h4>
+<ul>
+  <li>node_modules/jquery/package.json</li>
+  <li>“types”:”types/xxx.d.ts”</li>
+  <li>node_modules/jquery/index.d.ts</li>
+  <li>node_modules/@types/jquery/index.d.ts</li>
+</ul>
+
+<h3 id="6扩展全局变量的类型">6、扩展全局变量的类型</h3>
+<h4 id="1-扩展局部变量类型">(1) 扩展局部变量类型</h4>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nb">String</span> <span class="p">{</span>
+    <span class="nx">double</span><span class="p">():</span><span class="nx">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">double</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">+</span><span class="dl">'</span><span class="s1">+</span><span class="dl">'</span><span class="o">+</span><span class="k">this</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span><span class="p">.</span><span class="nx">double</span><span class="p">());</span>
+
+<span class="kr">interface</span> <span class="nx">Window</span><span class="p">{</span>
+    <span class="nl">myname</span><span class="p">:</span><span class="nx">string</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">myname</span><span class="p">);</span>
+<span class="c1">//export {}</span>
+</code></pre></div></div>
+
+<h4 id="2-模块内全局扩展">(2) 模块内全局扩展</h4>
+<p>types\global\index.d.ts</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">declare</span> <span class="nb">global</span><span class="p">{</span>
+    <span class="kr">interface</span> <span class="nb">String</span> <span class="p">{</span>
+        <span class="nx">double</span><span class="p">():</span><span class="nx">string</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kr">interface</span> <span class="nx">Window</span><span class="p">{</span>
+        <span class="nl">myname</span><span class="p">:</span><span class="nx">string</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">export</span>  <span class="p">{}</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="dl">"</span><span class="s2">include</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
+    <span class="dl">"</span><span class="s2">src/**/*</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">types/**/*</span><span class="dl">"</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<h3 id="7合并声明">7、合并声明</h3>
+<ul>
+  <li>同一名称的两个独立声明会被合并成一个单一声明</li>
+  <li>合并后的声明拥有原先两个声明的特性</li>
+  <li>类既可以作为类型使用，也可以作为值使用，接口只能作为类型使用</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Person</span><span class="p">{</span>
+    <span class="nl">name</span><span class="p">:</span><span class="nx">string</span><span class="o">=</span><span class="dl">''</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">p1</span><span class="p">:</span><span class="nx">Person</span><span class="p">;</span><span class="c1">//作为类型使用</span>
+<span class="kd">let</span> <span class="nx">p2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">();</span><span class="c1">//作为值使用</span>
+
+<span class="kr">interface</span> <span class="nx">Animal</span><span class="p">{</span>
+    <span class="nl">name</span><span class="p">:</span><span class="nx">string</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">a1</span><span class="p">:</span><span class="nx">Animal</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">a2</span> <span class="o">=</span> <span class="nx">Animal</span><span class="p">;</span><span class="c1">//接口类型不能用作值</span>
+</code></pre></div></div>
+
+<h4 id="1-合并类型声明">(1) 合并类型声明</h4>
+<ul>
+  <li>可以通过接口合并的特性给一个第三方为扩展类型声明</li>
+</ul>
+
+<p>use.js</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Animal</span><span class="p">{</span>
+    <span class="nl">name</span><span class="p">:</span><span class="nx">string</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">a1</span><span class="p">:</span><span class="nx">Animal</span><span class="o">=</span><span class="p">{</span><span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span><span class="na">age</span><span class="p">:</span><span class="mi">10</span><span class="p">};</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a1</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a1</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+</code></pre></div></div>
+<p>types\animal\index.d.ts</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Animal</span><span class="p">{</span>
+    <span class="nl">age</span><span class="p">:</span><span class="nx">number</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="2-使用命名空间扩展类">(2) 使用命名空间扩展类</h4>
+<ul>
+  <li>我们可以使用 namespace 来扩展类，用于表示内部类</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Form</span> <span class="p">{</span>
+  <span class="nl">username</span><span class="p">:</span> <span class="nx">Form</span><span class="p">.</span><span class="nx">Item</span><span class="o">=</span><span class="dl">''</span><span class="p">;</span>
+  <span class="nl">password</span><span class="p">:</span> <span class="nx">Form</span><span class="p">.</span><span class="nx">Item</span><span class="o">=</span><span class="dl">''</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//Item为Form的内部类</span>
+<span class="nx">namespace</span> <span class="nx">Form</span> <span class="p">{</span>
+  <span class="k">export</span> <span class="kd">class</span> <span class="nx">Item</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">item</span><span class="p">:</span><span class="nx">Form</span><span class="p">.</span><span class="nx">Item</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Form</span><span class="p">.</span><span class="nx">Item</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="3-使用命名空间扩展函数">(3) 使用命名空间扩展函数</h4>
+<ul>
+  <li>我们也可以使用 namespace 来扩展函数</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">greeting</span><span class="p">(</span><span class="nx">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">):</span> <span class="nx">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">greeting</span><span class="p">.</span><span class="nx">words</span><span class="o">+</span><span class="nx">name</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">namespace</span> <span class="nx">greeting</span> <span class="p">{</span>
+    <span class="k">export</span> <span class="kd">let</span> <span class="nx">words</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">Hello,</span><span class="dl">"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">greeting</span><span class="p">(</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h4 id="4-使用命名空间扩展枚举类型">(4) 使用命名空间扩展枚举类型</h4>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">enum</span> <span class="nx">Color</span> <span class="p">{</span>
+    <span class="nx">red</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">yellow</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nx">blue</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="p">}</span>
+
+<span class="nx">namespace</span> <span class="nx">Color</span> <span class="p">{</span>
+    <span class="k">export</span> <span class="kd">const</span> <span class="nx">green</span><span class="o">=</span><span class="mi">4</span><span class="p">;</span>
+    <span class="k">export</span> <span class="kd">const</span> <span class="nx">purple</span><span class="o">=</span><span class="mi">5</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">Color</span><span class="p">.</span><span class="nx">green</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="8生成声明文件">8、生成声明文件</h3>
+<ul>
+  <li>把TS编译成JS后丢失类型声明，我们可以在编译的时候自动生成一份JS文件</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+  <span class="dl">"</span><span class="s2">compilerOptions</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+     <span class="dl">"</span><span class="s2">declaration</span><span class="dl">"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="cm">/* Generates corresponding '.d.ts' file.*/</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

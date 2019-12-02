@@ -1,0 +1,350 @@
+I"�<h2 id="一类">一、类</h2>
+<h3 id="1如何定义类">1、如何定义类</h3>
+<ul>
+  <li>“strictPropertyInitialization”: true / 启用类属性初始化的严格检查/</li>
+  <li>name!:string
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Person</span><span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+  <span class="nx">getName</span><span class="p">():</span><span class="k">void</span><span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">p1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">();</span>
+<span class="nx">p1</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">;</span>
+<span class="nx">p1</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="2存取器">2、存取器</h3>
+<ul>
+  <li>在 TypeScript 中，我们可以通过存取器来改变一个类中属性的读取和赋值行为</li>
+  <li>构造函数
+    <ul>
+      <li>主要用于初始化类的成员变量属性</li>
+      <li>类的对象创建时自动调用执行</li>
+      <li>没有返回值</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">User</span> <span class="p">{</span>
+    <span class="nl">myname</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">myname</span><span class="p">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">myname</span> <span class="o">=</span> <span class="nx">myname</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">get</span> <span class="nx">name</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">myname</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">set</span> <span class="nx">name</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">myname</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span><span class="p">;</span> 
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span> 
+</code></pre></div></div>
+
+<h3 id="3参数属性">3、参数属性</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">User</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">myname</span><span class="p">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="kd">get</span> <span class="nx">name</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">myname</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">set</span> <span class="nx">name</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">myname</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span> 
+<span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span><span class="p">;</span> 
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="4readonly">4、readonly</h3>
+<ul>
+  <li>readonly 修饰的变量只能在构造函数中初始化</li>
+  <li>在 TypeScript 中，const 是常量标志符，其值不能被重新分配</li>
+  <li>TypeScript 的类型系统同样也允许将 interface、type、 class 上的属性标识为 readonly</li>
+  <li>readonly 实际上只是在编译阶段进行代码检查。而 const 则会在运行时检查（在支持 const 语法的 JavaScript 运行时环境中）</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Animal</span> <span class="p">{</span>
+    <span class="kr">public</span> <span class="nx">readonly</span> <span class="nx">name</span><span class="p">:</span> <span class="nx">string</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">:</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">changeName</span><span class="p">(</span><span class="nx">name</span><span class="p">:</span><span class="nx">string</span><span class="p">){</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Animal</span><span class="p">(</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">a</span><span class="p">.</span><span class="nx">changeName</span><span class="p">(</span><span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="5继承">5、继承</h3>
+<ul>
+  <li>子类继承父类后子类的实例就拥有了父类中的属性和方法，可以增强代码的可复用性</li>
+  <li>将子类公用的方法抽象出来放在父类中，自己的特殊逻辑放在子类中重写父类的逻辑</li>
+  <li>super可以调用父类上的方法和属性</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
+    <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span><span class="c1">//定义实例的属性，默认省略public修饰符</span>
+    <span class="nl">age</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">:</span><span class="nx">string</span><span class="p">,</span><span class="nx">age</span><span class="p">:</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span><span class="c1">//构造函数</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">=</span><span class="nx">name</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">age</span><span class="o">=</span><span class="nx">age</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">getName</span><span class="p">():</span><span class="nx">string</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">setName</span><span class="p">(</span><span class="nx">name</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span> <span class="k">void</span><span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">=</span><span class="nx">name</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Student</span> <span class="kd">extends</span> <span class="nx">Person</span><span class="p">{</span>
+    <span class="na">no</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="na">name</span><span class="p">:</span><span class="nx">string</span><span class="p">,</span><span class="na">age</span><span class="p">:</span><span class="nx">number</span><span class="p">,</span><span class="na">no</span><span class="p">:</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span><span class="nx">age</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">no</span><span class="o">=</span><span class="nx">no</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">getNo</span><span class="p">():</span><span class="nx">number</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">no</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">s1</span><span class="o">=</span><span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">s1</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="6类里面的修饰符">6、类里面的修饰符</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Father</span> <span class="p">{</span>
+    <span class="kr">public</span> <span class="nx">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>   <span class="c1">//类里面 子类 其它任何地方外边都可以访问</span>
+    <span class="kr">protected</span> <span class="nx">age</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span> <span class="c1">//类里面 子类 都可以访问,其它任何地方不能访问</span>
+    <span class="kr">private</span> <span class="nx">money</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span> <span class="c1">//类里面可以访问，子类和其它任何地方都不可以访问</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">:</span><span class="nx">string</span><span class="p">,</span><span class="nx">age</span><span class="p">:</span><span class="nx">number</span><span class="p">,</span><span class="nx">money</span><span class="p">:</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span><span class="c1">//构造函数</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">=</span><span class="nx">name</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">age</span><span class="o">=</span><span class="nx">age</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">money</span><span class="o">=</span><span class="nx">money</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">getName</span><span class="p">():</span><span class="nx">string</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">setName</span><span class="p">(</span><span class="nx">name</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span> <span class="k">void</span><span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">=</span><span class="nx">name</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Child</span> <span class="kd">extends</span> <span class="nx">Father</span><span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="na">name</span><span class="p">:</span><span class="nx">string</span><span class="p">,</span><span class="na">age</span><span class="p">:</span><span class="nx">number</span><span class="p">,</span><span class="na">money</span><span class="p">:</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span><span class="nx">age</span><span class="p">,</span><span class="nx">money</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">desc</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2"> </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">age</span><span class="p">}</span><span class="s2"> </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">money</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">child</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Child</span><span class="p">(</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1000</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">money</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="7静态属性-静态方法">7、静态属性 静态方法</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Father</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="nx">className</span><span class="o">=</span><span class="dl">'</span><span class="s1">Father</span><span class="dl">'</span><span class="p">;</span>
+    <span class="kd">static</span> <span class="nx">getClassName</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Father</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kr">public</span> <span class="nx">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">:</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span><span class="c1">//构造函数</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">=</span><span class="nx">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">Father</span><span class="p">.</span><span class="nx">className</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">Father</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">());</span>
+</code></pre></div></div>
+
+<h3 id="8抽象类">8、抽象类</h3>
+<ul>
+  <li>抽象描述一种抽象的概念，无法被实例化，只能被继承</li>
+  <li>无法创建抽象类的实例</li>
+  <li>抽象方法不能在抽象类中实现，只能在抽象类的具体子类中实现，而且必须实现</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">abstract</span> <span class="kd">class</span> <span class="nx">Animal</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">!</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+    <span class="nx">abstract</span> <span class="nx">speak</span><span class="p">():</span><span class="k">void</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Cat</span> <span class="kd">extends</span> <span class="nx">Animal</span><span class="p">{</span>
+    <span class="nx">speak</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">喵喵喵</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">animal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Animal</span><span class="p">();</span><span class="c1">//Cannot create an instance of an abstract class</span>
+<span class="nx">animal</span><span class="p">.</span><span class="nx">speak</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">cat</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cat</span><span class="p">();</span>
+<span class="nx">cat</span><span class="p">.</span><span class="nx">speak</span><span class="p">();</span>
+</code></pre></div></div>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>访问控制修饰符</td>
+          <td>private protected public</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>只读属性</td>
+          <td>readonly</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>静态属性</td>
+          <td>static</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>抽象类、抽象方法</td>
+          <td>abstract</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="9抽象类-vs-接口">9、抽象类 vs 接口</h3>
+<ul>
+  <li>不同类之间公有的属性或方法，可以抽象成一个接口（Interfaces）</li>
+  <li>而抽象类是供其他类继承的基类，抽象类不允许被实例化。抽象类中的抽象方法必须在子类中被实现</li>
+  <li>抽象类本质是一个无法被实例化的类，其中能够实现方法和初始化属性，而接口仅能够用于描述,既不提供方法的实现，也不为属性进行初始化</li>
+  <li>一个类可以继承一个类或抽象类，但可以实现（implements）多个接口</li>
+  <li>抽象类也可以实现接口
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">abstract</span> <span class="kd">class</span> <span class="nx">Animal</span><span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span><span class="nx">string</span><span class="p">;</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">:</span><span class="nx">string</span><span class="p">){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">abstract</span> <span class="nx">speak</span><span class="p">():</span><span class="k">void</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">Flying</span><span class="p">{</span>
+  <span class="nx">fly</span><span class="p">():</span><span class="k">void</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Duck</span> <span class="kd">extends</span> <span class="nx">Animal</span> <span class="kr">implements</span> <span class="nx">Flying</span><span class="p">{</span>
+  <span class="nx">speak</span><span class="p">(){</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">汪汪汪</span><span class="dl">'</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">fly</span><span class="p">(){</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">我会飞</span><span class="dl">'</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">duck</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Duck</span><span class="p">(</span><span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">duck</span><span class="p">.</span><span class="nx">speak</span><span class="p">();</span>
+<span class="nx">duck</span><span class="p">.</span><span class="nx">fly</span><span class="p">();</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="10抽象方法">10、抽象方法</h3>
+<ul>
+  <li>抽象类和方法不包含具体实现，必须在子类中实现</li>
+  <li>抽象方法只能出现在抽象类中</li>
+  <li>子类可以对抽象类进行不同的实现</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">abstract</span> <span class="kd">class</span> <span class="nx">Animal</span><span class="p">{</span>
+    <span class="nx">abstract</span> <span class="nx">speak</span><span class="p">():</span><span class="k">void</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Dog</span> <span class="kd">extends</span> <span class="nx">Animal</span><span class="p">{</span>
+    <span class="nx">speak</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">小狗汪汪汪</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Cat</span> <span class="kd">extends</span>  <span class="nx">Animal</span><span class="p">{</span>
+    <span class="nx">speak</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">小猫喵喵喵</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">dog</span><span class="o">=</span><span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">cat</span><span class="o">=</span><span class="k">new</span> <span class="nx">Cat</span><span class="p">();</span>
+<span class="nx">dog</span><span class="p">.</span><span class="nx">speak</span><span class="p">();</span>
+<span class="nx">cat</span><span class="p">.</span><span class="nx">speak</span><span class="p">();</span>
+</code></pre></div></div>
+
+<h3 id="11重写override-vs-重载overload">11、重写(override) vs 重载(overload)</h3>
+<ul>
+  <li>重写是指子类重写继承自父类中的方法</li>
+  <li>重载是指为同一个函数提供多个类型定义</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Animal</span><span class="p">{</span>
+    <span class="nx">speak</span><span class="p">(</span><span class="nx">word</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span><span class="nx">string</span><span class="p">{</span>
+        <span class="k">return</span> <span class="dl">'</span><span class="s1">动作叫:</span><span class="dl">'</span><span class="o">+</span><span class="nx">word</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Cat</span> <span class="kd">extends</span> <span class="nx">Animal</span><span class="p">{</span>
+    <span class="nx">speak</span><span class="p">(</span><span class="nx">word</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span><span class="nx">string</span><span class="p">{</span>
+        <span class="k">return</span> <span class="dl">'</span><span class="s1">猫叫:</span><span class="dl">'</span><span class="o">+</span><span class="nx">word</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">cat</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cat</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">cat</span><span class="p">.</span><span class="nx">speak</span><span class="p">(</span><span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span><span class="p">));</span>
+<span class="kd">function</span> <span class="nx">double</span><span class="p">(</span><span class="nx">val</span><span class="p">:</span><span class="nx">number</span><span class="p">):</span><span class="nx">number</span>
+<span class="kd">function</span> <span class="nx">double</span><span class="p">(</span><span class="nx">val</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span><span class="nx">string</span>
+<span class="kd">function</span> <span class="nx">double</span><span class="p">(</span><span class="nx">val</span><span class="p">:</span><span class="nx">any</span><span class="p">):</span><span class="nx">any</span><span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">val</span> <span class="o">==</span> <span class="dl">'</span><span class="s1">number</span><span class="dl">'</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">val</span> <span class="o">*</span><span class="mi">2</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">val</span> <span class="o">+</span> <span class="nx">val</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">double</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="12继承-vs-多态">12、继承 vs 多态</h3>
+<ul>
+  <li>继承（Inheritance）子类继承父类，子类除了拥有父类的所有特性外，还有一些更具体的特性</li>
+  <li>多态（Polymorphism）由继承而产生了相关的不同的类，对同一个方法可以有不同的响应
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Animal</span><span class="p">{</span>
+  <span class="nx">speak</span><span class="p">(</span><span class="nx">word</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span><span class="nx">string</span><span class="p">{</span>
+      <span class="k">return</span> <span class="dl">'</span><span class="s1">Animal: </span><span class="dl">'</span><span class="o">+</span><span class="nx">word</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Cat</span> <span class="kd">extends</span> <span class="nx">Animal</span><span class="p">{</span>
+  <span class="nx">speak</span><span class="p">(</span><span class="nx">word</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span><span class="nx">string</span><span class="p">{</span>
+      <span class="k">return</span> <span class="dl">'</span><span class="s1">Cat:</span><span class="dl">'</span><span class="o">+</span><span class="nx">word</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Dog</span> <span class="kd">extends</span> <span class="nx">Animal</span><span class="p">{</span>
+  <span class="nx">speak</span><span class="p">(</span><span class="nx">word</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span><span class="nx">string</span><span class="p">{</span>
+      <span class="k">return</span> <span class="dl">'</span><span class="s1">Dog:</span><span class="dl">'</span><span class="o">+</span><span class="nx">word</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">cat</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cat</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">cat</span><span class="p">.</span><span class="nx">speak</span><span class="p">(</span><span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span><span class="p">));</span>
+<span class="kd">let</span> <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">dog</span><span class="p">.</span><span class="nx">speak</span><span class="p">(</span><span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+:ET

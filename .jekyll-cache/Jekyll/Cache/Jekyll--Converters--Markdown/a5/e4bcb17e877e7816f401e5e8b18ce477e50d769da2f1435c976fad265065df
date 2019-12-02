@@ -1,4 +1,4 @@
-I"az<h2 id="一typescript-是什么">一、TypeScript 是什么</h2>
+I"ց<h2 id="一typescript-是什么">一、TypeScript 是什么</h2>
 <ul>
   <li>Typescript是由微软开发的一款开源的编程语言</li>
   <li>Typescript是Javascript的超集，遵循最新的ES5/ES6规范。TypeScript扩展了Javascript语法</li>
@@ -59,35 +59,36 @@
 <h3 id="6枚举类型enum">6、枚举类型(enum)</h3>
 <ul>
   <li>事先考虑某一个变量的所有的可能的值，尽量用自然语言中的单词表示它的每一个值</li>
-  <li>比如性别、月份、星期、颜色、单位、学历
-    <h4 id="1普通枚举">（1）普通枚举</h4>
-    <p>```js
-enum Gender{
-  GIRL,
-  BOY
-}
-console.log(<code class="highlighter-rouge">Mike是${Gender.BOY}</code>);
-console.log(<code class="highlighter-rouge">Linda是${Gender.GIRL}</code>);</p>
-  </li>
+  <li>比如性别、月份、星期、颜色、单位、学历</li>
 </ul>
 
-<p>enum Week{
-    MONDAY=1,
-    TUESDAY=2
-}
-console.log(<code class="highlighter-rouge">今天是星期${Week.MONDAY}</code>);</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-#### （2）常数枚举
-- 常数枚举与普通枚举的区别是，它会在编译阶段被删除，并且不能包含计算成员。假如包含了计算成员，则会在编译阶段报错
+<h4 id="1普通枚举">（1）普通枚举</h4>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">enum</span> <span class="nx">Gender</span><span class="p">{</span>
+    <span class="nx">GIRL</span><span class="p">,</span>
+    <span class="nx">BOY</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Mike是</span><span class="p">${</span><span class="nx">Gender</span><span class="p">.</span><span class="nx">BOY</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Linda是</span><span class="p">${</span><span class="nx">Gender</span><span class="p">.</span><span class="nx">GIRL</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
 
-```js
-const enum Colors {
-    Red,
-    Yellow,
-    Blue
-}
+<span class="kr">enum</span> <span class="nx">Week</span><span class="p">{</span>
+    <span class="nx">MONDAY</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="nx">TUESDAY</span><span class="o">=</span><span class="mi">2</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`今天是星期</span><span class="p">${</span><span class="nx">Week</span><span class="p">.</span><span class="nx">MONDAY</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+</code></pre></div></div>
 
-let myColors = [Colors.Red, Colors.Yellow, Colors.Blue];
+<h4 id="2常数枚举">（2）常数枚举</h4>
+<ul>
+  <li>常数枚举与普通枚举的区别是，它会在编译阶段被删除，并且不能包含计算成员。假如包含了计算成员，则会在编译阶段报错</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="kr">enum</span> <span class="nx">Colors</span> <span class="p">{</span>
+    <span class="nx">Red</span><span class="p">,</span>
+    <span class="nx">Yellow</span><span class="p">,</span>
+    <span class="nx">Blue</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">myColors</span> <span class="o">=</span> <span class="p">[</span><span class="nx">Colors</span><span class="p">.</span><span class="nx">Red</span><span class="p">,</span> <span class="nx">Colors</span><span class="p">.</span><span class="nx">Yellow</span><span class="p">,</span> <span class="nx">Colors</span><span class="p">.</span><span class="nx">Blue</span><span class="p">];</span>
 </code></pre></div></div>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="kr">enum</span> <span class="nx">Color</span> <span class="p">{</span><span class="nx">Red</span><span class="p">,</span> <span class="nx">Yellow</span><span class="p">,</span> <span class="nx">Blue</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">blue</span><span class="dl">"</span><span class="p">.</span><span class="nx">length</span><span class="p">};</span>
 </code></pre></div></div>
@@ -141,10 +142,10 @@ let myColors = [Colors.Red, Colors.Yellow, Colors.Blue];
 
 <h3 id="10never类型">10、never类型</h3>
 <ul>
-  <li>never是其它类型(null undefined)的子类型，代表不会出现的值
-    <h4 id="1作为不会返回-return-的函数的返回值类型">(1)作为不会返回（ return ）的函数的返回值类型</h4>
-  </li>
+  <li>never是其它类型(null undefined)的子类型，代表不会出现的值</li>
 </ul>
+
+<h4 id="1作为不会返回-return-的函数的返回值类型">(1)作为不会返回（ return ）的函数的返回值类型</h4>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 返回never的函数 必须存在 无法达到（ unreachable ） 的终点</span>
 <span class="kd">function</span> <span class="nx">error</span><span class="p">(</span><span class="nx">message</span><span class="p">:</span> <span class="nx">string</span><span class="p">):</span> <span class="nx">never</span> <span class="p">{</span>

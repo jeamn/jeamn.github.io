@@ -7,7 +7,7 @@ author:     Jeamn
 header-img: img/post-bg-ios9-web.jpg
 catalog: true
 tags:
-    - JavaScript
+    - TypeScript
 ---
 
 ## 一、类
@@ -32,6 +32,7 @@ p1.getName();
     - 主要用于初始化类的成员变量属性
     - 类的对象创建时自动调用执行
     - 没有返回值
+
 ```js
 class User {
     myname:string;
@@ -74,6 +75,7 @@ console.log(user.name);
 - 在 TypeScript 中，const 是常量标志符，其值不能被重新分配
 - TypeScript 的类型系统同样也允许将 interface、type、 class 上的属性标识为 readonly
 - readonly 实际上只是在编译阶段进行代码检查。而 const 则会在运行时检查（在支持 const 语法的 JavaScript 运行时环境中）
+
 ```js
 class Animal {
     public readonly name: string
@@ -93,6 +95,7 @@ a.changeName('mike');
 - 子类继承父类后子类的实例就拥有了父类中的属性和方法，可以增强代码的可复用性
 - 将子类公用的方法抽象出来放在父类中，自己的特殊逻辑放在子类中重写父类的逻辑
 - super可以调用父类上的方法和属性
+
 ```js
 class Person {
     name: string;//定义实例的属性，默认省略public修饰符
@@ -176,6 +179,7 @@ console.log(Father.getClassName());
 - 抽象描述一种抽象的概念，无法被实例化，只能被继承
 - 无法创建抽象类的实例
 - 抽象方法不能在抽象类中实现，只能在抽象类的具体子类中实现，而且必须实现
+
 ```js
 abstract class Animal {
     name!:string;
@@ -230,6 +234,7 @@ duck.fly();
 - 抽象类和方法不包含具体实现，必须在子类中实现
 - 抽象方法只能出现在抽象类中
 - 子类可以对抽象类进行不同的实现
+
 ```js
 abstract class Animal{
     abstract speak():void;
@@ -253,6 +258,7 @@ cat.speak();
 ### 11、重写(override) vs 重载(overload)
 - 重写是指子类重写继承自父类中的方法
 - 重载是指为同一个函数提供多个类型定义
+
 ```js
 class Animal{
     speak(word:string):string{
@@ -266,7 +272,6 @@ class Cat extends Animal{
 }
 let cat = new Cat();
 console.log(cat.speak('hello'));
-//--------------------------------------------
 function double(val:number):number
 function double(val:string):string
 function double(val:any):any{

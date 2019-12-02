@@ -7,7 +7,7 @@ author:     Jeamn
 header-img: img/post-bg-ios9-web.jpg
 catalog: true
 tags:
-    - JavaScript
+    - TypeScript
 ---
 
 ## 一、TypeScript 是什么
@@ -70,6 +70,7 @@ people[1].toFixed(2);
 ### 6、枚举类型(enum)
 - 事先考虑某一个变量的所有的可能的值，尽量用自然语言中的单词表示它的每一个值
 - 比如性别、月份、星期、颜色、单位、学历
+
 #### （1）普通枚举
 ```js
 enum Gender{
@@ -149,6 +150,7 @@ function greeting(name:string):void {
 
 ### 10、never类型
 - never是其它类型(null undefined)的子类型，代表不会出现的值
+
 #### (1)作为不会返回（ return ）的函数的返回值类型
 
 ```js

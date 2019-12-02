@@ -7,12 +7,13 @@ author:     Jeamn
 header-img: img/post-bg-ios9-web.jpg
 catalog: true
 tags:
-    - JavaScript
+    - TypeScript
 ---
 
 ## 一、类型变换
 ### 1、交叉类型
 - 交叉类型（Intersection Types）表示将多个类型合并为一个类型
+
 ```js
 interface Bird {
   name: string,
@@ -31,6 +32,7 @@ p.talk;
 
 ### 2、typeof
 - 可以获取一个变量的类型
+
 ```js
 //先定义类型，再定义变量
 type People = {
@@ -60,6 +62,7 @@ getName(p1);
 
 ### 3、索引访问操作符
 - 可以通过[]获取一个类型的子类型
+
 ```js
 interface Person{
     name:string;
@@ -77,6 +80,7 @@ let interestLevel:Person['interests'][0]['level'] = 2;
 
 ### 4、keyof
 - 索引类型查询操作符
+
 ```js
 interface Person{
   name:string;
@@ -117,6 +121,7 @@ let p2:Part<Person>={};
 - TS 中内置了一些工具类型来帮助我们更好地使用类型系统
 #### (1)Partial
 - Partial 可以将传入的属性由非可选变为可选，具体使用如下：
+
 ```js
 type Partial<T> = { [P in keyof T]?: T[P] };
 
@@ -132,6 +137,7 @@ const a: aPartial = {}; // 不会报错
 
 #### (2)Required
 - Required 可以将传入的属性中的可选项变为必选项，这里用了 -? 修饰符来实现。
+
 ```js
 //type Required<T> = { [P in keyof T]-?: T[P] };
 
@@ -152,6 +158,7 @@ let p:Required<Person> = {
 
 #### (3)Readonly
 - Readonly 通过为传入的属性每一项都加上 readonly 修饰符来实现。
+
 ```js
 interface Person{
   name:string;
@@ -169,6 +176,7 @@ p.age = 11;
 
 #### (4)Pick
 - Pick 能够帮助我们从传入的属性中摘取某一项返回
+
 ```js
 interface Animal {
   name: string;
@@ -251,6 +259,7 @@ type  E = NonNullable<string|number|null|undefined>;
 let e:E = null;
 ##### 4) ReturnType
 - 获取函数类型的返回类型 
+
 ```js 
 function getUserInfo() { return { name: "jeamn", age: 10 }; }
 // 通过 ReturnType 将 getUserInfo 的返回值类型赋给了 UserInfo type UserInfo = ReturnType;
@@ -259,6 +268,7 @@ const userA: UserInfo = { name: "jeamn", age: 10 };
 
 ##### 5) InstanceType<T>
 -  获取构造函数类型的实例类型
+
 ```js
 class Person{
   name:string;
@@ -275,6 +285,7 @@ let p:P = {name:'jeamn',getName(){}};
 ## 二、类型声明
 - 声明文件可以让我们不需要将JS重构为TS，只需要加上声明文件就可以使用系统
 - 类型声明在编译的时候都会被删除，不会影响真正的代码
+
 ### 1、普通类型声明
 ```js
 declare const $:(selector:string)=>{ //变量
@@ -298,6 +309,7 @@ type Student = { //声明类型
 ### 2、外部枚举
 - 外部枚举是使用declare enum定义的枚举类型
 - 外部枚举用来描述已经存在的枚举类型的形状
+
 ```js
 外部枚举用来描述已经存在的枚举类型的形状
 declare enum Seasons {
@@ -315,6 +327,7 @@ let seasons = [
 ];
 ```
 - declare 定义的类型只会用于编译时的检查，编译结果中会被删除。上例的编译结果如下
+
 ```js
 var seasons = [
     Seasons.Spring,
@@ -324,6 +337,7 @@ var seasons = [
 ];
 ```
 - 也可以同时使用declare 和 const
+
 ```js
 declare const enum Seasons {
     Spring,
@@ -353,6 +367,7 @@ var seasons = [
 - 如果一个全局变量包括了很多子属性，可能使用namespace
 - 在声明文件中的namespace表示一个全局变量包含很多子属性
 - 在命名空间内部不需要使用 declare 声明属性或方法
+
 ```js
 declare namespace ${
     function ajax(url:string,settings:any):void;
@@ -375,6 +390,7 @@ export {};
 - 可以在类型声明文件中使用类型声明
 - 文件命名规范为*.d.ts
 - 观看类型声明文件有助于了解库的使用方式
+
 #### (1)typings\jquery.d.ts
 ```js
 declare const $:(selector:string)=>{
@@ -437,6 +453,7 @@ tsconfig.json
 - 如果配置了paths,那么在引入包的的时候会自动去paths目录里找类型声明文件
 - 在 webpack 中，我们可以通过配置 alias 的形式来为项目里的文件做映射。在 tsconfig.json 中，我们同样也可以做路径的映射
 - 在 tsconfig.json 中，我们通过 compilerOptions 里的 paths 属性来配置路径映射。 tsconfig.json
+
 ```js
 {
     "baseUrl": "./",// 使用 paths 属性的话必须要指定 baseUrl 的值
@@ -485,6 +502,7 @@ declare global{
 
 export  {}
 ```
+
 ```js
 "include": [
     "src/**/*",
@@ -496,6 +514,7 @@ export  {}
 - 同一名称的两个独立声明会被合并成一个单一声明
 - 合并后的声明拥有原先两个声明的特性
 - 类既可以作为类型使用，也可以作为值使用，接口只能作为类型使用
+
 ```js
 class Person{
     name:string=''
@@ -512,6 +531,7 @@ let a2 = Animal;//接口类型不能用作值
 
 #### (1) 合并类型声明 
 - 可以通过接口合并的特性给一个第三方为扩展类型声明
+
 use.js
 ```js
 interface Animal{
@@ -530,6 +550,7 @@ interface Animal{
 
 #### (2) 使用命名空间扩展类
 - 我们可以使用 namespace 来扩展类，用于表示内部类
+
 ```js
 class Form {
   username: Form.Item='';
@@ -545,6 +566,7 @@ console.log(item);
 
 #### (3) 使用命名空间扩展函数
 - 我们也可以使用 namespace 来扩展函数
+
 ```js
 function greeting(name: string): string {
     return greeting.words+name;
@@ -574,6 +596,7 @@ console.log(Color.green)
 
 ### 8、生成声明文件
 - 把TS编译成JS后丢失类型声明，我们可以在编译的时候自动生成一份JS文件
+
 ```js
 {
   "compilerOptions": {
