@@ -1,8 +1,12 @@
 ---
-title: 函数的apply、call方法的运用
+layout:     post
+title:      函数的apply、call方法的运用
+date:       2017-05-12
+author:     Jeamn
+header-img: img/post-bg-ios9-web.jpg
+catalog: true
 tags:
-  - JavaScript
-date: 2017-05-12
+    - JavaScript
 ---
 JavaScript为函数对象定义了两个方法：apply和call，          
 它们的作用都是将函数绑定到另外一个对象上去运行，两者仅在定义参数的方式有所区别:       

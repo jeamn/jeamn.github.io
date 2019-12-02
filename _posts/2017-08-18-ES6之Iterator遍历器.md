@@ -1,9 +1,13 @@
 ---
-title: ES6笔记之Iterator遍历器
+layout:     post
+title:      ES6之Iterator遍历器
+date:       2017-08-18
+author:     Jeamn
+header-img: img/post-bg-ios9-web.jpg
+catalog: true
 tags:
-  - JavaScript
-  - ES6
-date: 2017-08-18
+    - JavaScript
+	- ES6
 ---
 
 ### 1.初识 Iterator
