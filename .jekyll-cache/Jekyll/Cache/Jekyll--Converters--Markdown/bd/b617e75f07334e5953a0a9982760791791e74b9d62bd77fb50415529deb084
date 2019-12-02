@@ -33,7 +33,7 @@
   <li>src/redux/applyMiddleware</li>
 </ul>
 
-<p><a href="https://github.com/reduxjs/redux/blob/master/src/applyMiddleware.js">applyMiddleware</a></p>
+<p><a href="https://github.com/reduxjs/redux/blob/master/src/applyMiddleware.ts">applyMiddleware</a></p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">compose</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./compose</span><span class="dl">'</span>
 <span class="cm">/**
@@ -68,7 +68,7 @@
   <li>src\redux\compose.js</li>
 </ul>
 
-<p><a href="https://github.com/reduxjs/redux/blob/master/src/compose.js">compose</a></p>
+<p><a href="https://github.com/reduxjs/redux/blob/master/src/compose.ts">compose</a></p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// function add1(str){</span>
 <span class="c1">//     return '1'+str;</span>
