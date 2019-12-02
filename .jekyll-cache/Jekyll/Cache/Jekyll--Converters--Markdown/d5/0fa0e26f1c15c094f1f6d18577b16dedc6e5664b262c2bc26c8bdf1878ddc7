@@ -1,0 +1,166 @@
+I"kJ<h2 id="一原生-js-实现计数器">一、原生 JS 实现计数器</h2>
+<p>我们先用原生的 JS 实现一个简单的计数器</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">"counter-btn"</span><span class="nt">&gt;</span>0<span class="nt">&lt;/button&gt;</span>
+    <span class="nt">&lt;script&gt;</span>
+        <span class="kd">let</span> <span class="nx">counterBtn</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">counter-btn</span><span class="dl">'</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">counterBtn</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span><span class="kd">function</span><span class="p">(){</span>
+            <span class="nx">counterBtn</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="o">++</span> <span class="nx">number</span><span class="p">;</span>
+        <span class="p">})</span>
+    <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>接着，我们将渲染节点的函数进行封装，</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"counter-app"</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"index.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+    <span class="kd">let</span> <span class="nx">counterApp</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">counter-app</span><span class="dl">'</span><span class="p">)</span>
+    <span class="nx">counterApp</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">new</span> <span class="nx">Counter</span><span class="p">().</span><span class="nx">render</span><span class="p">())</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Counter</span><span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(){</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">number</span><span class="p">:</span><span class="mi">0</span><span class="p">};</span>
+    <span class="p">}</span>  
+    <span class="nx">createDOMFromString</span><span class="p">(</span><span class="nx">domString</span><span class="p">){</span>
+        <span class="kd">const</span> <span class="nx">div</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">div</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">domString</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">div</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="nx">increment</span><span class="p">(){</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">number</span><span class="p">:</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="o">+</span><span class="mi">1</span><span class="p">};</span>
+        <span class="kd">let</span> <span class="nx">oldElement</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">domElement</span><span class="p">;</span>
+        <span class="kd">let</span> <span class="nx">newElement</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+        <span class="nx">oldElement</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">newElement</span><span class="p">,</span><span class="nx">oldElement</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">(){</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">domElement</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createDOMFromString</span><span class="p">(</span><span class="s2">`
+            &lt;button id="counter-btn"&gt;
+                </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="s2">
+            &lt;/button&gt;
+        `</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">domElement</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">increment</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">domElement</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="二抽象组件">二、抽象组件</h2>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"counter-app"</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"index.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+    <span class="kd">let</span> <span class="nx">counterApp</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">counter-app</span><span class="dl">'</span><span class="p">);</span>
+    <span class="k">new</span> <span class="nx">Counter</span><span class="p">({</span><span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">Jeamn</span><span class="dl">'</span><span class="p">}).</span><span class="nx">mount</span><span class="p">(</span><span class="nx">counterApp</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">window</span><span class="p">.</span><span class="nx">trigger</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">component</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">component</span><span class="p">;</span>
+    <span class="nx">component</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="nx">component</span><span class="p">,</span> <span class="nx">event</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">props</span> <span class="o">=</span> <span class="nx">props</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">createDOMFromString</span><span class="p">(</span><span class="nx">domString</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">div</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">div</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">domString</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">div</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="nx">setState</span><span class="p">(</span><span class="nx">partialState</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">partialState</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">oldElement</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">domElement</span><span class="p">;</span>
+        <span class="kd">let</span> <span class="nx">newElement</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">renderElement</span><span class="p">();</span>
+        <span class="nx">oldElement</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">newElement</span><span class="p">,</span> <span class="nx">oldElement</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">renderElement</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">renderString</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">domElement</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createDOMFromString</span><span class="p">(</span><span class="nx">renderString</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">domElement</span><span class="p">.</span><span class="nx">component</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">domElement</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">mount</span><span class="p">(</span><span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">container</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">renderElement</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Counter</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">number</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">increment</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+            <span class="na">number</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+            <span class="na">number</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">});</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
+        <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+                <span class="na">number</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="p">});</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+                <span class="na">number</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="p">});</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
+        <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">`&lt;button id="counter-btn" onclick="trigger(event,'increment')"&gt;
+                </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2">:</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="s2">
+            &lt;/button&gt;`</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="四setstate-可能是异步的">四、setState 可能是异步的</h2>
+<ul>
+  <li>this.setState(newState)</li>
+  <li>newState 存入 pending 队列</li>
+  <li>是否处于 batch update
+    <blockquote>
+      <p>是：保存组件于 dirtyComponents 中</p>
+    </blockquote>
+  </li>
+</ul>
+
+<blockquote>
+  <p>否：遍历所有的 dirtyComponents，调用 updateComponent，更新 pending state or props</p>
+</blockquote>
+:ET
