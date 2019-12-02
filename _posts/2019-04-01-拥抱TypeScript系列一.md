@@ -2,7 +2,7 @@
 layout:     post
 title:      从 vue 双向数据绑定到数组更新机制
 subtitle:   基本概念、安装编译、数据类型、函数
-date:       2019-03-26
+date:       2019-04-01
 author:     Jeamn
 header-img: img/post-bg-ios9-web.jpg
 catalog: true
