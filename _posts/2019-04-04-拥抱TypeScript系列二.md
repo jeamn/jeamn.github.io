@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      拥抱TypeScript系列二
-subtitle:   基本概念、安装编译、数据类型、函数
+subtitle:   类
 date:       2019-04-01
 author:     Jeamn
 header-img: img/post-bg-ios9-web.jpg
@@ -10,7 +10,7 @@ tags:
     - JavaScript
 ---
 
-## 五、类
+## 一、类
 ### 1、如何定义类
 - "strictPropertyInitialization": true / 启用类属性初始化的严格检查/
 - name!:string
@@ -25,6 +25,7 @@ let p1 = new Person();
 p1.name = 'jeamn';
 p1.getName();
 ```
+
 ### 2、存取器
 - 在 TypeScript 中，我们可以通过存取器来改变一个类中属性的读取和赋值行为
 - 构造函数
@@ -49,6 +50,7 @@ let user = new User('jeamn');
 user.name = 'mike'; 
 console.log(user.name); 
 ```
+
 ### 3、参数属性
 ```js
 class User {
@@ -66,6 +68,7 @@ console.log(user.name);
 user.name = 'mike'; 
 console.log(user.name);
 ```
+
 ### 4、readonly
 - readonly 修饰的变量只能在构造函数中初始化
 - 在 TypeScript 中，const 是常量标志符，其值不能被重新分配
@@ -85,6 +88,7 @@ class Animal {
 let a = new Animal('jeamn');
 a.changeName('mike');
 ```
+
 ### 5、继承
 - 子类继承父类后子类的实例就拥有了父类中的属性和方法，可以增强代码的可复用性
 - 将子类公用的方法抽象出来放在父类中，自己的特殊逻辑放在子类中重写父类的逻辑
@@ -117,6 +121,7 @@ class Student extends Person{
 let s1=new Student('jeamn',10,1);
 console.log(s1);
 ```
+
 ### 6、类里面的修饰符
 ```js
 class Father {
@@ -149,6 +154,7 @@ console.log(child.name);
 console.log(child.age);
 console.log(child.money);
 ```
+
 ### 7、静态属性 静态方法
 ```js
 class Father {
@@ -165,6 +171,7 @@ class Father {
 console.log(Father.className);
 console.log(Father.getClassName());
 ```
+
 ### 8、抽象类
 - 抽象描述一种抽象的概念，无法被实例化，只能被继承
 - 无法创建抽象类的实例
@@ -188,6 +195,7 @@ cat.speak();
 - 只读属性 | readonly
 - 静态属性 | static
 - 抽象类、抽象方法 | abstract
+
 ### 9、抽象类 vs 接口
 - 不同类之间公有的属性或方法，可以抽象成一个接口（Interfaces）
 - 而抽象类是供其他类继承的基类，抽象类不允许被实例化。抽象类中的抽象方法必须在子类中被实现
@@ -217,6 +225,7 @@ let duck = new Duck('mike');
 duck.speak();
 duck.fly();
 ```
+
 ### 10、抽象方法
 - 抽象类和方法不包含具体实现，必须在子类中实现
 - 抽象方法只能出现在抽象类中
@@ -240,6 +249,7 @@ let cat=new Cat();
 dog.speak();
 cat.speak();
 ```
+
 ### 11、重写(override) vs 重载(overload)
 - 重写是指子类重写继承自父类中的方法
 - 重载是指为同一个函数提供多个类型定义
@@ -269,6 +279,7 @@ function double(val:any):any{
 let r = double(1);
 console.log(r);
 ```
+
 ### 12、继承 vs 多态
 - 继承（Inheritance）子类继承父类，子类除了拥有父类的所有特性外，还有一些更具体的特性
 - 多态（Polymorphism）由继承而产生了相关的不同的类，对同一个方法可以有不同的响应

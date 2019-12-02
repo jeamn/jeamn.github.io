@@ -1,4 +1,4 @@
-I"~O<h2 id="五类">五、类</h2>
+I"P<h2 id="一类">一、类</h2>
 <h3 id="1如何定义类">1、如何定义类</h3>
 <ul>
   <li>“strictPropertyInitialization”: true / 启用类属性初始化的严格检查/</li>
@@ -13,8 +13,11 @@
 <span class="nx">p1</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">;</span>
 <span class="nx">p1</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
 </code></pre></div>    </div>
-    <h3 id="2存取器">2、存取器</h3>
   </li>
+</ul>
+
+<h3 id="2存取器">2、存取器</h3>
+<ul>
   <li>在 TypeScript 中，我们可以通过存取器来改变一个类中属性的读取和赋值行为</li>
   <li>构造函数
     <ul>
@@ -41,7 +44,8 @@ class User {
 <p>let user = new User(‘jeamn’);
 user.name = ‘mike’; 
 console.log(user.name);</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>### 3、参数属性
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+### 3、参数属性
 ```js
 class User {
     constructor(public myname: string) {}
@@ -58,6 +62,7 @@ console.log(user.name);
 user.name = 'mike'; 
 console.log(user.name);
 </code></pre></div></div>
+
 <h3 id="4readonly">4、readonly</h3>
 <ul>
   <li>readonly 修饰的变量只能在构造函数中初始化</li>
@@ -78,7 +83,8 @@ class Animal {
 
 <p>let a = new Animal(‘jeamn’);
 a.changeName(‘mike’);</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>### 5、继承
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+### 5、继承
 - 子类继承父类后子类的实例就拥有了父类中的属性和方法，可以增强代码的可复用性
 - 将子类公用的方法抽象出来放在父类中，自己的特殊逻辑放在子类中重写父类的逻辑
 - super可以调用父类上的方法和属性
@@ -110,6 +116,7 @@ class Student extends Person{
 let s1=new Student('jeamn',10,1);
 console.log(s1);
 </code></pre></div></div>
+
 <h3 id="6类里面的修饰符">6、类里面的修饰符</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Father</span> <span class="p">{</span>
     <span class="kr">public</span> <span class="nx">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>   <span class="c1">//类里面 子类 其它任何地方外边都可以访问</span>
@@ -141,6 +148,7 @@ console.log(s1);
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">money</span><span class="p">);</span>
 </code></pre></div></div>
+
 <h3 id="7静态属性-静态方法">7、静态属性 静态方法</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Father</span> <span class="p">{</span>
     <span class="kd">static</span> <span class="nx">className</span><span class="o">=</span><span class="dl">'</span><span class="s1">Father</span><span class="dl">'</span><span class="p">;</span>
@@ -156,6 +164,7 @@ console.log(s1);
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">Father</span><span class="p">.</span><span class="nx">className</span><span class="p">);</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">Father</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">());</span>
 </code></pre></div></div>
+
 <h3 id="8抽象类">8、抽象类</h3>
 <ul>
   <li>抽象描述一种抽象的概念，无法被实例化，只能被继承</li>
@@ -206,9 +215,20 @@ console.log(s1);
       </tbody>
     </table>
   </li>
-  <li>抽象类、抽象方法 | abstract
-    <h3 id="9抽象类-vs-接口">9、抽象类 vs 接口</h3>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>抽象类、抽象方法</td>
+          <td>abstract</td>
+        </tr>
+      </tbody>
+    </table>
   </li>
+</ul>
+
+<h3 id="9抽象类-vs-接口">9、抽象类 vs 接口</h3>
+<ul>
   <li>不同类之间公有的属性或方法，可以抽象成一个接口（Interfaces）</li>
   <li>而抽象类是供其他类继承的基类，抽象类不允许被实例化。抽象类中的抽象方法必须在子类中被实现</li>
   <li>抽象类本质是一个无法被实例化的类，其中能够实现方法和初始化属性，而接口仅能够用于描述,既不提供方法的实现，也不为属性进行初始化</li>
@@ -236,8 +256,11 @@ console.log(s1);
 <span class="nx">duck</span><span class="p">.</span><span class="nx">speak</span><span class="p">();</span>
 <span class="nx">duck</span><span class="p">.</span><span class="nx">fly</span><span class="p">();</span>
 </code></pre></div>    </div>
-    <h3 id="10抽象方法">10、抽象方法</h3>
   </li>
+</ul>
+
+<h3 id="10抽象方法">10、抽象方法</h3>
+<ul>
   <li>抽象类和方法不包含具体实现，必须在子类中实现</li>
   <li>抽象方法只能出现在抽象类中</li>
   <li>子类可以对抽象类进行不同的实现
@@ -259,8 +282,11 @@ console.log(s1);
 <span class="nx">dog</span><span class="p">.</span><span class="nx">speak</span><span class="p">();</span>
 <span class="nx">cat</span><span class="p">.</span><span class="nx">speak</span><span class="p">();</span>
 </code></pre></div>    </div>
-    <h3 id="11重写override-vs-重载overload">11、重写(override) vs 重载(overload)</h3>
   </li>
+</ul>
+
+<h3 id="11重写override-vs-重载overload">11、重写(override) vs 重载(overload)</h3>
+<ul>
   <li>重写是指子类重写继承自父类中的方法</li>
   <li>重载是指为同一个函数提供多个类型定义
 ```js
@@ -289,7 +315,8 @@ return val + val;
 
 <p>let r = double(1);
 console.log(r);</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>### 12、继承 vs 多态
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+### 12、继承 vs 多态
 - 继承（Inheritance）子类继承父类，子类除了拥有父类的所有特性外，还有一些更具体的特性
 - 多态（Polymorphism）由继承而产生了相关的不同的类，对同一个方法可以有不同的响应
 ```js
