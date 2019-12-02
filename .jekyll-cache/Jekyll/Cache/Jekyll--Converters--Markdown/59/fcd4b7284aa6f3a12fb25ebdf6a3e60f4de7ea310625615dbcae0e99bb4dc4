@@ -1,4 +1,4 @@
-I"��<h2 id="一什么是-react">一、什么是 React</h2>
+I"��<h2 id="一什么是-react">一、什么是 React</h2>
 <ul>
   <li>React 是一个用于构建用户界面的 JavaScript 库，核心专注于视图层，目的实现组件化开发</li>
 </ul>
@@ -29,7 +29,7 @@
 <p>JSX 是一种 JS 和 HTML 混合的语法，将组件的结构、数据和样式有聚合在一起定义组件，JSX 语法会被 babel 编译成 createElement 语法，即：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">h1</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">title</span><span class="dl">"</span> <span class="nx">style</span><span class="o">=&gt;</span>
-       <span class="nx">Hello</span> <span class="o">&lt;</span><span class="nx">i</span> <span class="nx">id</span><span class="o">=</span><span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Jeamn</span><span class="o">&lt;</span><span class="sr">/i</span><span class="err">&gt;
+    <span class="nx">Hello</span> <span class="o">&lt;</span><span class="nx">i</span> <span class="nx">id</span><span class="o">=</span><span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Jeamn</span><span class="o">&lt;</span><span class="sr">/i</span><span class="err">&gt;
 </span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
 </span></code></pre></div></div>
 
@@ -278,89 +278,90 @@
 
 <h3 id="2不要直接修改-state">2、不要直接修改 state</h3>
 <ul>
-  <li>
-    <p>构造函数是唯一可以给 this.state 赋值的地方
-```js
-import React from ‘react’;
-import ReactDOM from ‘react-dom’;
-class Counter extends React.Component {
-  constructor(props) {
-      super(props);
-      this.state = {
-          number: 0
-      };
-  }</p>
-
-    <p>componentDidMount() {
-      this.timerID = setInterval(
-          () =&gt; {
-              this.setState({number:this.state.number+1});
-              // 下面不可取
-              // this.state.number = this.state.number + 1;
-          },
-          1000
-      );
-  }</p>
-
-    <p>componentWillUnmount() {
-      clearInterval(this.timerID);
-  }</p>
-
-    <p>render() {
-      return (
-          &lt;div &gt;
-              &lt;p&gt; {this.state.number} &lt;/p&gt;
-          &lt;/div&gt;
-      );
-  }
-}</p>
-  </li>
+  <li>构造函数是唯一可以给 this.state 赋值的地方</li>
 </ul>
 
-<p>ReactDOM.render(<Counter></Counter>,
-    document.getElementById(‘root’)
-);</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-### 3、state 的更新可能是异步的
-- 出于性能考虑， React 可能会把多个 setState() 调用合并成一个调用
-- 因为 this.props 和 this.state 可能会异步更新，所以不要依赖他们的值来更新下一个状态，如果希望这样做，那么应参考下面的做法
-- 可以让 setState() 接收一个函数而不是一个对象，这个函数用上一个 state 的值作为第一个参数
-```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-class Counter extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            number: 0
-        };
-    }
-    handleClick = ()=&gt;{
-        //this.setState({number:this.state.number+1});
-        //console.log(this.state.number);
-        //this.setState({number:this.state.number+1});
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">Counter</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">number</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
 
-        this.setState((state)=&gt;(
-            {number:state.number+1}
-        ));
-        this.setState((state)=&gt;(
-            {number:state.number+1}
-        ));
-    }
-    render() {
-        return (
-            &lt;div &gt;
-                &lt;p&gt; {this.state.number} &lt;/p&gt;
-                &lt;button onClick={this.handleClick}&gt;+&lt;/button&gt;
-            &lt;/div&gt;
-        );
-    }
-}
+    <span class="nx">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">timerID</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span>
+            <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="na">number</span><span class="p">:</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="o">+</span><span class="mi">1</span><span class="p">});</span>
+                <span class="c1">// 下面不可取</span>
+                <span class="c1">// this.state.number = this.state.number + 1;</span>
+            <span class="p">},</span>
+            <span class="mi">1000</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
 
-ReactDOM.render(&lt;
-    Counter /&gt;,
-    document.getElementById('root')
-);
+    <span class="nx">componentWillUnmount</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">clearInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timerID</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span> <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span> <span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Counter</span> <span class="o">/&gt;</span><span class="p">,</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="3state-的更新可能是异步的">3、state 的更新可能是异步的</h3>
+<ul>
+  <li>出于性能考虑， React 可能会把多个 setState() 调用合并成一个调用</li>
+  <li>因为 this.props 和 this.state 可能会异步更新，所以不要依赖他们的值来更新下一个状态，如果希望这样做，那么应参考下面的做法</li>
+  <li>可以让 setState() 接收一个函数而不是一个对象，这个函数用上一个 state 的值作为第一个参数</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">Counter</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">number</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">handleClick</span> <span class="o">=</span> <span class="p">()</span><span class="o">=&gt;</span><span class="p">{</span>
+        <span class="c1">//this.setState({number:this.state.number+1});</span>
+        <span class="c1">//console.log(this.state.number);</span>
+        <span class="c1">//this.setState({number:this.state.number+1});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">((</span><span class="nx">state</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">(</span>
+            <span class="p">{</span><span class="na">number</span><span class="p">:</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="o">+</span><span class="mi">1</span><span class="p">}</span>
+        <span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">((</span><span class="nx">state</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">(</span>
+            <span class="p">{</span><span class="na">number</span><span class="p">:</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="o">+</span><span class="mi">1</span><span class="p">}</span>
+        <span class="p">));</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span> <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span> <span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}</span><span class="o">&gt;+&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span>
+    <span class="nx">Counter</span> <span class="o">/&gt;</span><span class="p">,</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">);</span>
 </code></pre></div></div>
 
 <h3 id="4state-的更新会被合并">4、state 的更新会被合并</h3>
@@ -373,44 +374,44 @@ ReactDOM.render(&lt;
   <li>不管是父组件还是子组件都无法知道某个组件是有状态的还是无状态的，并且它们不关心它是函数组件还是类组件</li>
   <li>这就是为什么称 state 为局部的或者是封装的原因，除了拥有它并设置它的组件之外，其他组件都无法访问</li>
   <li>任何 state 总是属于特定的组件，而且从该 state 派生的任何数据或 UI 只能影响树中“低于”它们的组件，即它们的子组件</li>
-  <li>如果把一个以组件构成的树想象成一个 props 的数据瀑布流，那么每一个组件的 state 就像是在任意一点上给瀑布增加额外的水源，但是它只能向下流动
-    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+  <li>如果把一个以组件构成的树想象成一个 props 的数据瀑布流，那么每一个组件的 state 就像是在任意一点上给瀑布增加额外的水源，但是它只能向下流动</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
 <span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
 <span class="kd">class</span> <span class="nx">Counter</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
-  <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
-          <span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">Jeamn</span><span class="dl">'</span><span class="p">,</span>
-          <span class="na">number</span><span class="p">:</span> <span class="mi">0</span>
-      <span class="p">};</span>
-  <span class="p">}</span>
-  <span class="nx">handleClick</span> <span class="o">=</span> <span class="p">()</span><span class="o">=&gt;</span><span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">((</span><span class="nx">state</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">(</span>
-          <span class="p">{</span><span class="na">number</span><span class="p">:</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="o">+</span><span class="mi">1</span><span class="p">}</span>
-      <span class="p">));</span>
-  <span class="p">}</span>
-  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="p">(</span>
-          <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
-              <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">name</span><span class="p">}:</span> <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span> <span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
-</span>              <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}</span><span class="o">&gt;+&lt;</span><span class="sr">/button</span><span class="err">&gt;
-</span>              <span class="o">&lt;</span><span class="nx">SubCounter</span> <span class="nx">number</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
-</span>          <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
-</span>      <span class="p">);</span>
-  <span class="p">}</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">name</span><span class="p">:</span><span class="dl">'</span><span class="s1">Jeamn</span><span class="dl">'</span><span class="p">,</span>
+            <span class="na">number</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">handleClick</span> <span class="o">=</span> <span class="p">()</span><span class="o">=&gt;</span><span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">((</span><span class="nx">state</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">(</span>
+            <span class="p">{</span><span class="na">number</span><span class="p">:</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="o">+</span><span class="mi">1</span><span class="p">}</span>
+        <span class="p">));</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">name</span><span class="p">}:</span> <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span> <span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}</span><span class="o">&gt;+&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">SubCounter</span> <span class="nx">number</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">);</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 <span class="kd">class</span> <span class="nx">SubCounter</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
-<span class="nx">render</span><span class="p">(){</span>
-    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span><span class="err">子计数器</span><span class="p">:{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/div&gt;</span><span class="err">;
-</span><span class="p">}</span>
+  <span class="nx">render</span><span class="p">(){</span>
+      <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span><span class="err">子计数器</span><span class="p">:{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/div&gt;</span><span class="err">;
+</span>  <span class="p">}</span>
 <span class="p">}</span>
 <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
-  <span class="o">&lt;</span><span class="nx">Counter</span> <span class="o">/&gt;</span><span class="p">,</span>
-  <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">)</span>
+    <span class="o">&lt;</span><span class="nx">Counter</span> <span class="o">/&gt;</span><span class="p">,</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">)</span>
 <span class="p">);</span>
-</code></pre></div>    </div>
-  </li>
-</ul>
+</code></pre></div></div>
 
 <h2 id="八事件处理">八、事件处理</h2>
 <h3 id="1内容">1、内容</h3>
@@ -497,9 +498,11 @@ ReactDOM.render(&lt;
 <h3 id="4ref">4、ref</h3>
 <ul>
   <li>ref 提供了一种方式，允许我们访问 DOM 节点或在 render 方法中创建的 React 元素</li>
-  <li>在 React 渲染生命周期时，表单元素上的 value 将会覆盖 DOM 节点中的值，在非受控组件中，我们希望 React 能赋予组件一个初始值，但是不去控制后续的更新。这时，我们可以指定一个 defaultValue 属性而不是 value
-    <h4 id="0表单受控组件和非受控组件">（0）表单受控组件和非受控组件</h4>
-  </li>
+  <li>在 React 渲染生命周期时，表单元素上的 value 将会覆盖 DOM 节点中的值，在非受控组件中，我们希望 React 能赋予组件一个初始值，但是不去控制后续的更新。这时，我们可以指定一个 defaultValue 属性而不是 value</li>
+</ul>
+
+<h4 id="0表单受控组件和非受控组件">（0）表单受控组件和非受控组件</h4>
+<ul>
   <li>表单分为受控组件和非受控组件</li>
   <li>使 React 的 state 成为唯一数据源，渲染表单的 React 组件还控制着用户输入过程中表单发生的操作。被 React 以这种方式控制取值的表单输入元素就叫做“受控组件”。</li>
   <li>表单元素（如 input、textarea 和 select）之类的表单元素通常自己维护 state ，并根据用户输入进行更新，这是非受控组件。</li>
@@ -689,12 +692,8 @@ ReactDOM.render(&lt;
 
 <h2 id="九状态提升">九、状态提升</h2>
 <ul>
-  <li>
-    <p>在 React 中，将多个组件中需要共享的 state 向上移动到它们的最近共同父组件中，便可实现共享 state。这就是所谓的“状态提升”</p>
-  </li>
-  <li>
-    <p>没有状态提升</p>
-  </li>
+  <li>在 React 中，将多个组件中需要共享的 state 向上移动到它们的最近共同父组件中，便可实现共享 state。这就是所谓的“状态提升”</li>
+  <li>没有状态提升</li>
 </ul>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
@@ -751,184 +750,192 @@ ReactDOM.render(&lt;
 </code></pre></div></div>
 
 <ul>
-  <li>
-    <p>状态提升
-```js
-import React from ‘react’;
-import ReactDOM from ‘react-dom’;
-class Todos extends React.Component {
- constructor(props){
-     super(props);
-     this.state = {
-         text:’’,
-         todos:[]
-     }
- }
- handleAdd = (event)=&gt;{
-  event.preventDefault();
-  this.setState({
-      todos:[…this.state.todos,{id:Date.now(),text:this.state.text}],
-      text:’’
-  });
- }
- handleDelete = (id)=&gt;{
-  this.setState({
-      todos:this.state.todos.filter(todo=&gt;todo.id != id)
-  });
- }
- handleChange = (event)=&gt;{
-  this.setState({
-      text:event.target.value
-  });
- }</p>
-
-    <p>render() {
-      return (
-         &lt;&gt;
-          {this.props.name&amp;&amp;&lt;h1&gt;{this.props.name}&lt;/h1&gt;}
-          &lt;TodoHeader text={this.state.text}  handleAdd={this.handleAdd} handleChange={this.handleChange}/&gt;  <br />
-          &lt;TodoItems todos={this.state.todos} handleDelete={this.handleDelete}/&gt;
-          &lt;TodoFooter todos={this.state.todos}/&gt;
-         &lt;/&gt;
-      );
-  }
-}
-class TodoHeader extends React.Component{
-  render(){
-      return (
-          &lt;form onSubmit={this.props.handleAdd}&gt;
-              &lt;input type=”text” value={this.props.text} onChange={this.props.handleChange}/&gt;
-              <input type="submit" />
-          &lt;/form&gt;
-      )
-  }
-}
-class TodoItems extends React.Component{
-  render(){
-      let todos = this.props.todos.map(todo=&gt;&lt;li key={todo.id}&gt;{todo.text}&lt;button onClick={()=&gt;this.props.handleDelete(todo.id)}&gt;X&lt;/button&gt;&lt;/li&gt;);
-      return (
-          &lt;ul&gt;
-            { todos}
-          &lt;/ul&gt;
-      )
-  }
-}
-class TodoFooter extends React.Component{
-  render(){
-      return (
-         &lt;&gt;{this.props.todos.length&gt;0?<code class="highlighter-rouge">你现在${this.props.todos.length}件待办事项</code>:<code class="highlighter-rouge">你现在没有待办事项</code>}&lt;/&gt;
-      )
-  }
-}</p>
-  </li>
+  <li>状态提升</li>
 </ul>
 
-<p>ReactDOM.render(
-    <Todos name="待办事项"></Todos>,
-    document.getElementById(‘root’)
-);</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-## 十、生命周期
-### 1、旧版生命周期
-#### 第一阶段（Initialization）：接收的属性和自身的状态初始化
-- setup props and state
-#### 第二阶段（Mounting）：组件实例挂载与渲染
-- componentWillMount：组件将要挂载
-- render：组件渲染
-- componentDidMount：组件挂载完成
-#### 第三阶段（Updation）：数据更新
-1）props 接收的属性数据更新
-- componentWillReceiveProps：组件将要接收 props
-- shouldComponentUpdate：组件应该更新吗（返回 true 才能更新）
-- componentWillUpdate：组件将要更新数据
-- render：组件渲染
-- componentDidUpdate：组件数据更新完成
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">Todos</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+   <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">){</span>
+       <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+       <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+           <span class="na">text</span><span class="p">:</span><span class="dl">''</span><span class="p">,</span>
+           <span class="na">todos</span><span class="p">:[]</span>
+       <span class="p">}</span>
+   <span class="p">}</span>
+   <span class="nx">handleAdd</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">{</span>
+    <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+        <span class="na">todos</span><span class="p">:[...</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">todos</span><span class="p">,{</span><span class="na">id</span><span class="p">:</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">(),</span><span class="na">text</span><span class="p">:</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">text</span><span class="p">}],</span>
+        <span class="na">text</span><span class="p">:</span><span class="dl">''</span>
+    <span class="p">});</span>
+   <span class="p">}</span>
+   <span class="nx">handleDelete</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+        <span class="na">todos</span><span class="p">:</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">todo</span><span class="o">=&gt;</span><span class="nx">todo</span><span class="p">.</span><span class="nx">id</span> <span class="o">!=</span> <span class="nx">id</span><span class="p">)</span>
+    <span class="p">});</span>
+   <span class="p">}</span>
+   <span class="nx">handleChange</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+        <span class="na">text</span><span class="p">:</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span>
+    <span class="p">});</span>
+   <span class="p">}</span>
 
-2）state 自身的状态数据更新
-- shouldComponentUpdate：组件应该更新吗（返回 true 才能更新）
-- componentWillUpdate：组件将要更新数据
-- render：组件渲染
-- componentDidUpdate：组件数据更新完成
-#### 第四阶段（Unmounting）：组件卸载
-- componentWillUnmount：组件将要卸载
+   <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+           <span class="o">&lt;&gt;</span>
+            <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">name</span><span class="o">&amp;&amp;&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span><span class="err">}
+</span>            <span class="o">&lt;</span><span class="nx">TodoHeader</span> <span class="nx">text</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">text</span><span class="p">}</span>  <span class="nx">handleAdd</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleAdd</span><span class="p">}</span> <span class="nx">handleChange</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleChange</span><span class="p">}</span><span class="sr">/&gt;   </span><span class="err"> 
+</span>            <span class="o">&lt;</span><span class="nx">TodoItems</span> <span class="nx">todos</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">todos</span><span class="p">}</span> <span class="nx">handleDelete</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleDelete</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="nx">TodoFooter</span> <span class="nx">todos</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">todos</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
+</span>           <span class="o">&lt;</span><span class="sr">/</span><span class="err">&gt;
+</span>        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">TodoHeader</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+    <span class="nx">render</span><span class="p">(){</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">form</span> <span class="nx">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">handleAdd</span><span class="p">}</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="dl">"</span><span class="s2">text</span><span class="dl">"</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">text</span><span class="p">}</span> <span class="nx">onChange</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">handleChange</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="dl">"</span><span class="s2">submit</span><span class="dl">"</span><span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/form</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">TodoItems</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+    <span class="nx">render</span><span class="p">(){</span>
+        <span class="kd">let</span> <span class="nx">todos</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">todo</span><span class="o">=&gt;&lt;</span><span class="nx">li</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">todo</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">todo</span><span class="p">.</span><span class="nx">text</span><span class="p">}</span><span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span><span class="o">=&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">handleDelete</span><span class="p">(</span><span class="nx">todo</span><span class="p">.</span><span class="nx">id</span><span class="p">)}</span><span class="o">&gt;</span><span class="nx">X</span><span class="o">&lt;</span><span class="sr">/button&gt;&lt;/</span><span class="nx">li</span><span class="o">&gt;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+              <span class="p">{</span> <span class="nx">todos</span><span class="p">}</span>
+            <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">TodoFooter</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+    <span class="nx">render</span><span class="p">(){</span>
+        <span class="k">return</span> <span class="p">(</span>
+           <span class="o">&lt;&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">length</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">?</span><span class="s2">`你现在</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">length</span><span class="p">}</span><span class="s2">件待办事项`</span><span class="p">:</span><span class="s2">`你现在没有待办事项`</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
+    <span class="o">&lt;</span><span class="nx">Todos</span> <span class="nx">name</span><span class="o">=</span><span class="dl">"</span><span class="s2">待办事项</span><span class="dl">"</span><span class="o">/&gt;</span><span class="p">,</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div></div>
 
-例子：
-```js
-import React, {Component} from 'react'
-import ReactDom from 'react-dom'
+<h2 id="十生命周期">十、生命周期</h2>
+<h3 id="1旧版生命周期">1、旧版生命周期</h3>
+<h4 id="第一阶段initialization接收的属性和自身的状态初始化">第一阶段（Initialization）：接收的属性和自身的状态初始化</h4>
+<ul>
+  <li>setup props and state</li>
+</ul>
 
-class Counter extends Component{
-    constructor(props){
-        console.log('1、constructor');
-        super()
-        this.state = {
-            number: 0
-        }
-    }
-    componentWillMount(){
-        console.log('2、componentWillMount：组件将要挂载');
-    }
-    componentDidMount(){
-        console.log('4、componentDidMount：组件完成挂载');
-    }
-    shouldComponentUpdate(nextProps,nextState){
-        console.log('5、组件是否可以更新', nextProps,nextState);
-        return nextState.number%2
-    }
-    componentWillUpdate(){
-        console.log('6、组件将要更新');
-    }
-    componentDidUpdate(){
-        console.log('7、组件完成更新');
-    }
-    add = () =&gt;{
-        this.setState({
-            number: this.state.number + 1
-        })
-    }
-    render(){
-        console.log('3、render 组件渲染');
-        return (
-            &lt;&gt;
-                &lt;div&gt;{this.state.number}&lt;/div&gt;
-                {this.state.number%3 === 0 ? null : &lt;ChildCount num={this.state.number}/&gt;}
-                &lt;button onClick={this.add}&gt;+&lt;/button&gt;
-            &lt;/&gt;
-        )
-    }
-}
-class ChildCount extends Component{
-    componentWillReceiveProps(){
-        console.log('child componentWillReceiveProps');
-    }
-    componentWillMount(){
-        console.log('child 组件将要挂载');
-    }
-    componentDidMount(){
-        console.log('child 组件完成挂载');
-    }
-    shouldComponentUpdate(nextProps,nextState){
-        console.log('child 组件是否可以更新');
-        return nextProps.num%3 === 0
-    }
-    componentWillUpdate(){
-        console.log('child 组件将要更新');
-    }
-    componentDidUpdate(){
-        console.log('child 组件完成更新');
-    }
-    componentWillUnmount(){
-        console.log('child 组件将要卸载');
-    }
-    render(){
-        console.log('child render');
-        return (
-            &lt;div&gt;{this.props.num}&lt;/div&gt;
-        )
-    }
-}
-ReactDom.render(&lt;Counter /&gt;, document.getElementById('root'))
+<h4 id="第二阶段mounting组件实例挂载与渲染">第二阶段（Mounting）：组件实例挂载与渲染</h4>
+<ul>
+  <li>componentWillMount：组件将要挂载</li>
+  <li>render：组件渲染</li>
+  <li>componentDidMount：组件挂载完成</li>
+</ul>
+
+<h4 id="第三阶段updation数据更新">第三阶段（Updation）：数据更新</h4>
+<p>1）props 接收的属性数据更新</p>
+<ul>
+  <li>componentWillReceiveProps：组件将要接收 props</li>
+  <li>shouldComponentUpdate：组件应该更新吗（返回 true 才能更新）</li>
+  <li>componentWillUpdate：组件将要更新数据</li>
+  <li>render：组件渲染</li>
+  <li>componentDidUpdate：组件数据更新完成</li>
+</ul>
+
+<p>2）state 自身的状态数据更新</p>
+<ul>
+  <li>shouldComponentUpdate：组件应该更新吗（返回 true 才能更新）</li>
+  <li>componentWillUpdate：组件将要更新数据</li>
+  <li>render：组件渲染</li>
+  <li>componentDidUpdate：组件数据更新完成
+    <h4 id="第四阶段unmounting组件卸载">第四阶段（Unmounting）：组件卸载</h4>
+  </li>
+  <li>componentWillUnmount：组件将要卸载</li>
+</ul>
+
+<p>例子：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">Component</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">ReactDom</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span>
+
+<span class="kd">class</span> <span class="nx">Counter</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">1、constructor</span><span class="dl">'</span><span class="p">);</span>
+        <span class="k">super</span><span class="p">()</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">number</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">componentWillMount</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">2、componentWillMount：组件将要挂载</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">componentDidMount</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">4、componentDidMount：组件完成挂载</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">shouldComponentUpdate</span><span class="p">(</span><span class="nx">nextProps</span><span class="p">,</span><span class="nx">nextState</span><span class="p">){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">5、组件是否可以更新</span><span class="dl">'</span><span class="p">,</span> <span class="nx">nextProps</span><span class="p">,</span><span class="nx">nextState</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">nextState</span><span class="p">.</span><span class="nx">number</span><span class="o">%</span><span class="mi">2</span>
+    <span class="p">}</span>
+    <span class="nx">componentWillUpdate</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">6、组件将要更新</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">componentDidUpdate</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">7、组件完成更新</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">add</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span><span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+            <span class="na">number</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">3、render 组件渲染</span><span class="dl">'</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;&gt;</span>
+                <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>                <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="o">%</span><span class="mi">3</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">?</span> <span class="kc">null</span> <span class="p">:</span> <span class="o">&lt;</span><span class="nx">ChildCount</span> <span class="nx">num</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="sr">/&gt;</span><span class="err">}
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">}</span><span class="o">&gt;+&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">ChildCount</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+    <span class="nx">componentWillReceiveProps</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">child componentWillReceiveProps</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">componentWillMount</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">child 组件将要挂载</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">componentDidMount</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">child 组件完成挂载</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">shouldComponentUpdate</span><span class="p">(</span><span class="nx">nextProps</span><span class="p">,</span><span class="nx">nextState</span><span class="p">){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">child 组件是否可以更新</span><span class="dl">'</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">nextProps</span><span class="p">.</span><span class="nx">num</span><span class="o">%</span><span class="mi">3</span> <span class="o">===</span> <span class="mi">0</span>
+    <span class="p">}</span>
+    <span class="nx">componentWillUpdate</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">child 组件将要更新</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">componentDidUpdate</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">child 组件完成更新</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">componentWillUnmount</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">child 组件将要卸载</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">child render</span><span class="dl">'</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">num</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">ReactDom</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Counter</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">))</span>
 </code></pre></div></div>
 
 <h3 id="2新版生命周期">2、新版生命周期</h3>
@@ -937,17 +944,21 @@ ReactDom.render(&lt;Counter /&gt;, document.getElementById('root'))
   <li>constructor：构造函数初始化数据</li>
   <li>getDerivedStateFromProps：将传入的props映射到 state 上面</li>
   <li>componentDidUpdate：React 更新 DOM 和 refs</li>
-  <li>componentDidMount：组件挂载完成
-    <h4 id="第二阶段更新时">第二阶段（更新时）：</h4>
-  </li>
+  <li>componentDidMount：组件挂载完成</li>
+</ul>
+
+<h4 id="第二阶段更新时">第二阶段（更新时）：</h4>
+<ul>
   <li>getDerivedStateFromProps：将传入的props映射到 state 上面</li>
   <li>shouldComponentUpdate：组件应该更新吗（返回 true 才能更新）</li>
   <li>render：组件渲染</li>
   <li>getSnapshotBeforeUpdate：被调用于render之后，可以读取但无法使用DOM的时候</li>
   <li>componentDidUpdate：React 更新 DOM 和 refs</li>
-  <li>componentDidUpdate：组件数据更新完成
-    <h4 id="第三阶段卸载时接收的属性和自身的状态初始化">第三阶段（卸载时）：接收的属性和自身的状态初始化</h4>
-  </li>
+  <li>componentDidUpdate：组件数据更新完成</li>
+</ul>
+
+<h4 id="第三阶段卸载时接收的属性和自身的状态初始化">第三阶段（卸载时）：接收的属性和自身的状态初始化</h4>
+<ul>
   <li>componentWillUnmount：组件将要卸载</li>
 </ul>
 
