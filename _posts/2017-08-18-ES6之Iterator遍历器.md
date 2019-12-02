@@ -7,7 +7,6 @@ header-img: img/post-bg-ios9-web.jpg
 catalog: true
 tags:
     - JavaScript
-	- ES6
 ---
 
 ### 1.初识 Iterator
