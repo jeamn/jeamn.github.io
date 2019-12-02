@@ -1,0 +1,49 @@
+I"<h3 id="概念理解">概念理解</h3>
+<p>对于闭包，不同的书有不同的解释。看看“红宝书”是怎么解释闭包的。</p>
+
+<p>闭包是指有权访问另一个函数作用域中的变量的函数。</p>
+
+<p>因为函数是一个作用域，在JS中，子作用域可以访问父作用域的变量，反之却不可以。那么我们如果想要访问子作用域中的变量，该怎么做呢？比如，我们想访问一个函数A中的变量，</p>
+
+<p>我们可以这样操作，在函数A中，再定义一个函数，叫B。在定义的B函数中调用我们想访问的A函数中的变量，
+然后在函数A中返回函数B。
+<!--more--></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">f1</span><span class="p">(){</span>
+<span class="err">　　　　</span><span class="kd">var</span> <span class="nx">n</span><span class="o">=</span><span class="mi">999</span><span class="p">;</span>
+<span class="err">　　　　</span><span class="kd">function</span> <span class="nx">f2</span><span class="p">(){</span>
+<span class="err">　　　　　　</span><span class="nx">alert</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span> 
+<span class="err">　　　　</span><span class="p">}</span>
+<span class="err">　　　　</span><span class="k">return</span> <span class="nx">f2</span><span class="p">;</span>
+<span class="err">　　</span><span class="p">}</span>
+<span class="err">　　</span><span class="kd">var</span> <span class="nx">result</span><span class="o">=</span><span class="nx">f1</span><span class="p">();</span>
+<span class="err">　　</span><span class="nx">result</span><span class="p">();</span> <span class="c1">// 999</span>
+</code></pre></div></div>
+<p>f2函数 我们就可以看成一个闭包。</p>
+
+<p>可见，闭包是连接函数内部与外部的一座桥梁。</p>
+
+<p>来看一个实际的例子：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+			<span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">a</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+				<span class="kd">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+				<span class="nx">i</span><span class="o">++</span><span class="p">;</span>
+				<span class="nx">j</span><span class="o">++</span><span class="p">;</span>
+				<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">,</span><span class="dl">"</span> <span class="o">+</span> <span class="nx">j</span><span class="p">);</span>
+			<span class="p">};</span>
+		<span class="p">}</span>
+		<span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">foo</span><span class="p">;</span>
+		<span class="nx">fn</span><span class="p">.</span><span class="nx">a</span><span class="p">();</span> <span class="c1">//1,1</span>
+		<span class="nx">fn</span><span class="p">.</span><span class="nx">a</span><span class="p">();</span> <span class="c1">//2,1</span>
+		<span class="nx">fn</span><span class="p">.</span><span class="nx">a</span><span class="p">();</span> <span class="c1">//3,1</span>
+</code></pre></div></div>
+<p>可以看出，每调用一次 a 函数，j的值就变成1，而i的值会累加。</p>
+
+<p>这体现了闭包的另外一个作用：就是让这些变量的值始终保存在内存中。</p>
+
+<h3 id="慎用闭包">慎用闭包</h3>
+<p>闭包会使得变量被保存在内存中，会浪费内存，甚至造成内存泄漏。</p>
+
+:ET

@@ -1,0 +1,151 @@
+I"�4<p>内部类就是在一个类里面定义一个类。内部类不允许同个包中的其他类访问，可以直接访问包括私有数据在内的外部类的所有数据，分为成员内部类、静态内部类和方法内部类。</p>
+
+<p>要使用内部类的方法时，首先创建了一个外部类对象，在创建内部类对象时，通过外部类对象.new 内部类（）的形式。可以理解为：要使用内部类的方法，首先需要将外部类实例化为一个对象，然后通过外部类的对象对内部类进行实例化，最后再调用内部类的方法。
+<!-- more --></p>
+
+<h1 id="一成员内部类">一、成员内部类</h1>
+<p><strong>成员内部类的使用方法：</strong>
+ 1、内部类可以使用任意访问控制符
+ 2、内部类中定义的方法可以直接访问外部类中的数据，而不受访问控制符的影响。
+ 3、定义了成员内部类后，必须使用外部类对象来创建内部类对象，  <br />
+      即：内部类 对象名 = 外部类对象.new 内部类( );</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Outer</span><span class="o">{</span>
+	<span class="kd">private</span> <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">99</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Inner</span><span class="o">{</span>
+		<span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">20</span><span class="o">;</span>
+		<span class="kd">public</span> <span class="kt">void</span> <span class="nf">test</span><span class="o">(){</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"访问外部类中的a："</span> <span class="o">+</span> <span class="n">a</span><span class="o">);</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"访问内部类中的b："</span> <span class="o">+</span> <span class="n">b</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nc">Outer</span> <span class="n">o</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Outer</span><span class="o">();</span>  <span class="c1">//创建外部对象o</span>
+		<span class="nc">Inner</span> <span class="n">i</span> <span class="o">=</span> <span class="n">o</span><span class="o">.</span><span class="na">new</span> <span class="nf">Inner</span><span class="o">();</span>  <span class="c1">//使用外部类对象创建内部类对象i</span>
+		<span class="n">i</span><span class="o">.</span><span class="na">test</span><span class="o">();</span>    <span class="c1">//调用内部对象的test方法</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>结果为：
+访问外部类中的a：99
+访问内部类中的b：20
+<em>注意点：</em></p>
+
+<ul>
+  <li>外部类不能直接使用内部类的成员和方法，解决方法为：可先创建内部类的对象，然后通过内部类的对象来访问其成员变量和方法。</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWord</span><span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Outer</span><span class="o">{</span>
+		<span class="kd">public</span> <span class="kt">void</span> <span class="nf">Show</span><span class="o">(){</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="kd">public</span> <span class="kt">void</span> <span class="nf">print</span><span class="o">(){</span>
+			<span class="nc">Outer</span> <span class="n">in</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Outer</span><span class="o">();</span>
+			<span class="n">in</span><span class="o">.</span><span class="na">Show</span><span class="o">();</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<ul>
+  <li>如果外部类和内部类具有相同的成员变量或方法，内部类默认访问自己的成员变量或方法，外部类用this关键字访问。</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Outer</span><span class="o">{</span>
+	<span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Inner</span><span class="o">{</span>
+		<span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">20</span><span class="o">;</span>
+		<span class="kd">public</span> <span class="kt">void</span> <span class="nf">test</span><span class="o">(){</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"访问外部类中的a:"</span> <span class="o">+</span> <span class="nc">Outer</span><span class="o">.</span><span class="na">this</span><span class="o">.</span><span class="na">b</span><span class="o">);</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"访问内部类中的b:"</span> <span class="o">+</span> <span class="n">b</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<h1 id="二静态内部类">二、静态内部类</h1>
+<p>静态内部类是 static 修饰的内部类，这种内部类的特点是：</p>
+
+<ul>
+  <li>
+    <p>1、静态内部类不能直接访问外部类的非静态成员，但可以通过 new 外部类().成员 的方式访问</p>
+  </li>
+  <li>
+    <p>2、 如果外部类的静态成员与内部类的成员名称相同，可通过“类名.静态成员”访问外部类的静态成员；如果外部类的静态成员与内部类的成员名称不相同，则可通过“成员名”直接调用外部类的静态成员</p>
+  </li>
+  <li>
+    <p>3、 创建静态内部类的对象时，不需要外部类的对象，可以直接创建 内部类 对象名= new 内部类();</p>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//外部类</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorld</span> <span class="o">{</span>
+ 
+    <span class="c1">// 外部类中的静态变量score</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">score</span> <span class="o">=</span> <span class="mi">84</span><span class="o">;</span>
+    
+    <span class="c1">// 创建静态内部类</span>
+	<span class="kd">public</span>  <span class="kd">static</span> <span class="kd">class</span> <span class="nc">SInner</span> <span class="o">{</span>
+        <span class="c1">// 内部类中的变量score</span>
+        <span class="kt">int</span> <span class="n">score</span> <span class="o">=</span> <span class="mi">91</span><span class="o">;</span>
+        
+		<span class="kd">public</span> <span class="kt">void</span> <span class="nf">show</span><span class="o">()</span> <span class="o">{</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"访问外部类中的score："</span> <span class="o">+</span>  <span class="nc">HelloWorld</span><span class="o">.</span><span class="na">score</span>          <span class="o">);</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"访问内部类中的score："</span> <span class="o">+</span> <span class="n">score</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+
+	<span class="c1">// 测试静态内部类</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 直接创建内部类的对象</span>
+        <span class="nc">SInner</span> <span class="n">si</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SInner</span><span class="o">();</span>
+        
+        <span class="c1">// 调用show方法</span>
+		<span class="n">si</span><span class="o">.</span><span class="na">show</span><span class="o">();</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>运行结果：
+访问外部类中的score：84
+访问内部类中的score：91</p>
+<h1 id="三方法内部类">三、方法内部类</h1>
+<p>方法内部类就是内部类定义在外部类的方法中，方法内部类只在该方法的内部可见，即只在该方法内可以使用。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//外部类</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorld</span> <span class="o">{</span>
+    
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"爱慕课"</span><span class="o">;</span>
+    
+    <span class="c1">// 外部类中的show方法</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">show</span><span class="o">()</span> <span class="o">{</span> 
+		<span class="c1">// 定义方法内部类</span>
+		<span class="kd">class</span> <span class="nc">MInner</span> <span class="o">{</span>
+			<span class="kt">int</span> <span class="n">score</span> <span class="o">=</span> <span class="mi">83</span><span class="o">;</span>
+			<span class="kd">public</span> <span class="kt">int</span> <span class="nf">getScore</span><span class="o">()</span> <span class="o">{</span>
+				<span class="k">return</span> <span class="n">score</span> <span class="o">+</span> <span class="mi">10</span><span class="o">;</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+        
+		<span class="c1">// 创建方法内部类的对象</span>
+        <span class="nc">MInner</span> <span class="n">mi</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MInner</span><span class="o">();</span>
+        
+        <span class="c1">// 调用内部类的方法</span>
+		<span class="kt">int</span> <span class="n">newScore</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="na">getScore</span><span class="o">();</span>
+        
+		<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"姓名："</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">"\n加分后的成绩："</span> <span class="o">+</span> <span class="n">newScore</span><span class="o">);</span>
+	<span class="o">}</span>
+    
+	<span class="c1">// 测试方法内部类</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        
+		<span class="c1">// 创建外部类的对象</span>
+        <span class="nc">HelloWorld</span> <span class="n">mo</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HelloWorld</span><span class="o">();</span>
+        
+        <span class="c1">// 调用外部类的方法</span>
+		<span class="n">mo</span><span class="o">.</span><span class="na">show</span><span class="o">();</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p><strong><em>注意点：</em></strong>
+由于方法内部类不能在外部类的方法以外的地方使用，因此方法内部类不能使用访问控制符和 static 修饰符。</p>
+
+:ET

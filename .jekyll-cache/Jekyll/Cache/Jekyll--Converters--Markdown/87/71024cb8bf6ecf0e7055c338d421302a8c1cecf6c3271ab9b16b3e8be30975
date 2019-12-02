@@ -1,0 +1,392 @@
+I"��<h2 id="一先来使用一下-promise">一、先来使用一下 Promise</h2>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nb">Promise</span> <span class="o">=</span> 
+<span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="nx">resolve</span><span class="p">(</span><span class="dl">'</span><span class="s1">成功</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">})</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">成功的值：</span><span class="dl">'</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+<span class="p">},</span> <span class="nx">reason</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">失败的原因：</span><span class="dl">'</span><span class="p">,</span> <span class="nx">reason</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+<!-- more -->
+<p>这里定义了一个 Promsie p，并立即执行成功的方法，那么 p 实例在调用 then 方法的时候，会触发成功的回调，并将传入 resolve 函数的参数传出。在同级目录下创建一个 promise.js 文件，并在 index.js 引入这个 promise。</p>
+
+<p>这里先采用 es5 的语法来实现，实例的方法是定义在类的原型上，所以，代码呈上：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nb">Promise</span><span class="p">(){</span>
+
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">then</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">then</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nb">Promise</span>
+</code></pre></div></div>
+<p>我们在 index.js下试着能打印出 then ，说明我们引用成功了。</p>
+
+<h2 id="二同步方法的调用">二、同步方法的调用</h2>
+<p>从 Promise 的执行机制我们可以看出，在 new 一个 Pormise 实例的时候，会传入一个立即执行的函数，参数为成功的方法和失败的方法。我们首先会把成功与失败的方法传入的参数先保存起来，等到实例调用 then 方法的时候，根据当前是 Promsie 是调用了成功还是失败，来决定实例 p 的 then 方法触发成功或者失败的回调。那么，我们可以这样实现：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">executor</span><span class="p">){</span>
+
+    <span class="kd">function</span> <span class="nx">resolve</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">resolve</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">reject</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">reject</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">executor</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">then</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">then</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nb">Promise</span>
+</code></pre></div></div>
+
+<p>执行，能正常运行。不过此时如果在 index.js 里面同时调用 resolve 和 reject，会发现成功和失败的方法都能执行，这显然是不符合 Promise 的规定的。</p>
+<blockquote>
+  <p>一个 Promise 如果成功了就不能失败，如果失败了就不能成功。</p>
+</blockquote>
+
+<p>所以我们需要添加一个 promise 的状态标记 status，默认是等待态度的 promise，并且只在等待态的情况下，才能执行成功或者失败的方法，同时将当前的状态改为成功或者失败，并保存传入的参数。然后在then方法里根据当前 pomise 的状态去执行成功还是失败的回调，同时将参数传出，代码呈上：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">executor</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">''</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="dl">''</span>
+    <span class="kd">function</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">resolve</span><span class="dl">'</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">reject</span><span class="dl">'</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="nx">reason</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">executor</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">then</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">onFulfilled</span><span class="p">,</span> <span class="nx">onRejected</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">resolve</span><span class="dl">'</span><span class="p">){</span>
+        <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">reject</span><span class="dl">'</span><span class="p">){</span>
+        <span class="nx">onRejected</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">reason</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nb">Promise</span>
+</code></pre></div></div>
+
+<h2 id="三异步方法的调用">三、异步方法的调用</h2>
+<p>一般来说，promise 里面成功与失败的方法都会是异步执行的，那我们用定时器来模拟一下异步请求，在 index.js 文件里面：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nb">Promise</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./promise.js</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">resolve</span><span class="p">(</span><span class="dl">'</span><span class="s1">成功</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+    <span class="c1">// reject('失败')</span>
+<span class="p">})</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">成功的值：</span><span class="dl">'</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+<span class="p">},</span> <span class="nx">reason</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">失败的原因：</span><span class="dl">'</span><span class="p">,</span> <span class="nx">reason</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>这个时候我们会发现代码就不能正常执行了。在 p 实例调用 then 方法的时候，我们现在的代码中只判断了两种状态，那么如果 promsie 里面是异步代码的话，当前的状态毫无疑问是 pending，所以我们可以添加一个等待态的判断。既然是等待态，就说明当前还没有到执行成功或者失败回调的时机，那么我们可以先将它们保存起来，然后在 promise 执行成功的方法  resolve 或者失败的方法 reject 的时候，执行它们：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">executor</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">''</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="dl">''</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">onFulfilledCallbacks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">onRejectedCallbacks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="kd">function</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">resolve</span><span class="dl">'</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onFulfilledCallbacks</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">fn</span> <span class="o">=&gt;</span> <span class="nx">fn</span><span class="p">())</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">reject</span><span class="dl">'</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="nx">reason</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onRejectedCallbacks</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">fn</span> <span class="o">=&gt;</span> <span class="nx">fn</span><span class="p">())</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">executor</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">then</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">onFulfilled</span><span class="p">,</span> <span class="nx">onRejected</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">resolve</span><span class="dl">'</span><span class="p">){</span>
+        <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">reject</span><span class="dl">'</span><span class="p">){</span>
+        <span class="nx">onRejected</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">reason</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">onFulfilledCallbacks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+            <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+        <span class="p">})</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">onRejectedCallbacks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+            <span class="nx">onRejected</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nb">Promise</span>
+</code></pre></div></div>
+
+<h2 id="四promsie的链式调用">四、Promsie的链式调用</h2>
+<p>我们在使用原生 Promsie 的时候，是能链式调用的，代码呈上：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">p</span><span class="p">.</span><span class="nx">then</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>这说明：</p>
+<blockquote>
+  <p>1、如果一个 then 没有传入成功或者失败的回调的时候，我们要将这个 then 的结果直接传递给下一个 then</p>
+</blockquote>
+
+<blockquote>
+  <p>2、一个 promise 调用完 then 方法之后，应该还是一个 promise，那它才有 then 方法</p>
+</blockquote>
+
+<p>那我们可以将在 then 里面抛出一个新的 Promise，代码呈上：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">executor</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">''</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="dl">''</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">onFulfilledCallbacks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">onRejectedCallbacks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="kd">function</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">resolve</span><span class="dl">'</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onFulfilledCallbacks</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">fn</span> <span class="o">=&gt;</span> <span class="nx">fn</span><span class="p">())</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">reject</span><span class="dl">'</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="nx">reason</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onRejectedCallbacks</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">fn</span> <span class="o">=&gt;</span> <span class="nx">fn</span><span class="p">())</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">executor</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">then</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">onFulfilled</span><span class="p">,</span> <span class="nx">onRejected</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="nx">onFulfilled</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onFulfilled</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span> <span class="p">?</span> <span class="nx">onFulfilled</span> <span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+        <span class="k">return</span> <span class="nx">data</span>
+    <span class="p">}</span>
+    <span class="kd">let</span> <span class="nx">promise2</span>
+    <span class="nx">promise2</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">resolve</span><span class="dl">'</span><span class="p">){</span>
+            <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="c1">// 定义第一个 then 的返回值</span>
+            <span class="nx">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>   <span class="c1">// 这里先默认上个 then 返回的是一个普通值</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">reject</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">onRejected</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">reason</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onFulfilledCallbacks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+            <span class="p">})</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onRejectedCallbacks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">onRejected</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+            <span class="p">})</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+    <span class="k">return</span> <span class="nx">promise2</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nb">Promise</span>
+</code></pre></div></div>
+<p>然后我们在 index.js 测试一下：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nb">Promise</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./promise.js</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">resolve</span><span class="p">(</span><span class="dl">'</span><span class="s1">成功</span><span class="dl">'</span><span class="p">)</span>
+    <span class="c1">// reject('失败')</span>
+<span class="p">})</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span><span class="p">{</span>
+    <span class="k">return</span> <span class="dl">'</span><span class="s1">第一个then</span><span class="dl">'</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">第二个then：</span><span class="dl">'</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h2 id="五then-的返回结果剖析">五、then 的返回结果剖析</h2>
+<p>then 的返回情况，可能是一个普通值，也可能是一个 promsie，上面默认处理的是返回普通值的情况。那么如果一个 promise 返回的是 promise ，我们应该让这个 promise 执行，并将成功的结果或者失败的原因作为返回值传递给下一个 then，如果抛出异常，我们应该执行 reject 方法。所以，我们可以写一个方法来判断 then 的返回情况：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">promise2</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">x</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">fucntion</span><span class="dl">'</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span><span class="p">)){</span>
+        <span class="c1">// 如果x是一个对象或者函数类型，那么有可能是一个promise</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">then</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">then</span>
+            <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">then</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">){</span>
+                <span class="nx">then</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">y</span><span class="p">){</span>
+                    <span class="c1">//如果是 pormise仍需要递归调用 resolvePromise ，直到返回值是一个普通值</span>
+                    <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">y</span><span class="p">,</span> <span class="nx">promise2</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+                    <span class="c1">// resolve(y)  // 这里默认 y 不是一个 promise</span>
+                <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+                    <span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+                <span class="p">})</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// 如果是一个普通值，直接返回即可</span>
+        <span class="nx">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>然后我们可以在 index.js 测试一下：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nb">Promise</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./promise.js</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">resolve</span><span class="p">(</span><span class="dl">'</span><span class="s1">成功</span><span class="dl">'</span><span class="p">)</span>
+    <span class="c1">// reject('失败')</span>
+<span class="p">})</span>
+
+<span class="nx">p</span><span class="p">.</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span><span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">resolve</span><span class="p">(</span><span class="dl">'</span><span class="s1">返回的是一个Promsie</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">})</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">第二个then：</span><span class="dl">'</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+<p>可以正常运行！！！但在实际的开发中，代码运行并不时时如我们所愿，有可能会报错。比如，
+在执行promise 传入的函数的时候可能出错，</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">try</span> <span class="p">{</span>
+	<span class="nx">executor</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>那么致此，一个简单的 promise 就实现了，呈上全部代码：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">executor</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">''</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="dl">''</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">onFulfilledCallbacks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">onRejectedCallbacks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="kd">function</span> <span class="nx">resolve</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">resolve</span><span class="dl">'</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onFulfilledCallbacks</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">fn</span> <span class="o">=&gt;</span> <span class="nx">fn</span><span class="p">())</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">reject</span><span class="p">(</span><span class="nx">reason</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">reject</span><span class="dl">'</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">reason</span> <span class="o">=</span> <span class="nx">reason</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onRejectedCallbacks</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">fn</span> <span class="o">=&gt;</span> <span class="nx">fn</span><span class="p">())</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="nx">executor</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">promise2</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">x</span> <span class="o">==</span> <span class="nx">promise2</span><span class="p">){</span>
+        <span class="c1">// 自己不能等待自己完成，循环引用错误</span>
+        <span class="k">return</span> <span class="nx">reject</span><span class="p">(</span><span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="dl">'</span><span class="s1">循环引用</span><span class="dl">'</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">x</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">fucntion</span><span class="dl">'</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span><span class="p">)){</span>
+        <span class="c1">// 如果x是一个对象或者函数类型，那么有可能是一个promise</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">then</span> <span class="o">=</span> <span class="nx">x</span><span class="p">.</span><span class="nx">then</span>
+            <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">then</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">){</span>
+                <span class="nx">then</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">y</span><span class="p">){</span>
+                    <span class="c1">//如果是 pormise仍需要递归调用 resolvePromise ，直到返回值是一个普通值</span>
+                    <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">y</span><span class="p">,</span> <span class="nx">promise2</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+                    <span class="c1">// resolve(y)  // 这里默认 y 不是一个 promise</span>
+                <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+                    <span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+                <span class="p">})</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// 如果是一个普通值，直接返回即可</span>
+        <span class="nx">resolve</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">then</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">onFulfilled</span><span class="p">,</span> <span class="nx">onRejected</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="nx">onFulfilled</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onFulfilled</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span> <span class="p">?</span> <span class="nx">onFulfilled</span> <span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+        <span class="k">return</span> <span class="nx">data</span>
+    <span class="p">}</span>
+    <span class="nx">onRejected</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">onRejected</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span> <span class="p">?</span> <span class="nx">onRejected</span> <span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+        <span class="k">throw</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    <span class="kd">let</span> <span class="nx">promise2</span>
+    <span class="nx">promise2</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">resolve</span><span class="dl">'</span><span class="p">){</span>
+            <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+            <span class="nx">resolvePromise</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">promise2</span><span class="p">,</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">reject</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">onRejected</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">reason</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">pending</span><span class="dl">'</span><span class="p">){</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onFulfilledCallbacks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">onFulfilled</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+            <span class="p">})</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onRejectedCallbacks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                <span class="nx">onRejected</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+            <span class="p">})</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+    <span class="k">return</span> <span class="nx">promise2</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nb">Promise</span>
+</code></pre></div></div>
+
+:ET

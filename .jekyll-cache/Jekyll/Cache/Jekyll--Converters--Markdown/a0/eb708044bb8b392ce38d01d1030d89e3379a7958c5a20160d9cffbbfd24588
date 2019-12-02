@@ -1,0 +1,112 @@
+I"s1<h3 id="一node中requrie的用法">一、node中requrie的用法</h3>
+<p>我们知道，node的模块化实现用的是CommonJS规范，即，引入模块使用的是：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./name.js)
+</span></code></pre></div></div>
+
+<p>导出模块使用的是：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{...}</span>
+</code></pre></div></div>
+<p>如果我们导入的文件没有写后缀名，那么node默认会先寻找路径下.js结尾的文件，如果找不到，会继续找.json结尾的文件，如果找不到，会找node结尾的文件….</p>
+
+<p>那么我们来看一下怎么实现require方法，简单的实现，不考虑复杂因素，所以我们会默认给出导入模块的后缀名，.js或者.json，来对应处理引入的模块内容并将其导出。
+<!-- more --></p>
+
+<h3 id="二实现require需要实现什么">二、实现require需要实现什么</h3>
+<p>接下来我们先考虑实现一个require的大致思路：</p>
+
+<ul>
+  <li>1） 拿到我们传入require方法的这个路径，在这里我们要拿绝对路径</li>
+  <li>2） 创建一个模块，并将我们拿到的模块内容存起来</li>
+  <li>3） 根据后缀名称来决定如何导出模块的内容</li>
+</ul>
+
+<h4 id="第一步拿路径">第一步：拿路径</h4>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">fs</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">function</span> <span class="nx">req</span><span class="p">(</span><span class="nx">moduleId</span><span class="p">){</span>
+    <span class="c1">// 拿到绝对路径</span>
+    <span class="kd">const</span> <span class="nx">absPath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="nx">moduleId</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<h4 id="第二步存内容">第二步：存内容</h4>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">fs</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="c1">//存储内容我们需要定义一个模块，模块只包含这个模块的路径id，以及模块的内容</span>
+<span class="kd">function</span> <span class="nx">Module</span><span class="p">(</span><span class="nx">id</span><span class="p">){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{}</span>   <span class="c1">//默认导出一个空对象</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">req</span><span class="p">(</span><span class="nx">moduleId</span><span class="p">){</span>
+    <span class="c1">// 拿到绝对路径</span>
+    <span class="kd">let</span> <span class="nx">absPath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="nx">moduleId</span><span class="p">)</span>
+    <span class="c1">// 创建一个模块来存储内容</span>
+    <span class="kd">let</span> <span class="nx">module</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Module</span><span class="p">(</span><span class="nx">absPath</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="第三步导出去">第三步：导出去</h4>
+<blockquote>
+  <p>json文件：直接导出模块的内容</p>
+
+  <p>js文件：用闭包来处理导出的js模块，node的require是这样实现的，这样能解决命名空间的问题</p>
+</blockquote>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">fs</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">vm</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">vm</span><span class="dl">'</span><span class="p">)</span> <span class="c1">// node用一个虚拟的沙箱来实现代码的执行，而不是通过eval，因为eval不安全，eval可以读到全局的变量</span>
+
+<span class="c1">//存储内容我们需要定义一个模块，模块只包含这个模块的路径id，以及模块的内容</span>
+<span class="kd">function</span> <span class="nx">Module</span><span class="p">(</span><span class="nx">id</span><span class="p">){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{}</span>   <span class="c1">//默认导出一个空对象</span>
+<span class="p">}</span>
+
+<span class="c1">//自定义一个对象来实现对应后缀文件的执行方式</span>
+<span class="kd">let</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="dl">'</span><span class="s1">.js</span><span class="dl">'</span><span class="p">(</span><span class="nx">module</span><span class="p">){</span>
+        <span class="kd">let</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf8</span><span class="dl">'</span><span class="p">)</span>
+        <span class="c1">//每个模块都是一个闭包，这个闭包默认有五个参数：</span>
+        <span class="kd">let</span> <span class="nx">moduleWrap</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">(function(exports, module, require, __dirname, __filename){</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">})</span><span class="dl">'</span><span class="p">]</span>
+        <span class="c1">//将读出来的内容拼接成代码块并在沙箱中执行</span>
+        <span class="kd">let</span> <span class="nx">script</span> <span class="o">=</span> <span class="nx">moduleWrap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">content</span> <span class="o">+</span> <span class="nx">moduleWrap</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="nx">vm</span><span class="p">.</span><span class="nx">runInThisContext</span><span class="p">(</span><span class="nx">script</span><span class="p">).</span><span class="nx">call</span><span class="p">(</span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">module</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="dl">'</span><span class="s1">.json</span><span class="dl">'</span><span class="p">(</span><span class="nx">module</span><span class="p">){</span>
+        <span class="c1">//如果是json结尾，直接将内容导出</span>
+        <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf8</span><span class="dl">'</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">req</span><span class="p">(</span><span class="nx">moduleId</span><span class="p">){</span>
+    <span class="c1">// 拿到绝对路径</span>
+    <span class="kd">let</span> <span class="nx">absPath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="nx">moduleId</span><span class="p">)</span>
+    <span class="c1">// 创建一个模块来存储内容</span>
+    <span class="kd">let</span> <span class="nx">module</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Module</span><span class="p">(</span><span class="nx">absPath</span><span class="p">)</span>
+    <span class="c1">// 获取后缀名</span>
+    <span class="kd">let</span> <span class="nx">ext</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">absPath</span><span class="p">)</span>
+    <span class="c1">// 根据后缀名称进行加载</span>
+    <span class="nx">obj</span><span class="p">[</span><span class="nx">ext</span><span class="p">](</span><span class="nx">module</span><span class="p">)</span>
+    <span class="c1">//最后将modele的exports返回</span>
+    <span class="k">return</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">}</span>
+
+<span class="c1">//并试验一下</span>
+<span class="kd">let</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">req</span><span class="p">(</span><span class="dl">'</span><span class="s1">./user.json</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+
+<span class="kd">let</span> <span class="nx">name2</span> <span class="o">=</span> <span class="nx">req</span><span class="p">(</span><span class="dl">'</span><span class="s1">./name.js</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name2</span><span class="p">);</span>
+</code></pre></div></div>
+<p>简单而又粗暴的实现。。。</p>
+<h5 id="参考文章">参考文章</h5>
+<p><a href="https://juejin.im/post/5ab4d3d151882521d6578298">Node.js Require源码粗读</a>
+<a href="http://www.ruanyifeng.com/blog/2015/05/require.html">阮一峰 require() 源码解读</a></p>
+
+:ET
