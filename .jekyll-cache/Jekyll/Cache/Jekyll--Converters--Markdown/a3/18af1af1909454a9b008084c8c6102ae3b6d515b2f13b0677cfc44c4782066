@@ -1,0 +1,255 @@
+I"�j<h2 id="一redux-中间件">一、Redux 中间件</h2>
+<p>中间件就是一个函数，对store.dispatch方法进行了改造，在发出 Action 和执行 Reducer 这两步之间，添加了其他功能</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span class="nx">createStore</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">redux</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">reducers</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./reducers</span><span class="dl">'</span>
+
+<span class="kd">let</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">reducers</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">dispatch</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span>
+<span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span> <span class="o">=</span> <span class="nx">action</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">老状态</span><span class="dl">'</span><span class="p">,</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">())</span>
+    <span class="nx">dispatch</span><span class="p">(</span><span class="nx">action</span><span class="p">)</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">新状态</span><span class="dl">'</span><span class="p">,</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">())</span>
+<span class="p">}</span>
+<span class="k">export</span> <span class="k">default</span> <span class="nx">store</span>
+
+</code></pre></div></div>
+
+<h2 id="二中间件实现">二、中间件实现：</h2>
+<ul>
+  <li>src/store/index.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createStore</span><span class="p">,</span><span class="nx">applyMiddleware</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../redux</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">reducer</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./reducers</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">logger</span> <span class="o">=</span> <span class="nx">store</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span> <span class="o">=&gt;</span> <span class="nx">action</span><span class="o">=&gt;</span><span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">().</span><span class="nx">number</span><span class="p">);</span>
+  <span class="nx">dispatch</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">().</span><span class="nx">number</span><span class="p">)</span>
+<span class="p">};</span>
+<span class="k">export</span> <span class="k">default</span> <span class="nx">applyMiddleware</span><span class="p">(</span><span class="nx">logger</span><span class="p">)(</span><span class="nx">createStore</span><span class="p">)(</span><span class="nx">reducer</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li>src/redux/applyMiddleware</li>
+</ul>
+
+<p><a href="https://github.com/reduxjs/redux/blob/master/src/applyMiddleware.js">applyMiddleware</a></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">compose</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./compose</span><span class="dl">'</span>
+<span class="cm">/**
+ * @param {...Function} middlewares The middleware chain to be applied.
+ * @returns {Function} A store enhancer applying the middleware.
+ */</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">function</span> <span class="nx">applyMiddleware</span><span class="p">(...</span><span class="nx">middlewares</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">createStore</span> <span class="o">=&gt;</span> <span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(...</span><span class="nx">args</span><span class="p">)</span>
+        <span class="kd">let</span> <span class="nx">dispatch</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span>
+            <span class="dl">'</span><span class="s1">Dispatching while constructing your middleware is not allowed. </span><span class="dl">'</span> <span class="o">+</span>
+            <span class="dl">'</span><span class="s1">Other middleware would not be applied to this dispatch.</span><span class="dl">'</span>
+        <span class="p">)</span>
+        <span class="p">}</span>
+        <span class="kd">const</span> <span class="nx">middlewareAPI</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">getState</span><span class="p">:</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">,</span>
+        <span class="na">dispatch</span><span class="p">:</span> <span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span><span class="p">(...</span><span class="nx">args</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="kd">const</span> <span class="nx">chain</span> <span class="o">=</span> <span class="nx">middlewares</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">middleware</span> <span class="o">=&gt;</span> <span class="nx">middleware</span><span class="p">(</span><span class="nx">middlewareAPI</span><span class="p">))</span>
+        <span class="nx">dispatch</span> <span class="o">=</span> <span class="nx">compose</span><span class="p">(...</span><span class="nx">chain</span><span class="p">)(</span><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+        <span class="p">...</span><span class="nx">store</span><span class="p">,</span>
+        <span class="nx">dispatch</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>src\redux\compose.js</li>
+</ul>
+
+<p><a href="https://github.com/reduxjs/redux/blob/master/src/compose.js">compose</a></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// function add1(str){</span>
+<span class="c1">//     return '1'+str;</span>
+<span class="c1">// }</span>
+<span class="c1">// function add2(str){</span>
+<span class="c1">//     return '2'+str;</span>
+<span class="c1">// }</span>
+<span class="c1">// function add3(str){</span>
+<span class="c1">//     return '3'+str;</span>
+<span class="c1">// }</span>
+
+<span class="c1">// function compose(...funcs){</span>
+<span class="c1">//     return funcs.reduce((a,b)=&gt;(...args)=&gt;a(b(...args)));</span>
+<span class="c1">// }</span>
+
+<span class="c1">// let result = compose(add3,add2,add1)('jeamn');</span>
+<span class="c1">// console.log(result);</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">function</span> <span class="nx">compose</span><span class="p">(...</span><span class="nx">funcs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">funcs</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">arg</span> <span class="o">=&gt;</span> <span class="nx">arg</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">funcs</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">funcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">funcs</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">a</span><span class="p">(</span><span class="nx">b</span><span class="p">(...</span><span class="nx">args</span><span class="p">)))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="三级联中间件">三、级联中间件</h2>
+<ul>
+  <li>src\components\Counter.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">Component</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">actions</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../store/action</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">connect</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../react-redux</span><span class="dl">'</span>
+
+<span class="kd">class</span> <span class="nx">Counter</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">increment</span><span class="p">}</span><span class="o">&gt;+&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">decrement</span><span class="p">}</span><span class="o">&gt;-&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">incrementAsync</span><span class="p">}</span><span class="o">&gt;</span><span class="err">异步</span><span class="o">+</span><span class="mi">1</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">incrementPromise</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">promise</span><span class="err">异步</span><span class="o">+</span><span class="mi">1</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// connect 用来连接组件和仓库</span>
+<span class="c1">// 让组件可以获取仓库中的状态</span>
+<span class="kd">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">=&gt;</span> <span class="nx">state</span>
+<span class="k">export</span> <span class="k">default</span> <span class="nx">connect</span><span class="p">(</span>
+    <span class="nx">mapStateToProps</span><span class="p">,</span>
+    <span class="nx">actions</span>
+<span class="p">)(</span><span class="nx">Counter</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>src\store\index.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span class="nx">createStore</span><span class="p">,</span> <span class="nx">applyMiddleware</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../redux</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">reducer</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./reducers</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">logger</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../redux-logger</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">thunk</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../redux-thunk</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">promise</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../redux-promise</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="c1">// export default applyMiddleware(logger)(createStore)(reducer);</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">applyMiddleware</span><span class="p">(</span><span class="nx">thunk</span><span class="p">,</span><span class="nx">promise</span><span class="p">,</span><span class="nx">logger</span><span class="p">)(</span><span class="nx">createStore</span><span class="p">)(</span><span class="nx">reducer</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li>src\store\reducers\index.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// import counter1 from './counter1'</span>
+<span class="c1">// import counter2 from './counter2'</span>
+<span class="k">import</span> <span class="nx">counter</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./counter</span><span class="dl">'</span>
+
+<span class="c1">// import {combineReducers} from '../../redux'</span>
+
+<span class="c1">// let reducers = combineReducers({</span>
+<span class="c1">//     counter1, counter2</span>
+<span class="c1">// })</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">counter</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>actions\counter.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">types</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../actions-types</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">export</span> <span class="k">default</span> <span class="p">{</span>
+    <span class="nx">increment</span><span class="p">(){</span>
+        <span class="k">return</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span><span class="nx">types</span><span class="p">.</span><span class="nx">INCREMENT</span><span class="p">};</span>
+    <span class="p">},</span>
+    <span class="nx">decrement</span><span class="p">(){</span>
+        <span class="k">return</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span><span class="nx">types</span><span class="p">.</span><span class="nx">DECREMENT</span><span class="p">};</span>
+    <span class="p">},</span>
+    <span class="nx">incrementAsync</span><span class="p">(){</span>
+        <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dispatch</span><span class="p">){</span>
+            <span class="nx">setTimeout</span><span class="p">(()</span><span class="o">=&gt;</span><span class="p">{</span>
+                <span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span><span class="nx">types</span><span class="p">.</span><span class="nx">INCREMENT</span><span class="p">});</span>
+            <span class="p">},</span><span class="mi">1000</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">incrementPromise</span><span class="p">(){</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="na">type</span><span class="p">:</span><span class="nx">types</span><span class="p">.</span><span class="nx">INCREMENT</span><span class="p">,</span>
+            <span class="na">payload</span><span class="p">:</span><span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span><span class="nx">reject</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">{</span>
+                <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">();</span>
+                <span class="k">if</span><span class="p">(</span><span class="nx">result</span><span class="o">&gt;</span><span class="p">.</span><span class="mi">5</span><span class="p">){</span>
+                    <span class="nx">resolve</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+                <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+                    <span class="nx">reject</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>redux-logger.js</li>
+</ul>
+
+<p><a href="https://github.com/LogRocket/redux-logger/blob/master/src/index.js">redux-logger.js</a></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="k">default</span>  <span class="nx">store</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span> <span class="o">=&gt;</span> <span class="nx">action</span><span class="o">=&gt;</span><span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">().</span><span class="nx">number</span><span class="p">);</span>
+    <span class="nx">dispatch</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">().</span><span class="nx">number</span><span class="p">)</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<ul>
+  <li>src\redux-thunk.js</li>
+</ul>
+
+<p><a href="https://github.com/reduxjs/redux-thunk/blob/master/src/index.js">redux-thunk.js</a></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">createThunkMiddleware</span><span class="p">(</span><span class="nx">extraArgument</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">({</span><span class="nx">dispatch</span><span class="p">,</span><span class="nx">getState</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="nx">next</span> <span class="o">=&gt;</span> <span class="nx">action</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">action</span> <span class="o">==</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">action</span><span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">,</span> <span class="nx">extraArgument</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">const</span> <span class="nx">thunk</span> <span class="o">=</span> <span class="nx">createThunkMiddleware</span><span class="p">();</span>
+<span class="nx">thunk</span><span class="p">.</span><span class="nx">withExtraArgument</span> <span class="o">=</span> <span class="nx">createThunkMiddleware</span><span class="p">;</span>
+<span class="k">export</span> <span class="k">default</span> <span class="nx">thunk</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>src\redux-promise.js</li>
+</ul>
+
+<p><a href="https://github.com/redux-utilities/redux-promise/blob/master/src/index.js">redux-promise.js</a></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">isPromise</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">!!</span><span class="nx">obj</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">obj</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">obj</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">then</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">function</span> <span class="nx">promiseMiddleware</span><span class="p">({</span> <span class="nx">dispatch</span> <span class="p">})</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span> <span class="o">=&gt;</span> <span class="nx">action</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">isPromise</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">payload</span><span class="p">)</span>
+            <span class="p">?</span> <span class="nx">action</span><span class="p">.</span><span class="nx">payload</span>
+                <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">result</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span><span class="p">({</span> <span class="p">...</span><span class="nx">action</span><span class="p">,</span> <span class="na">payload</span><span class="p">:</span> <span class="nx">result</span> <span class="p">}))</span>
+                <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="nx">dispatch</span><span class="p">({</span> <span class="p">...</span><span class="nx">action</span><span class="p">,</span> <span class="na">payload</span><span class="p">:</span> <span class="nx">error</span><span class="p">,</span> <span class="na">error</span><span class="p">:</span> <span class="kc">true</span> <span class="p">});</span>
+                    <span class="k">return</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+                <span class="p">})</span>
+            <span class="p">:</span> <span class="nx">next</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET
