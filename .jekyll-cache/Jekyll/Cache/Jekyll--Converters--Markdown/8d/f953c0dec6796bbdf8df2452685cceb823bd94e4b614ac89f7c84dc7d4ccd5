@@ -1,4 +1,4 @@
-I"��<h2 id="一typescript-是什么">一、TypeScript 是什么</h2>
+I"az<h2 id="一typescript-是什么">一、TypeScript 是什么</h2>
 <ul>
   <li>Typescript是由微软开发的一款开源的编程语言</li>
   <li>Typescript是Javascript的超集，遵循最新的ES5/ES6规范。TypeScript扩展了Javascript语法</li>
@@ -32,60 +32,66 @@
 <h3 id="1布尔类型boolean">1、布尔类型(boolean)</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">married</span><span class="p">:</span> <span class="nx">boolean</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 </code></pre></div></div>
+
 <h3 id="2数字类型number">2、数字类型(number)</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">age</span><span class="p">:</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
 </code></pre></div></div>
+
 <h3 id="3字符串类型string">3、字符串类型(string)</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">firstname</span><span class="p">:</span> <span class="nx">string</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">zfpx</span><span class="dl">'</span><span class="p">;</span>
 </code></pre></div></div>
+
 <h3 id="4数组类型array">4、数组类型(array)</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">arr2</span><span class="p">:</span> <span class="nx">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">];</span>
 <span class="kd">let</span> <span class="nx">arr3</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">number</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">];</span>
 </code></pre></div></div>
+
 <h3 id="5元组类型tuple">5、元组类型(tuple)</h3>
 <ul>
-  <li>在 TypeScript 的基础类型中，元组（ Tuple ）表示一个已知数量和类型的数组</li>
-</ul>
-
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">people</span><span class="p">:[</span><span class="nx">string</span><span class="p">,</span><span class="nx">number</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span><span class="mi">5</span><span class="p">];</span>
+  <li>在 TypeScript 的基础类型中，元组（ Tuple ）表示一个已知数量和类型的数组
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">people</span><span class="p">:[</span><span class="nx">string</span><span class="p">,</span><span class="nx">number</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">,</span><span class="mi">5</span><span class="p">];</span>
 <span class="nx">people</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
 <span class="nx">people</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-</code></pre></div></div>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
 <h3 id="6枚举类型enum">6、枚举类型(enum)</h3>
 <ul>
   <li>事先考虑某一个变量的所有的可能的值，尽量用自然语言中的单词表示它的每一个值</li>
-  <li>比如性别、月份、星期、颜色、单位、学历</li>
+  <li>比如性别、月份、星期、颜色、单位、学历
+    <h4 id="1普通枚举">（1）普通枚举</h4>
+    <p>```js
+enum Gender{
+  GIRL,
+  BOY
+}
+console.log(<code class="highlighter-rouge">Mike是${Gender.BOY}</code>);
+console.log(<code class="highlighter-rouge">Linda是${Gender.GIRL}</code>);</p>
+  </li>
 </ul>
 
-<h4 id="1普通枚举">（1）普通枚举</h4>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">enum</span> <span class="nx">Gender</span><span class="p">{</span>
-    <span class="nx">GIRL</span><span class="p">,</span>
-    <span class="nx">BOY</span>
-<span class="p">}</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Mike是</span><span class="p">${</span><span class="nx">Gender</span><span class="p">.</span><span class="nx">BOY</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Linda是</span><span class="p">${</span><span class="nx">Gender</span><span class="p">.</span><span class="nx">GIRL</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+<p>enum Week{
+    MONDAY=1,
+    TUESDAY=2
+}
+console.log(<code class="highlighter-rouge">今天是星期${Week.MONDAY}</code>);</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+#### （2）常数枚举
+- 常数枚举与普通枚举的区别是，它会在编译阶段被删除，并且不能包含计算成员。假如包含了计算成员，则会在编译阶段报错
 
-<span class="kr">enum</span> <span class="nx">Week</span><span class="p">{</span>
-    <span class="nx">MONDAY</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="nx">TUESDAY</span><span class="o">=</span><span class="mi">2</span>
-<span class="p">}</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`今天是星期</span><span class="p">${</span><span class="nx">Week</span><span class="p">.</span><span class="nx">MONDAY</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
-</code></pre></div></div>
-<h4 id="2常数枚举">（2）常数枚举</h4>
-<ul>
-  <li>常数枚举与普通枚举的区别是，它会在编译阶段被删除，并且不能包含计算成员。假如包含了计算成员，则会在编译阶段报错</li>
-</ul>
+```js
+const enum Colors {
+    Red,
+    Yellow,
+    Blue
+}
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="kr">enum</span> <span class="nx">Colors</span> <span class="p">{</span>
-    <span class="nx">Red</span><span class="p">,</span>
-    <span class="nx">Yellow</span><span class="p">,</span>
-    <span class="nx">Blue</span>
-<span class="p">}</span>
-
-<span class="kd">let</span> <span class="nx">myColors</span> <span class="o">=</span> <span class="p">[</span><span class="nx">Colors</span><span class="p">.</span><span class="nx">Red</span><span class="p">,</span> <span class="nx">Colors</span><span class="p">.</span><span class="nx">Yellow</span><span class="p">,</span> <span class="nx">Colors</span><span class="p">.</span><span class="nx">Blue</span><span class="p">];</span>
+let myColors = [Colors.Red, Colors.Yellow, Colors.Blue];
 </code></pre></div></div>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="kr">enum</span> <span class="nx">Color</span> <span class="p">{</span><span class="nx">Red</span><span class="p">,</span> <span class="nx">Yellow</span><span class="p">,</span> <span class="nx">Blue</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">blue</span><span class="dl">"</span><span class="p">.</span><span class="nx">length</span><span class="p">};</span>
 </code></pre></div></div>
+
 <h3 id="7任意类型any">7、任意类型(any)</h3>
 <ul>
   <li>any就是可以赋值给任意类型</li>
@@ -100,6 +106,7 @@
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">root</span><span class="p">:(</span><span class="nx">HTMLElement</span><span class="o">|</span><span class="kc">null</span><span class="p">)</span><span class="o">=</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">);</span>
 <span class="nx">root</span><span class="o">!</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">color</span><span class="o">=</span><span class="dl">'</span><span class="s1">red</span><span class="dl">'</span><span class="p">;</span><span class="c1">//非空断言操作符</span>
 </code></pre></div></div>
+
 <h3 id="8null-和-undefined">8、null 和 undefined</h3>
 <ul>
   <li>null 和 undefined 是其它类型的子类型，可以赋值给其它类型，如数字类型，此时，赋值后的类型会变成 null 或 undefined</li>
@@ -116,6 +123,7 @@
 <span class="nx">y</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>   
 <span class="nx">y</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 </code></pre></div></div>
+
 <h3 id="9void-类型">9、void 类型</h3>
 <ul>
   <li>void 表示没有任何类型</li>
@@ -130,6 +138,7 @@
     <span class="c1">//return undefined;</span>
 <span class="p">}</span>
 </code></pre></div></div>
+
 <h3 id="10never类型">10、never类型</h3>
 <ul>
   <li>never是其它类型(null undefined)的子类型，代表不会出现的值
@@ -153,6 +162,7 @@
     <span class="k">while</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{}</span>
 <span class="p">}</span>
 </code></pre></div></div>
+
 <h4 id="2strictnullchecks">(2)strictNullChecks</h4>
 <ul>
   <li>在 TS 中， null 和 undefined 是任何类型的有效值，所以无法正确地检测它们是否被错误地使用。于是 TS 引入了 –strictNullChecks 这一种检查模式</li>
@@ -171,6 +181,7 @@
   <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
+
 <h4 id="3never-和-void-的区别">(3)never 和 void 的区别</h4>
 <ul>
   <li>void 可以被赋值为 null 和 undefined的类型。 never 则是一个不包含值的类型。</li>
@@ -261,6 +272,7 @@
 <span class="p">}</span>
 <span class="nx">hello</span><span class="p">(</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">);</span>
 </code></pre></div></div>
+
 <h3 id="2函数表达式">2、函数表达式</h3>
 <ul>
   <li>定义函数类型</li>
@@ -271,6 +283,7 @@
   <span class="k">return</span> <span class="nx">firstName</span> <span class="o">+</span> <span class="nx">lastName</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
+
 <h3 id="3没有返回值">3、没有返回值</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">hello2</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">:</span><span class="nx">string</span><span class="p">):</span><span class="k">void</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">hello2</span><span class="dl">'</span><span class="p">,</span><span class="nx">name</span><span class="p">);</span>
@@ -278,6 +291,7 @@
 <span class="p">}</span>
 <span class="nx">hello2</span><span class="p">(</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">);</span>
 </code></pre></div></div>
+
 <h3 id="4可选参数">4、可选参数</h3>
 <ul>
   <li>在 TS 中函数的形参和实参必须一样，不一样就要配置可选参数,而且必须是最后一个参数</li>
@@ -288,18 +302,21 @@
 <span class="p">}</span>
 <span class="nx">print</span><span class="p">(</span><span class="dl">'</span><span class="s1">jeamn</span><span class="dl">'</span><span class="p">);</span>
 </code></pre></div></div>
+
 <h3 id="5默认参数">5、默认参数</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">ajax</span><span class="p">(</span><span class="nx">url</span><span class="p">:</span><span class="nx">string</span><span class="p">,</span><span class="nx">method</span><span class="p">:</span><span class="nx">string</span><span class="o">=</span><span class="dl">'</span><span class="s1">GET</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span><span class="nx">method</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="nx">ajax</span><span class="p">(</span><span class="dl">'</span><span class="s1">/users</span><span class="dl">'</span><span class="p">);</span>
 </code></pre></div></div>
+
 <h3 id="6剩余参数">6、剩余参数</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">sum</span><span class="p">(...</span><span class="nx">numbers</span><span class="p">:</span><span class="nx">number</span><span class="p">[])</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">numbers</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">val</span><span class="p">,</span><span class="nx">item</span><span class="p">)</span><span class="o">=&gt;</span><span class="nx">val</span><span class="o">+=</span><span class="nx">item</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">));</span>
 </code></pre></div></div>
+
 <h3 id="7函数重载">7、函数重载</h3>
 <ul>
   <li>在Java中的重载，指的是两个或者两个以上的同名函数，参数不一样</li>

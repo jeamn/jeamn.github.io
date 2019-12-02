@@ -42,31 +42,34 @@ npm scripts
 ```js
 let married: boolean = false;
 ```
+
 ### 2、数字类型(number)
 ```js
 let age: number = 10;
 ```
+
 ### 3、字符串类型(string)
 ```js
 let firstname: string = 'zfpx';
 ```
+
 ### 4、数组类型(array)
 ```js
 let arr2: number[] = [4,5,6];
 let arr3: Array<number> = [7,8,9];
 ```
+
 ### 5、元组类型(tuple)
 - 在 TypeScript 的基础类型中，元组（ Tuple ）表示一个已知数量和类型的数组
-
 ```js
 let people:[string,number] = ['jeamn',5];
 people[0].length;
 people[1].toFixed(2);
 ```
+
 ### 6、枚举类型(enum)
 - 事先考虑某一个变量的所有的可能的值，尽量用自然语言中的单词表示它的每一个值
 - 比如性别、月份、星期、颜色、单位、学历
-
 #### （1）普通枚举
 ```js
 enum Gender{
@@ -82,6 +85,7 @@ enum Week{
 }
 console.log(`今天是星期${Week.MONDAY}`);
 ```
+
 #### （2）常数枚举
 - 常数枚举与普通枚举的区别是，它会在编译阶段被删除，并且不能包含计算成员。假如包含了计算成员，则会在编译阶段报错
 
@@ -97,6 +101,7 @@ let myColors = [Colors.Red, Colors.Yellow, Colors.Blue];
 ```js
 const enum Color {Red, Yellow, Blue = "blue".length};
 ```
+
 ### 7、任意类型(any)
 - any就是可以赋值给任意类型
 - 第三方库没有提供类型文件时可以使用any
@@ -111,6 +116,7 @@ root.style.color='red';
 let root:(HTMLElement|null)=document.getElementById('root');
 root!.style.color='red';//非空断言操作符
 ```
+
 ### 8、null 和 undefined
 - null 和 undefined 是其它类型的子类型，可以赋值给其它类型，如数字类型，此时，赋值后的类型会变成 null 或 undefined
 - strictNullChecks 参数用于新的严格空检查模式,在严格空检查模式下， null 和 undefined 值都不属于任何一个类型，它们只能赋值给自己这种类型或者 any
@@ -126,6 +132,7 @@ y = 1;
 y = undefined;   
 y = null;
 ```
+
 ### 9、void 类型
 - void 表示没有任何类型
 - 当一个函数没有返回值时，TS 会认为它的返回值是 void 类型。
@@ -139,6 +146,7 @@ function greeting(name:string):void {
     //return undefined;
 }
 ```
+
 ### 10、never类型
 - never是其它类型(null undefined)的子类型，代表不会出现的值
 #### (1)作为不会返回（ return ）的函数的返回值类型
@@ -160,6 +168,7 @@ function infiniteLoop(): never {
     while (true) {}
 }
 ```
+
 #### (2)strictNullChecks
 - 在 TS 中， null 和 undefined 是任何类型的有效值，所以无法正确地检测它们是否被错误地使用。于是 TS 引入了 --strictNullChecks 这一种检查模式
 - 由于引入了 --strictNullChecks ，在这一模式下，null 和 undefined 能被检测到。所以 TS 需要一种新的底部类型（ bottom type ）。所以就引入了 never。
@@ -177,6 +186,7 @@ function fn(x: number | string) {
   }
 }
 ```
+
 #### (3)never 和 void 的区别
 - void 可以被赋值为 null 和 undefined的类型。 never 则是一个不包含值的类型。
 - 拥有 void 返回值类型的函数能正常运行。拥有 never 返回值类型的函数无法正常返回，无法终止，或会抛出异常。
@@ -255,6 +265,7 @@ function hello(name:string):void {
 }
 hello('jeamn');
 ```
+
 ### 2、函数表达式
 - 定义函数类型
 
@@ -264,6 +275,7 @@ let getUsername:GetUsernameFunction = function(firstName,lastName){
   return firstName + lastName;
 }
 ```
+
 ### 3、没有返回值
 ```js
 let hello2 = function (name:string):void {
@@ -272,6 +284,7 @@ let hello2 = function (name:string):void {
 }
 hello2('jeamn');
 ```
+
 ### 4、可选参数
 - 在 TS 中函数的形参和实参必须一样，不一样就要配置可选参数,而且必须是最后一个参数
 
@@ -281,6 +294,7 @@ function print(name:string,age?:number):void {
 }
 print('jeamn');
 ```
+
 ### 5、默认参数
 ```js
 function ajax(url:string,method:string='GET') {
@@ -288,6 +302,7 @@ function ajax(url:string,method:string='GET') {
 }
 ajax('/users');
 ```
+
 ### 6、剩余参数
 ```js
 function sum(...numbers:number[]) {
@@ -295,6 +310,7 @@ function sum(...numbers:number[]) {
 }
 console.log(sum(1,2,3));
 ```
+
 ### 7、函数重载
 - 在Java中的重载，指的是两个或者两个以上的同名函数，参数不一样
 - 在TypeScript中，表现为给同一个函数提供多个函数类型定义
