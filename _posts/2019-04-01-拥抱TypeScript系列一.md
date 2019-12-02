@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      从 vue 双向数据绑定到数组更新机制
+title:      拥抱TypeScript系列一
 subtitle:   基本概念、安装编译、数据类型、函数
 date:       2019-04-01
 author:     Jeamn
@@ -57,6 +57,7 @@ let arr3: Array<number> = [7,8,9];
 ```
 ### 5、元组类型(tuple)
 - 在 TypeScript 的基础类型中，元组（ Tuple ）表示一个已知数量和类型的数组
+
 ```js
 let people:[string,number] = ['jeamn',5];
 people[0].length;
@@ -65,6 +66,7 @@ people[1].toFixed(2);
 ### 6、枚举类型(enum)
 - 事先考虑某一个变量的所有的可能的值，尽量用自然语言中的单词表示它的每一个值
 - 比如性别、月份、星期、颜色、单位、学历
+
 #### （1）普通枚举
 ```js
 enum Gender{
@@ -82,6 +84,7 @@ console.log(`今天是星期${Week.MONDAY}`);
 ```
 #### （2）常数枚举
 - 常数枚举与普通枚举的区别是，它会在编译阶段被删除，并且不能包含计算成员。假如包含了计算成员，则会在编译阶段报错
+
 ```js
 const enum Colors {
     Red,
@@ -99,6 +102,7 @@ const enum Color {Red, Yellow, Blue = "blue".length};
 - 第三方库没有提供类型文件时可以使用any
 - 类型转换遇到困难时
 - 数据结构太复杂难以定义
+
 ```js
 let root:any=document.getElementById('root');
 root.style.color='red';
@@ -110,6 +114,7 @@ root!.style.color='red';//非空断言操作符
 ### 8、null 和 undefined
 - null 和 undefined 是其它类型的子类型，可以赋值给其它类型，如数字类型，此时，赋值后的类型会变成 null 或 undefined
 - strictNullChecks 参数用于新的严格空检查模式,在严格空检查模式下， null 和 undefined 值都不属于任何一个类型，它们只能赋值给自己这种类型或者 any
+
 ```js
 let x: number;
 x = 1;
@@ -124,6 +129,7 @@ y = null;
 ### 9、void 类型
 - void 表示没有任何类型
 - 当一个函数没有返回值时，TS 会认为它的返回值是 void 类型。
+
 ```js
 function greeting(name:string):void {
     console.log('hello',name);
@@ -136,6 +142,7 @@ function greeting(name:string):void {
 ### 10、never类型
 - never是其它类型(null undefined)的子类型，代表不会出现的值
 #### (1)作为不会返回（ return ）的函数的返回值类型
+
 ```js
 // 返回never的函数 必须存在 无法达到（ unreachable ） 的终点
 function error(message: string): never {
@@ -156,6 +163,7 @@ function infiniteLoop(): never {
 #### (2)strictNullChecks
 - 在 TS 中， null 和 undefined 是任何类型的有效值，所以无法正确地检测它们是否被错误地使用。于是 TS 引入了 --strictNullChecks 这一种检查模式
 - 由于引入了 --strictNullChecks ，在这一模式下，null 和 undefined 能被检测到。所以 TS 需要一种新的底部类型（ bottom type ）。所以就引入了 never。
+
 ```js
 // Compiled with --strictNullChecks
 function fn(x: number | string) {
@@ -182,6 +190,7 @@ function fn(x: number | string) {
 - JavaScript 的类型分为两种：原始数据类型（Primitive data types）和对象类型（Object types）。
 - 所有的原始数据类型都没有属性（property）
 - 原始数据类型：布尔值、数值、字符串、null、undefined、Symbol
+
 ```js
 let name = 'Jeamn';
 console.log(name.toUpperCase());
@@ -189,6 +198,7 @@ console.log(name.toUpperCase());
 console.log((new String('jeamn')).toUpperCase());
 ```
 - 当调用基本数据类型方法的时候，JavaScript 会在原始数据类型和对象类型之间做一个迅速的强制性切换
+
 ```js
 let isOK: boolean = true; // 编译通过
 let isOK: boolean = Boolean(1) // 编译通过
@@ -198,6 +208,7 @@ let isOK: boolean = new Boolean(1); // 编译失败   期望的 isOK 是一个�
 ### 13、联合类型
 - 联合类型（Union Types）表示取值可以为多种类型中的一种
 - 未赋值时联合类型上只能访问两个类型共有的属性和方法
+
 ```js
 let name: string | number;
 console.log(name.toString());
@@ -212,6 +223,7 @@ export {};
 ### 14、类型断言
 - 类型断言可以将一个联合类型的变量，指定为一个更加具体的类型
 - 不能将联合类型断言为不存在的类型
+
 ```js
 let name: string | number;
 console.log((name as string).length);
@@ -221,6 +233,7 @@ console.log((name as boolean));
 
 ### 15、字面量类型
 - 可以把字符串、数字、布尔值字面量组成一个联合类型
+
 ```js
 type ZType = 1 | 'One'|true;
 let t1:ZType = 1;
@@ -235,6 +248,7 @@ let t3:ZType = true;
 ## 四、函数
 ### 1、函数的定义
 - 可以指定参数的类型和返回值的类型
+
 ```js
 function hello(name:string):void {
     console.log('hello',name);
@@ -243,6 +257,7 @@ hello('jeamn');
 ```
 ### 2、函数表达式
 - 定义函数类型
+
 ```js
 type GetUsernameFunction = (x:string,y:string)=>string;
 let getUsername:GetUsernameFunction = function(firstName,lastName){
@@ -259,6 +274,7 @@ hello2('jeamn');
 ```
 ### 4、可选参数
 - 在 TS 中函数的形参和实参必须一样，不一样就要配置可选参数,而且必须是最后一个参数
+
 ```js
 function print(name:string,age?:number):void {
     console.log(name,age);
@@ -282,6 +298,7 @@ console.log(sum(1,2,3));
 ### 7、函数重载
 - 在Java中的重载，指的是两个或者两个以上的同名函数，参数不一样
 - 在TypeScript中，表现为给同一个函数提供多个函数类型定义
+
 ```js
 let obj: any={};
 function attr(val: string): void;
