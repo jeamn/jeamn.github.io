@@ -1,4 +1,4 @@
-I"��<h2 id="一什么是-react">一、什么是 React</h2>
+I"Y�<h2 id="一什么是-react">一、什么是 React</h2>
 <ul>
   <li>React 是一个用于构建用户界面的 JavaScript 库，核心专注于视图层，目的实现组件化开发</li>
 </ul>
@@ -28,7 +28,7 @@
 <h3 id="1什么是-jsx">1、什么是 JSX：</h3>
 <p>JSX 是一种 JS 和 HTML 混合的语法，将组件的结构、数据和样式有聚合在一起定义组件，JSX 语法会被 babel 编译成 createElement 语法，即：</p>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">h1</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">title</span><span class="dl">"</span> <span class="nx">style</span><span class="o">=&gt;</span>
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">h1</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">title</span><span class="dl">"</span> <span class="nx">style</span><span class="o">=&gt;</span>
     <span class="nx">Hello</span> <span class="o">&lt;</span><span class="nx">i</span> <span class="nx">id</span><span class="o">=</span><span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Jeamn</span><span class="o">&lt;</span><span class="sr">/i</span><span class="err">&gt;
 </span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
 </span></code></pre></div></div>
@@ -66,7 +66,7 @@
 <h3 id="5更新机制">5、更新机制</h3>
 <ul>
   <li>React 只会更新必要的部分</li>
-  <li>ReactDOM 首先会比较元素内容先后的不同，在渲染过程中只会更新了改变的部分</li>
+  <li>ReactDOM 首先会比较元素内容先后的不同，在渲染过程中只会更新改变了的部分</li>
   <li>即使每秒都创建了一个新元素，ReactDOM 也只会更新渲染文本节点中发生变化的内容</li>
 </ul>
 
@@ -98,7 +98,7 @@
 <h3 id="4props-的只读性">4、props 的只读性</h3>
 <ul>
   <li>无论是使用函数还是类来声明一个组件，它绝不能修改自己的 props</li>
-  <li>所有的 React 组件都必须像春函数那样使用它们的 props</li>
+  <li>所有的 React 组件都必须像纯函数那样使用它们的 props</li>
   <li>纯函数特点：不改变入参、不改变外界变量值</li>
 </ul>
 
@@ -1070,4 +1070,8 @@
     <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">)</span>
 <span class="p">);</span>
 </code></pre></div></div>
+
+<p><strong><em>借鉴的文档：</em></strong></p>
+
+<p><a href="https://zh-hans.reactjs.org/docs">React 官方教程</a></p>
 :ET
