@@ -4,7 +4,7 @@ SEOTitle: Jeamn的博客 | Jeamn Blog
 header-img: img/post-bg-rwd.jpg
 email: jeamnchan@gmail.com
 description: "Every failure is leading towards success."
-keyword: "Jeamn Blog, Jeamn的博客, Jeamn, jingming, 镜明"
+keyword: "Jeamn Blog, Jeamn的博客, Jeamn, jingming"
 url: "http://jeamn.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
 github_repo: "https://github.com/jeamn/jeamn.github.io.git" # you code repository
