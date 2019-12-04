@@ -1,12 +1,12 @@
-I"�~<h2 id="一vuejs-的源码目录">一、Vue.js 的源码目录</h2>
+I"�y<h2 id="一vuejs-的源码目录">一、Vue.js 的源码目录</h2>
 <p>Vue.js 源码的目录主要是放在 src 目录下</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">src</span>
-<span class="err">├──</span> <span class="nx">compiler</span>        <span class="err">#</span> <span class="err">编译相关（包含编译相关的代码，将模板解析成</span> <span class="nx">ast</span> <span class="err">语法树，</span><span class="nx">ast</span> <span class="err">优化，代码生成等）</span>
-<span class="err">├──</span> <span class="nx">core</span>            <span class="err">#</span> <span class="err">核心代码（包含内置组件、全局</span><span class="nx">API</span><span class="err">封装、</span><span class="nx">Vue</span><span class="err">实例化、观察者、虚拟</span><span class="nx">DOM</span><span class="err">、工具函数等）</span>
-<span class="err">├──</span> <span class="nx">platforms</span>       <span class="err">#</span> <span class="err">不同平台（</span><span class="nx">Vue</span> <span class="err">框架是跨平台的，可以打包成</span> <span class="nx">web</span> <span class="err">和</span> <span class="nx">weex</span> <span class="err">运行的</span> <span class="nx">vue</span><span class="p">.</span><span class="nx">js</span><span class="err">）</span>
-<span class="err">├──</span> <span class="nx">server</span>          <span class="err">#</span> <span class="err">服务端渲染（运行在服务器端的</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">js</span><span class="err">代码，把组件渲染为服务端的</span> <span class="nx">HTML</span><span class="err">）</span>
-<span class="err">├──</span> <span class="nx">sfc</span>             <span class="err">#</span> <span class="p">.</span><span class="nx">vue</span> <span class="err">文件内容（解析为</span> <span class="nx">JavaScript</span> <span class="err">对象）</span>
-<span class="err">├──</span> <span class="nx">shared</span>          <span class="err">#</span> <span class="err">共享代码（可以给客户端和服务端的</span> <span class="nx">Vue</span><span class="p">.</span><span class="nx">js</span> <span class="err">共享）</span>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>src
+├── compiler        # 编译相关（包含编译相关的代码，将模板解析成 ast 语法树，ast 优化，代码生成等）
+├── core            # 核心代码（包含内置组件、全局API封装、Vue实例化、观察者、虚拟DOM、工具函数等）
+├── platforms       # 不同平台（Vue 框架是跨平台的，可以打包成 web 和 weex 运行的 vue.js）
+├── server          # 服务端渲染（运行在服务器端的 Node.js代码，把组件渲染为服务端的 HTML）
+├── sfc             # .vue 文件内容（解析为 JavaScript 对象）
+├── shared          # 共享代码（可以给客户端和服务端的 Vue.js 共享）
 </code></pre></div></div>
 
 <h2 id="二数据驱动的思想">二、数据驱动的思想</h2>
@@ -173,7 +173,7 @@ Vue.js 让我们只需要关系视图层和模型层，vm 则是 Vue.js 的灵�
 
 <p>可以看出，<code class="highlighter-rouge">Vue</code> 初始化做了以下几件事：</p>
 <h3 id="1初始化及挂载">1、初始化及挂载</h3>
-<p>在 <code class="highlighter-rouge">new Vue()</code> 之后，<code class="highlighter-rouge">Vue</code> 会调用 <code class="highlighter-rouge">_init</code> 函数进行初始化，会初始化<code class="highlighter-rouge">生命周期</code>、<code class="highlighter-rouge">事件</code>、<code class="highlighter-rouge">props</code>、<code class="highlighter-rouge">methods</code>、<code class="highlighter-rouge">data</code>、<code class="highlighter-rouge">computed</code> 与 <code class="highlighter-rouge">watch</code> 等，data函数中返回的对象的属性，会通过 <code class="highlighter-rouge">Object.defineProperty</code> 设置 <code class="highlighter-rouge">setter</code> 和 <code class="highlighter-rouge">getter</code> 函数，用来实现 <code class="highlighter-rouge">「响应式」</code> 和 <code class="highlighter-rouge">「依赖收集」</code>，初始化之后调用 <code class="highlighter-rouge">$mount</code>会挂载组件。</p>
+<p>在 <code class="highlighter-rouge">new Vue()</code> 之后，<code class="highlighter-rouge">Vue</code> 会调用 <code class="highlighter-rouge">_init</code> 函数进行初始化，会初始化<code class="highlighter-rouge">生命周期</code>、<code class="highlighter-rouge">事件</code>、<code class="highlighter-rouge">props</code>、<code class="highlighter-rouge">methods</code>、<code class="highlighter-rouge">data</code>、<code class="highlighter-rouge">computed</code> 与 <code class="highlighter-rouge">watch</code> 等，通过 <code class="highlighter-rouge">Object.defineProperty</code> 设置 <code class="highlighter-rouge">setter</code> 和 <code class="highlighter-rouge">getter</code> 函数，用来实现 <code class="highlighter-rouge">「响应式」</code> 和 <code class="highlighter-rouge">「依赖收集」</code>，初始化之后调用 <code class="highlighter-rouge">$mount</code>会挂载组件。</p>
 
 <h3 id="2编译">2、编译</h3>
 <p>首先解释一下什么是编译：</p>
@@ -183,10 +183,10 @@ Vue.js 让我们只需要关系视图层和模型层，vm 则是 Vue.js 的灵�
 
 <p>Vue.js 提供了两个版本，一个是 Runtime Only，一个是 Runtime+Compiler。</p>
 
-<p>我们在使用 Runtime Only 版本的时候，通常需要借助如 webpack 的 vue-loader 工具把 .vue 文件编译成 JavaScript，因为这个过程是在编译阶段做的，所以它只包含运行时的 Vue.js 代码，因此代码体积也会更轻量。
+<p>我们在使用 Runtime Only 版本的时候，通常需要借助如 webpack 的 vue-loader 工具把 .vue 文件编译成 JavaScript，因为这个过程是在编译阶段做的，所以 Runtime Only 版本的代码只包含运行时的 Vue.js 代码，因此代码体积也会更轻量。
 在将 .vue 文件编译成 JavaScript 的编译过程中会将组件中的 template 模板编译为 render 函数，所以我们得到的是 render 函数的版本。所以运行的时候是不带编译的，编译是在离线的时候做的。</p>
 
-<p>我们如果没有对代码做预编译，但又使用了 Vue 的 template 属性并传入一个字符串，则需要在客户端运行 Vue 代码时，编译模板。</p>
+<p>我们如果没有对代码做预编译，但又使用了 Vue 的 template 属性并传入一个字符串，则需要在客户端运行 Vue 代码时，编译模板。即使用 Runtime+Compiler 版本的代码。</p>
 
 <p>虽然我们可以直接给组件编写 render 函数，但一般我们会选择使用单文件组件编写 template 模板，因为这比较简单。</p>
 
@@ -213,7 +213,7 @@ Vue.js 让我们只需要关系视图层和模型层，vm 则是 Vue.js 的灵�
 当响应式数据发生变化的时候，也就是触发了 <code class="highlighter-rouge">setter</code> 时，<code class="highlighter-rouge">setter</code> 会负责通知该数据的订阅者列表里的每一个 <code class="highlighter-rouge">Watcher</code>，告诉它们自己的值改变了，需要重新渲染视图，<code class="highlighter-rouge">Watcher</code> 会调用 <code class="highlighter-rouge">update</code> 来更新视图。</p>
 
 <h3 id="4virtual-dom">4、Virtual DOM</h3>
-<p>render function 会被转化成 VNode 节点，Virtual DOM 实际上就是一棵以 JavaScript 对象作为基础的树，用对象属性来描述节点，是对真实 DOM的抽象。</p>
+<p>render function 会被转化成 VNode 节点，Virtual DOM 实际上就是一棵以 JavaScript 对象作为基础的树，用对象属性来描述节点，是对真实 DOM的抽象，核心定义无非就几个关键属性，标签名、数据、子节点、键值等。Virtual DOM 除了它的数据结构的定义，映射到真实的 DOM 实际上要经历 VNode 的 create、diff、patch 等过程。</p>
 
 <h3 id="5更新视图">5、更新视图</h3>
 <p>在修改一个对象值的时候，会通过 setter -&gt; Watcher -&gt; update 的流程来修改对应的视图，那么最终是如何更新视图的呢？</p>
