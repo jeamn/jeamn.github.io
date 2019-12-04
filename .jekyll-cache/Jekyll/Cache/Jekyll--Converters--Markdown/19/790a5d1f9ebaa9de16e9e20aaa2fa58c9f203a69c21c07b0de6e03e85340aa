@@ -1,0 +1,211 @@
+I"�t<h2 id="一vuejs-的源码目录">一、Vue.js 的源码目录</h2>
+<p>Vue.js 源码的目录主要是放在 src 目录下</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">src</span>
+<span class="err">├──</span> <span class="nx">compiler</span>        <span class="err">#</span> <span class="err">编译相关（包含编译相关的代码，将模板解析成</span> <span class="nx">ast</span> <span class="err">语法树，</span><span class="nx">ast</span> <span class="err">优化，代码生成等）</span>
+<span class="err">├──</span> <span class="nx">core</span>            <span class="err">#</span> <span class="err">核心代码（包含内置组件、全局</span><span class="nx">API</span><span class="err">封装、</span><span class="nx">Vue</span><span class="err">实例化、观察者、虚拟</span><span class="nx">DOM</span><span class="err">、工具函数等）</span>
+<span class="err">├──</span> <span class="nx">platforms</span>       <span class="err">#</span> <span class="err">不同平台（</span><span class="nx">Vue</span> <span class="err">框架是跨平台的，可以打包成</span> <span class="nx">web</span> <span class="err">和</span> <span class="nx">weex</span> <span class="err">运行的</span> <span class="nx">vue</span><span class="p">.</span><span class="nx">js</span><span class="err">）</span>
+<span class="err">├──</span> <span class="nx">server</span>          <span class="err">#</span> <span class="err">服务端渲染（运行在服务器端的</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">js</span><span class="err">代码，把组件渲染为服务端的</span> <span class="nx">HTML</span><span class="err">）</span>
+<span class="err">├──</span> <span class="nx">sfc</span>             <span class="err">#</span> <span class="p">.</span><span class="nx">vue</span> <span class="err">文件内容（解析为</span> <span class="nx">JavaScript</span> <span class="err">对象）</span>
+<span class="err">├──</span> <span class="nx">shared</span>          <span class="err">#</span> <span class="err">共享代码（可以给客户端和服务端的</span> <span class="nx">Vue</span><span class="p">.</span><span class="nx">js</span> <span class="err">共享）</span>
+</code></pre></div></div>
+
+<h2 id="二数据驱动的思想">二、数据驱动的思想</h2>
+<p>数据驱动，指的是使用者无须关心和操作 DOM ，只需要操作数据，通过数据的改变来驱动视图的刷新。
+Vue.js 让我们只需要关系视图层和模型层，vm 则是 Vue.js 的灵魂所在。</p>
+
+<h2 id="三new-vue-发生了什么">三、new Vue 发生了什么？</h2>
+<p>通过源码入口，<code class="highlighter-rouge">src/core/instance/index.js</code>
+我们可以知道，源码定义了一个 Vue 的构造函数，代码如下：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">initMixin</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./init</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">stateMixin</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./state</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">renderMixin</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./render</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">eventsMixin</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./events</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">lifecycleMixin</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./lifecycle</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">warn</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../util/index</span><span class="dl">'</span>
+
+<span class="kd">function</span> <span class="nx">Vue</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span> <span class="o">&amp;&amp;</span>
+    <span class="o">!</span><span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Vue</span><span class="p">)</span>
+  <span class="p">)</span> <span class="p">{</span>
+    <span class="nx">warn</span><span class="p">(</span><span class="dl">'</span><span class="s1">Vue is a constructor and should be called with the `new` keyword</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">initMixin</span><span class="p">(</span><span class="nx">Vue</span><span class="p">)</span>
+<span class="nx">stateMixin</span><span class="p">(</span><span class="nx">Vue</span><span class="p">)</span>
+<span class="nx">eventsMixin</span><span class="p">(</span><span class="nx">Vue</span><span class="p">)</span>
+<span class="nx">lifecycleMixin</span><span class="p">(</span><span class="nx">Vue</span><span class="p">)</span>
+<span class="nx">renderMixin</span><span class="p">(</span><span class="nx">Vue</span><span class="p">)</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">Vue</span>
+</code></pre></div></div>
+<p>从代码中可以看出，只能通过 <code class="highlighter-rouge">new</code> 来初始化，会调用初始化 <code class="highlighter-rouge">_init</code> 方法，该方法在同目录下的 <code class="highlighter-rouge">init.js</code> 下，</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* @flow */</span>
+
+<span class="k">import</span> <span class="nx">config</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../config</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">initProxy</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./proxy</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">initState</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./state</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">initRender</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./render</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">initEvents</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./events</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">mark</span><span class="p">,</span> <span class="nx">measure</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../util/perf</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">initLifecycle</span><span class="p">,</span> <span class="nx">callHook</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./lifecycle</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">initProvide</span><span class="p">,</span> <span class="nx">initInjections</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./inject</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">extend</span><span class="p">,</span> <span class="nx">mergeOptions</span><span class="p">,</span> <span class="nx">formatComponentName</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../util/index</span><span class="dl">'</span>
+
+<span class="kd">let</span> <span class="nx">uid</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">initMixin</span> <span class="p">(</span><span class="nx">Vue</span><span class="p">:</span> <span class="nx">Class</span><span class="o">&lt;</span><span class="nx">Component</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">Vue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">?:</span> <span class="nb">Object</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">vm</span><span class="p">:</span> <span class="nx">Component</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="c1">// a uid</span>
+    <span class="nx">vm</span><span class="p">.</span><span class="nx">_uid</span> <span class="o">=</span> <span class="nx">uid</span><span class="o">++</span>
+
+    <span class="kd">let</span> <span class="nx">startTag</span><span class="p">,</span> <span class="nx">endTag</span>
+    <span class="cm">/* istanbul ignore if */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">performance</span> <span class="o">&amp;&amp;</span> <span class="nx">mark</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">startTag</span> <span class="o">=</span> <span class="s2">`vue-perf-start:</span><span class="p">${</span><span class="nx">vm</span><span class="p">.</span><span class="nx">_uid</span><span class="p">}</span><span class="s2">`</span>
+      <span class="nx">endTag</span> <span class="o">=</span> <span class="s2">`vue-perf-end:</span><span class="p">${</span><span class="nx">vm</span><span class="p">.</span><span class="nx">_uid</span><span class="p">}</span><span class="s2">`</span>
+      <span class="nx">mark</span><span class="p">(</span><span class="nx">startTag</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">// a flag to avoid this being observed</span>
+    <span class="nx">vm</span><span class="p">.</span><span class="nx">_isVue</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="c1">// merge options</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">_isComponent</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// optimize internal component instantiation</span>
+      <span class="c1">// since dynamic options merging is pretty slow, and none of the</span>
+      <span class="c1">// internal component options needs special treatment.</span>
+      <span class="nx">initInternalComponent</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">vm</span><span class="p">.</span><span class="nx">$options</span> <span class="o">=</span> <span class="nx">mergeOptions</span><span class="p">(</span>
+        <span class="nx">resolveConstructorOptions</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="kd">constructor</span><span class="p">),</span>
+        <span class="nx">options</span> <span class="o">||</span> <span class="p">{},</span>
+        <span class="nx">vm</span>
+      <span class="p">)</span>
+    <span class="p">}</span>
+    <span class="cm">/* istanbul ignore else */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">initProxy</span><span class="p">(</span><span class="nx">vm</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">vm</span><span class="p">.</span><span class="nx">_renderProxy</span> <span class="o">=</span> <span class="nx">vm</span>
+    <span class="p">}</span>
+    <span class="c1">// expose real self</span>
+    <span class="nx">vm</span><span class="p">.</span><span class="nx">_self</span> <span class="o">=</span> <span class="nx">vm</span>
+    <span class="nx">initLifecycle</span><span class="p">(</span><span class="nx">vm</span><span class="p">)</span>
+    <span class="nx">initEvents</span><span class="p">(</span><span class="nx">vm</span><span class="p">)</span>
+    <span class="nx">initRender</span><span class="p">(</span><span class="nx">vm</span><span class="p">)</span>
+    <span class="nx">callHook</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="dl">'</span><span class="s1">beforeCreate</span><span class="dl">'</span><span class="p">)</span>
+    <span class="nx">initInjections</span><span class="p">(</span><span class="nx">vm</span><span class="p">)</span> <span class="c1">// resolve injections before data/props</span>
+    <span class="nx">initState</span><span class="p">(</span><span class="nx">vm</span><span class="p">)</span>
+    <span class="nx">initProvide</span><span class="p">(</span><span class="nx">vm</span><span class="p">)</span> <span class="c1">// resolve provide after data/props</span>
+    <span class="nx">callHook</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="dl">'</span><span class="s1">created</span><span class="dl">'</span><span class="p">)</span>
+
+    <span class="cm">/* istanbul ignore if */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">performance</span> <span class="o">&amp;&amp;</span> <span class="nx">mark</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">vm</span><span class="p">.</span><span class="nx">_name</span> <span class="o">=</span> <span class="nx">formatComponentName</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
+      <span class="nx">mark</span><span class="p">(</span><span class="nx">endTag</span><span class="p">)</span>
+      <span class="nx">measure</span><span class="p">(</span><span class="s2">`vue </span><span class="p">${</span><span class="nx">vm</span><span class="p">.</span><span class="nx">_name</span><span class="p">}</span><span class="s2"> init`</span><span class="p">,</span> <span class="nx">startTag</span><span class="p">,</span> <span class="nx">endTag</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">$options</span><span class="p">.</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">vm</span><span class="p">.</span><span class="nx">$mount</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">$options</span><span class="p">.</span><span class="nx">el</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">initInternalComponent</span> <span class="p">(</span><span class="nx">vm</span><span class="p">:</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">options</span><span class="p">:</span> <span class="nx">InternalComponentOptions</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">opts</span> <span class="o">=</span> <span class="nx">vm</span><span class="p">.</span><span class="nx">$options</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="kd">constructor</span><span class="p">.</span><span class="nx">options</span><span class="p">)</span>
+  <span class="c1">// doing this because it's faster than dynamic enumeration.</span>
+  <span class="kd">const</span> <span class="nx">parentVnode</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">_parentVnode</span>
+  <span class="nx">opts</span><span class="p">.</span><span class="nx">parent</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">parent</span>
+  <span class="nx">opts</span><span class="p">.</span><span class="nx">_parentVnode</span> <span class="o">=</span> <span class="nx">parentVnode</span>
+
+  <span class="kd">const</span> <span class="nx">vnodeComponentOptions</span> <span class="o">=</span> <span class="nx">parentVnode</span><span class="p">.</span><span class="nx">componentOptions</span>
+  <span class="nx">opts</span><span class="p">.</span><span class="nx">propsData</span> <span class="o">=</span> <span class="nx">vnodeComponentOptions</span><span class="p">.</span><span class="nx">propsData</span>
+  <span class="nx">opts</span><span class="p">.</span><span class="nx">_parentListeners</span> <span class="o">=</span> <span class="nx">vnodeComponentOptions</span><span class="p">.</span><span class="nx">listeners</span>
+  <span class="nx">opts</span><span class="p">.</span><span class="nx">_renderChildren</span> <span class="o">=</span> <span class="nx">vnodeComponentOptions</span><span class="p">.</span><span class="nx">children</span>
+  <span class="nx">opts</span><span class="p">.</span><span class="nx">_componentTag</span> <span class="o">=</span> <span class="nx">vnodeComponentOptions</span><span class="p">.</span><span class="nx">tag</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">render</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">render</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">render</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">staticRenderFns</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">staticRenderFns</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">resolveConstructorOptions</span> <span class="p">(</span><span class="nx">Ctor</span><span class="p">:</span> <span class="nx">Class</span><span class="o">&lt;</span><span class="nx">Component</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">options</span> <span class="o">=</span> <span class="nx">Ctor</span><span class="p">.</span><span class="nx">options</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">Ctor</span><span class="p">.</span><span class="k">super</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">superOptions</span> <span class="o">=</span> <span class="nx">resolveConstructorOptions</span><span class="p">(</span><span class="nx">Ctor</span><span class="p">.</span><span class="k">super</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">cachedSuperOptions</span> <span class="o">=</span> <span class="nx">Ctor</span><span class="p">.</span><span class="nx">superOptions</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">superOptions</span> <span class="o">!==</span> <span class="nx">cachedSuperOptions</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// super option changed,</span>
+      <span class="c1">// need to resolve new options.</span>
+      <span class="nx">Ctor</span><span class="p">.</span><span class="nx">superOptions</span> <span class="o">=</span> <span class="nx">superOptions</span>
+      <span class="c1">// check if there are any late-modified/attached options (#4976)</span>
+      <span class="kd">const</span> <span class="nx">modifiedOptions</span> <span class="o">=</span> <span class="nx">resolveModifiedOptions</span><span class="p">(</span><span class="nx">Ctor</span><span class="p">)</span>
+      <span class="c1">// update base extend options</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">modifiedOptions</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">extend</span><span class="p">(</span><span class="nx">Ctor</span><span class="p">.</span><span class="nx">extendOptions</span><span class="p">,</span> <span class="nx">modifiedOptions</span><span class="p">)</span>
+      <span class="p">}</span>
+      <span class="nx">options</span> <span class="o">=</span> <span class="nx">Ctor</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">mergeOptions</span><span class="p">(</span><span class="nx">superOptions</span><span class="p">,</span> <span class="nx">Ctor</span><span class="p">.</span><span class="nx">extendOptions</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">components</span><span class="p">[</span><span class="nx">options</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Ctor</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">options</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">resolveModifiedOptions</span> <span class="p">(</span><span class="nx">Ctor</span><span class="p">:</span> <span class="nx">Class</span><span class="o">&lt;</span><span class="nx">Component</span><span class="o">&gt;</span><span class="p">):</span> <span class="p">?</span><span class="nb">Object</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">modified</span>
+  <span class="kd">const</span> <span class="nx">latest</span> <span class="o">=</span> <span class="nx">Ctor</span><span class="p">.</span><span class="nx">options</span>
+  <span class="kd">const</span> <span class="nx">sealed</span> <span class="o">=</span> <span class="nx">Ctor</span><span class="p">.</span><span class="nx">sealedOptions</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">latest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">latest</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">sealed</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">modified</span><span class="p">)</span> <span class="nx">modified</span> <span class="o">=</span> <span class="p">{}</span>
+      <span class="nx">modified</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">latest</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">modified</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>可以看出，<code class="highlighter-rouge">Vue</code> 初始化做了以下几件事：</p>
+<h3 id="1初始化及挂载">1、初始化及挂载</h3>
+<p>在 <code class="highlighter-rouge">new Vue()</code> 之后，<code class="highlighter-rouge">Vue</code> 会调用 <code class="highlighter-rouge">_init</code> 函数进行初始化，会初始化<code class="highlighter-rouge">生命周期</code>、<code class="highlighter-rouge">事件</code>、<code class="highlighter-rouge">props</code>、<code class="highlighter-rouge">methods</code>、<code class="highlighter-rouge">data</code>、<code class="highlighter-rouge">computed</code> 与 <code class="highlighter-rouge">watch</code> 等，data函数中返回的对象的属性，会通过 <code class="highlighter-rouge">Object.defineProperty</code> 设置 <code class="highlighter-rouge">setter</code> 和 <code class="highlighter-rouge">getter</code> 函数，用来实现 <code class="highlighter-rouge">「响应式」</code> 和 <code class="highlighter-rouge">「依赖收集」</code>，初始化之后调用 <code class="highlighter-rouge">$mount</code>会挂载组件。</p>
+
+<h3 id="2编译">2、编译</h3>
+<p>首先解释一下什么是编译：</p>
+<blockquote>
+  <p>将 template 模板转换成 render 函数，这个过程我们称为编译。</p>
+</blockquote>
+
+<p>Vue.js 提供了两个版本，一个是 Runtime Only，一个是 Runtime+Compiler。</p>
+
+<p>我们在使用 Runtime Only 版本的时候，通常需要借助如 webpack 的 vue-loader 工具把 .vue 文件编译成 JavaScript，因为这个过程是在编译阶段做的，所以它只包含运行时的 Vue.js 代码，因此代码体积也会更轻量。
+在将 .vue 文件编译成 JavaScript 的编译过程中会将组件中的 template 模板编译为 render 函数，所以我们得到的是 render 函数的版本。所以运行的时候是不带编译的，编译是在离线的时候做的。</p>
+
+<p>我们如果没有对代码做预编译，但又使用了 Vue 的 template 属性并传入一个字符串，则需要在客户端运行 Vue 代码时，编译模板。</p>
+
+<p>虽然我们可以直接给组件编写 render 函数，但一般我们会选择使用单文件组件编写 template 模板，因为这比较简单。</p>
+
+<p>所以，如果代码是运行时编译，即不存在 render function 但是又有 template 的情况，则需要进行 <code class="highlighter-rouge">「编译」</code> 步骤。具体的编译步骤会在另外的系列博客进行分析。</p>
+
+<p>complile 编译可以分成 <code class="highlighter-rouge">parse</code>、<code class="highlighter-rouge">optimize</code>与<code class="highlighter-rouge">generate</code>三个阶段，最终的目的是得到 render function。</p>
+<h4 id="1parse">（1）parse</h4>
+<p>parse 会利用正则等方式解析模板中的指令、class、style等数据，形成 AST 语法树</p>
+<h4 id="2optimize">（2）optimize</h4>
+<p><code class="highlighter-rouge">optimize</code> 的主要作用是标记 <code class="highlighter-rouge">static</code> 静态节点，这是 Vue 在编译过程中的一处优化，后面当 <code class="highlighter-rouge">update</code>更新界面时，会有一个 <code class="highlighter-rouge">patch</code> 过程，diff 算法会直接跳过静态节点，从而减少了比较的过程，优化了 <code class="highlighter-rouge">patch</code> 的性能。</p>
+<h4 id="3generate">（3）generate</h4>
+<p><code class="highlighter-rouge">generate</code>是将 AST 转化为 render function 字符串的过程，得到 render 的字符串以及 staticRenderFns 字符串。</p>
+
+<p>在经历编译的是三个阶段后，组件中就会存在渲染 VNode 所需的 render function 了。</p>
+
+<h3 id="3响应式">3、响应式</h3>
+
+<p><strong><em>参考：</em></strong></p>
+
+<p><a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a></p>
+
+:ET

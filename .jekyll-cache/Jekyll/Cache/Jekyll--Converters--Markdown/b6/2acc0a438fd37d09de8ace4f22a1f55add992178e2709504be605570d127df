@@ -54,7 +54,7 @@
 
 <h3 id="3jsx-属性">3、JSX 属性</h3>
 <ul>
-  <li>属性中不能包含关键字，如 calss 要写成 className，for 要写成 htmlFor，属性名要采用驼峰命名法</li>
+  <li>属性中不能包含关键字，如 class 要写成 className，for 要写成 htmlFor，属性名要采用驼峰命名法</li>
 </ul>
 
 <h3 id="4更新元素渲染">4、更新元素渲染</h3>
