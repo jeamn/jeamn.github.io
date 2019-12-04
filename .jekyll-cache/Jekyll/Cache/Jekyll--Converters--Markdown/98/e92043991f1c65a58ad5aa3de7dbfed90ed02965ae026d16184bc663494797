@@ -1,4 +1,4 @@
-I"�t<h2 id="一vuejs-的源码目录">一、Vue.js 的源码目录</h2>
+I"�~<h2 id="一vuejs-的源码目录">一、Vue.js 的源码目录</h2>
 <p>Vue.js 源码的目录主要是放在 src 目录下</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">src</span>
 <span class="err">├──</span> <span class="nx">compiler</span>        <span class="err">#</span> <span class="err">编译相关（包含编译相关的代码，将模板解析成</span> <span class="nx">ast</span> <span class="err">语法树，</span><span class="nx">ast</span> <span class="err">优化，代码生成等）</span>
@@ -203,6 +203,22 @@ Vue.js 让我们只需要关系视图层和模型层，vm 则是 Vue.js 的灵�
 <p>在经历编译的是三个阶段后，组件中就会存在渲染 VNode 所需的 render function 了。</p>
 
 <h3 id="3响应式">3、响应式</h3>
+<p>组件渲染函数被执行前，会对数据层的数据进行响应式化。响应式化大致就是使用 <code class="highlighter-rouge">Object.defineProperty</code> 把数据转为 <code class="highlighter-rouge">getter/setter</code>，并为每个数据添加一个订阅者列表 subs 的过程。这个列表是 <code class="highlighter-rouge">getter</code> 闭包中的属性，将会记录所有依赖这个数据的组件。</p>
+
+<p>也就是说，响应式化后的数据相当于发布者。</p>
+
+<p>每个组件都对应一个 <code class="highlighter-rouge">Watcher</code> 订阅者。当每个组件的渲染函数被执行时，都会将本组件的 <code class="highlighter-rouge">Watcher</code> 放到自己所依赖的响应式数据的订阅者列表里，这就相当于完成了订阅，一般这个过程被称为 <code class="highlighter-rouge">「依赖收集」</code> 。 <code class="highlighter-rouge">「依赖收集」</code> 的目的是将观察者 <code class="highlighter-rouge">Watcher</code> 对象存放到当前闭包中的订阅者 Dep 的 subs 中。</p>
+
+<p>组件渲染函数执行的结果是生成虚拟 DOM 树，这个树生成后将被映射为浏览器上的真实的 DOM 树，也就是用户所看到的页面视图。
+当响应式数据发生变化的时候，也就是触发了 <code class="highlighter-rouge">setter</code> 时，<code class="highlighter-rouge">setter</code> 会负责通知该数据的订阅者列表里的每一个 <code class="highlighter-rouge">Watcher</code>，告诉它们自己的值改变了，需要重新渲染视图，<code class="highlighter-rouge">Watcher</code> 会调用 <code class="highlighter-rouge">update</code> 来更新视图。</p>
+
+<h3 id="4virtual-dom">4、Virtual DOM</h3>
+<p>render function 会被转化成 VNode 节点，Virtual DOM 实际上就是一棵以 JavaScript 对象作为基础的树，用对象属性来描述节点，是对真实 DOM的抽象。</p>
+
+<h3 id="5更新视图">5、更新视图</h3>
+<p>在修改一个对象值的时候，会通过 setter -&gt; Watcher -&gt; update 的流程来修改对应的视图，那么最终是如何更新视图的呢？</p>
+
+<p>当数据变化后，执行 render function 就可以得到一个新的 VNode 节点，我们会将新的 VNode 与旧的 VNode 一起传入 <code class="highlighter-rouge">patch</code> 进行比较，经过 diff 算法得出它们的差异。最后我们只需要将这些差异的对应 DOM 进行修改即可。</p>
 
 <p><strong><em>参考：</em></strong></p>
 
