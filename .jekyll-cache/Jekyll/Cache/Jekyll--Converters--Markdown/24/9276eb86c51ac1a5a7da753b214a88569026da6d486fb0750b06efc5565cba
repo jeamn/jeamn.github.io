@@ -1,11 +1,11 @@
-I"�<h2 id="一响应式对象">一、响应式对象</h2>
-<p>Vue.js 基于 ES5 的 Object.defineProperty 属性，在 init 的阶段会进行初始化，对数据进行 <strong>响应式化</strong>，实现响应式系统。</p>
+I"v�<h2 id="一响应式对象">一、响应式对象</h2>
+<p>Vue.js 基于 ES5 的 <strong>Object.defineProperty</strong> 属性，在 init 的阶段会进行初始化，对数据进行 <strong>响应式化</strong>，实现响应式系统。</p>
 
 <p>Object.defineProperty 方法会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性， 并返回这个对象，</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
-    obj: 目标对象
-    prop: 需要操作的目标对象的属性名
-    descriptor: 描述符
+    obj: 目标对象；
+    prop: 需要操作的目标对象的属性名；
+    descriptor: 描述符；
     
     return value 传入对象
 */</span>
@@ -39,7 +39,7 @@
   <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
-<p>initState 方法主要是对 props、methods、data、computed 和 wathcer 等属性做了初始化操作。这里先看下 props 和 data，</p>
+<p>initState 方法主要是对 <code class="highlighter-rouge">props</code>、<code class="highlighter-rouge">methods</code>、<code class="highlighter-rouge">data</code>、<code class="highlighter-rouge">computed</code> 和 <code class="highlighter-rouge">wathcer</code> 等属性做了初始化操作。这里先看下 props 和 data，</p>
 <ul>
   <li>initProps</li>
 </ul>
@@ -142,12 +142,12 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>data 的初始化主要过程也是做两件事，一个是对定义 data 函数返回对象的遍历，通过 proxy 把每一个值 vm._data.xxx 都代理到 vm.xxx 上；另一个是调用 observe 方法观测整个 data 的变化，把 data 也变成响应式，可以通过 vm._data.xxx 访问到定义 data 返回函数中对应的属性。</p>
+<p>data 的初始化主要过程也是做两件事，一个是对定义 data 函数返回的对象的遍历，通过 proxy 把每一个值 vm._data.xxx 都代理到 vm.xxx 上；另一个是调用 observe 方法观测整个 data 的变化，把 data 也变成响应式，可以通过 vm._data.xxx 访问到定义 data 返回函数中对应的属性。</p>
 
 <p>可以看到，无论是 props 或是 data 的初始化都是把它们变成响应式对象。</p>
 
 <h3 id="2proxy">2、proxy</h3>
-<p>首先介绍一下代理，代理的作用是把 props 和 data 上的属性代理到 vm 实例上，这也就是为什么比如我们定义了如下 props，却可以通过 vm 实例访问到它。</p>
+<p>首先介绍一下代理，代理的作用是把 <code class="highlighter-rouge">props</code> 和 <code class="highlighter-rouge">data</code> 上的属性代理到 <code class="highlighter-rouge">vm</code> 实例上，这也就是为什么比如我们定义了如下 props，却可以通过 vm 实例访问到它。</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">comP</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">props</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">msg</span><span class="p">:</span> <span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span>
@@ -182,7 +182,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <p>proxy 方法的实现很简单，通过 Object.defineProperty 把 target[sourceKey][key] 的读写变成了对 target[key] 的读写。所以对于 props 而言，对 vm._props.xxx 的读写变成了 vm.xxx 的读写，而对于 vm._props.xxx 我们可以访问到定义在 props 中的属性，所以我们就可以通过 vm.xxx 访问到定义在 props 中的 xxx 属性了。同理，对于 data 而言，对 vm._data.xxxx 的读写变成了对 vm.xxxx 的读写，而对于 vm._data.xxxx 我们可以访问到定义在 data 函数返回对象中的属性，所以我们就可以通过 vm.xxxx 访问到定义在 data 函数返回对象中的 xxxx 属性了。</p>
 
 <h3 id="3observe">3、observe</h3>
-<p>observe 的功能就是用来监测数据的变化，它的定义在 src/core/observer/index.js 中：</p>
+<p><code class="highlighter-rouge">observe</code> 的功能就是用来监测数据的变化，它的定义在 <code class="highlighter-rouge">src/core/observer/index.js</code> 中：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Attempt to create an observer instance for a value,
  * returns the new observer if successfully observed,
@@ -214,7 +214,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <p>observe 方法的作用就是给非 VNode 的对象类型数据添加一个 Observer，如果已经添加过则直接返回，否则在满足一定条件下去实例化一个 Observer 对象实例。接下来看一下 Observer 的作用。</p>
 
 <h3 id="4observer">4、Observer</h3>
-<p>Observer 是一个类，它的作用是给对象的属性添加 getter 和 setter，用于依赖收集和派发更新：</p>
+<p><code class="highlighter-rouge">Observer</code> 是一个类，它的作用是给对象的属性添加 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>，用于依赖收集和派发更新：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Observer class that is attached to each observed
  * object. Once attached, the observer converts the target
@@ -266,7 +266,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>Observer 的构造函数逻辑很简单，首先实例化 Dep 对象，这块稍后会介绍，接着通过执行 def 函数把自身实例添加到数据对象 value 的 <strong>ob</strong> 属性上，def 的定义在 src/core/util/lang.js 中：</p>
+<p>Observer 的构造函数逻辑很简单，首先实例化 Dep 对象，这块稍后会介绍，接着通过执行 def 函数把自身实例添加到数据对象 value 的 <code class="highlighter-rouge">__ob__</code> 属性上，def 的定义在 src/core/util/lang.js 中：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Define a property.
  */</span>
@@ -280,12 +280,12 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>def 函数是一个非常简单的Object.defineProperty 的封装，这就是为什么我在开发中输出 data 上对象类型的数据，会发现该对象多了一个 <strong>ob</strong> 的属性。</p>
+<p>def 函数是一个非常简单的Object.defineProperty 的封装，这就是为什么我在开发中输出 data 上对象类型的数据，会发现该对象多了一个 <code class="highlighter-rouge">__ob__</code> 的属性。</p>
 
 <p>回到 Observer 的构造函数，接下来会对 value 做判断，对于数组会调用 observeArray 方法，否则对纯对象调用 walk 方法。可以看到 observeArray 是遍历数组再次调用 observe 方法，而 walk 方法是遍历对象的 key 调用 defineReactive 方法，那么我们来看一下这个方法是做什么的。</p>
 
 <h3 id="5definereactive">5、defineReactive</h3>
-<p>defineReactive 的功能就是定义一个响应式对象，给对象动态添加 getter 和 setter，它的定义在 src/core/observer/index.js 中：</p>
+<p><code class="highlighter-rouge">defineReactive</code> 的功能就是定义一个响应式对象，给对象动态添加 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>，它的定义在 <code class="highlighter-rouge">src/core/observer/index.js</code> 中：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Define a reactive property on an Object.
  */</span>
@@ -351,6 +351,53 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <span class="p">}</span>
 </code></pre></div></div>
 <p>defineReactive 函数最开始初始化 Dep 对象的实例，接着拿到 obj 的属性描述符，然后对子对象递归调用 observe 方法，这样就保证了无论 obj 的结构多复杂，它的所有子属性也能变成响应式的对象，这样我们访问或修改 obj 中一个嵌套较深的属性，也能触发 getter 和 setter。最后利用 Object.defineProperty 去给 obj 的属性 key 添加 getter 和 setter。</p>
+
+<p>在添加 setter 的过程中，会触发 def 实例的 notify 方法，这个方法就是实现通知订阅该数据的所有订阅者执行他们的 update 方法去更新数据，
+这个方法定义在 <code class="highlighter-rouge">src/core/observer/dep.js</code> 中</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/**
+ * A dep is an observable that can have multiple
+ * directives subscribing to it.
+ */
+export default class Dep {
+  static target: ?Watcher;
+  id: number;
+  subs: Array&lt;Watcher&gt;;
+
+  constructor () {
+    this.id = uid++
+    this.subs = []
+  }
+
+  addSub (sub: Watcher) {
+    this.subs.push(sub)
+  }
+
+  removeSub (sub: Watcher) {
+    remove(this.subs, sub)
+  }
+
+  depend () {
+    if (Dep.target) {
+      Dep.target.addDep(this)
+    }
+  }
+
+  notify () {
+    // stabilize the subscriber list first
+    const subs = this.subs.slice()
+    if (process.env.NODE_ENV !== 'production' &amp;&amp; !config.async) {
+      // subs aren't sorted in scheduler if not running async
+      // we need to sort them now to make sure they fire in correct
+      // order
+      subs.sort((a, b) =&gt; a.id - b.id)
+    }
+    for (let i = 0, l = subs.length; i &lt; l; i++) {
+      subs[i].update()
+    }
+  }
+}
+</code></pre></div></div>
+<p>到此，Vue.js 的响应式原理差不多了解得七七八八，接下来用一个简单实例梳理一下整个思路：</p>
 
 <h3 id="6一个简单的例子理解响应式对象">6、一个简单的例子理解响应式对象</h3>
 <p>首先定义一个函数表示视图刷新</p>

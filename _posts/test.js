@@ -36,4 +36,4 @@ let o = new Vue({
         test: "I am test."
     }
 });
-o._data.test = "hello,world.";  /* 视图更新啦～ */
+o._data.test = "hello ,world.";  /* 视图更新啦～ */
