@@ -1,0 +1,9 @@
+I"�<h2 id="配发更新">配发更新</h2>
+<p>响应式数据依赖收集的目的就是为了当我们修改数据的时候，可以对相关的依赖派发更新。派发更新的逻辑在 <code class="highlighter-rouge">setter</code> 中，</p>
+
+<h3 id="1">1、</h3>
+
+<p><strong><em>参考：</em></strong>
+<a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a>
+<a href="https://github.com/vuejs/vue">Vue 源码</a></p>
+:ET

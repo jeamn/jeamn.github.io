@@ -1,7 +1,7 @@
-I"v�<h2 id="一响应式对象">一、响应式对象</h2>
+I"�<h2 id="响应式对象">响应式对象</h2>
 <p>Vue.js 基于 ES5 的 <strong>Object.defineProperty</strong> 属性，在 init 的阶段会进行初始化，对数据进行 <strong>响应式化</strong>，实现响应式系统。</p>
 
-<p>Object.defineProperty 方法会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性， 并返回这个对象，</p>
+<p><strong>Object.defineProperty</strong> 方法会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性， 并返回这个对象，</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
     obj: 目标对象；
     prop: 需要操作的目标对象的属性名；
@@ -93,7 +93,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>props 的初始化主要过程，就是遍历定义的 props 配置。遍历的过程主要做两件事情：一个是调用 defineReactive 方法把每个 prop 对应的值变成响应式，可以通过 vm._props.xxx 访问到定义 props 中对应的属性。另一个是通过 proxy 把 vm._props.xxx 的访问代理到 vm.xxx 上。</p>
+<p><code class="highlighter-rouge">props</code> 的初始化主要过程，就是遍历定义的 <code class="highlighter-rouge">props</code> 配置。遍历的过程主要做两件事情：一个是调用 <code class="highlighter-rouge">defineReactive</code> 方法把每个 <code class="highlighter-rouge">prop</code> 对应的值变成响应式，可以通过 vm._props.xxx 访问到定义 props 中对应的属性。另一个是通过 proxy 把 vm._props.xxx 的访问代理到 vm.xxx 上。</p>
 
 <ul>
   <li>initData</li>
@@ -142,7 +142,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>data 的初始化主要过程也是做两件事，一个是对定义 data 函数返回的对象的遍历，通过 proxy 把每一个值 vm._data.xxx 都代理到 vm.xxx 上；另一个是调用 observe 方法观测整个 data 的变化，把 data 也变成响应式，可以通过 vm._data.xxx 访问到定义 data 返回函数中对应的属性。</p>
+<p><code class="highlighter-rouge">data</code> 的初始化主要过程也是做两件事，一个是对定义 <code class="highlighter-rouge">data</code> 函数返回的对象的遍历，通过 <code class="highlighter-rouge">proxy</code> 把每一个值 vm._data.xxx 都代理到 vm.xxx 上；另一个是调用 <code class="highlighter-rouge">observe</code> 方法观测整个 <code class="highlighter-rouge">data</code> 的变化，把 <code class="highlighter-rouge">data</code> 也变成响应式，可以通过 vm._data.xxx 访问到定义 <code class="highlighter-rouge">data</code> 返回函数中对应的属性。</p>
 
 <p>可以看到，无论是 props 或是 data 的初始化都是把它们变成响应式对象。</p>
 
@@ -179,7 +179,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 }
 </code></pre></div></div>
 
-<p>proxy 方法的实现很简单，通过 Object.defineProperty 把 target[sourceKey][key] 的读写变成了对 target[key] 的读写。所以对于 props 而言，对 vm._props.xxx 的读写变成了 vm.xxx 的读写，而对于 vm._props.xxx 我们可以访问到定义在 props 中的属性，所以我们就可以通过 vm.xxx 访问到定义在 props 中的 xxx 属性了。同理，对于 data 而言，对 vm._data.xxxx 的读写变成了对 vm.xxxx 的读写，而对于 vm._data.xxxx 我们可以访问到定义在 data 函数返回对象中的属性，所以我们就可以通过 vm.xxxx 访问到定义在 data 函数返回对象中的 xxxx 属性了。</p>
+<p><code class="highlighter-rouge">proxy</code> 方法的实现很简单，通过 <code class="highlighter-rouge">Object.defineProperty</code> 把 <code class="highlighter-rouge">target[sourceKey][key]</code> 的读写变成了对 <code class="highlighter-rouge">target[key]</code> 的读写。所以对于 <code class="highlighter-rouge">props</code> 而言，对 vm._props.xxx 的读写变成了 vm.xxx 的读写，而对于 vm._props.xxx 我们可以访问到定义在 props 中的属性，所以我们就可以通过 vm.xxx 访问到定义在 props 中的 xxx 属性了。同理，对于 data 而言，对 vm._data.xxxx 的读写变成了对 vm.xxxx 的读写，而对于 vm._data.xxxx 我们可以访问到定义在 data 函数返回对象中的属性，所以我们就可以通过 vm.xxxx 访问到定义在 data 函数返回对象中的 xxxx 属性了。</p>
 
 <h3 id="3observe">3、observe</h3>
 <p><code class="highlighter-rouge">observe</code> 的功能就是用来监测数据的变化，它的定义在 <code class="highlighter-rouge">src/core/observer/index.js</code> 中：</p>
@@ -211,7 +211,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>observe 方法的作用就是给非 VNode 的对象类型数据添加一个 Observer，如果已经添加过则直接返回，否则在满足一定条件下去实例化一个 Observer 对象实例。接下来看一下 Observer 的作用。</p>
+<p><code class="highlighter-rouge">observe</code> 方法的作用就是给非 VNode 的对象类型数据添加一个 <code class="highlighter-rouge">Observer</code>，如果已经添加过则直接返回，否则在满足一定条件下去实例化一个 <code class="highlighter-rouge">Observer</code> 对象实例。接下来看一下 Observer 的作用。</p>
 
 <h3 id="4observer">4、Observer</h3>
 <p><code class="highlighter-rouge">Observer</code> 是一个类，它的作用是给对象的属性添加 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>，用于依赖收集和派发更新：</p>
@@ -266,7 +266,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>Observer 的构造函数逻辑很简单，首先实例化 Dep 对象，这块稍后会介绍，接着通过执行 def 函数把自身实例添加到数据对象 value 的 <code class="highlighter-rouge">__ob__</code> 属性上，def 的定义在 src/core/util/lang.js 中：</p>
+<p><code class="highlighter-rouge">Observer</code> 的构造函数逻辑很简单，首先实例化 <code class="highlighter-rouge">Dep</code> 对象，这块稍后会介绍，接着通过执行 <code class="highlighter-rouge">def</code> 函数把自身实例添加到数据对象 value 的 <code class="highlighter-rouge">__ob__</code> 属性上，<code class="highlighter-rouge">def</code> 的定义在 <code class="highlighter-rouge">src/core/util/lang.js</code> 中：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Define a property.
  */</span>
@@ -280,9 +280,9 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>def 函数是一个非常简单的Object.defineProperty 的封装，这就是为什么我在开发中输出 data 上对象类型的数据，会发现该对象多了一个 <code class="highlighter-rouge">__ob__</code> 的属性。</p>
+<p><code class="highlighter-rouge">def</code> 函数是一个非常简单的 <code class="highlighter-rouge">Object.defineProperty</code> 的封装，这就是为什么我在开发中输出 data 上对象类型的数据，会发现该对象多了一个 <code class="highlighter-rouge">__ob__</code> 的属性。</p>
 
-<p>回到 Observer 的构造函数，接下来会对 value 做判断，对于数组会调用 observeArray 方法，否则对纯对象调用 walk 方法。可以看到 observeArray 是遍历数组再次调用 observe 方法，而 walk 方法是遍历对象的 key 调用 defineReactive 方法，那么我们来看一下这个方法是做什么的。</p>
+<p>回到 <code class="highlighter-rouge">Observer</code> 的构造函数，接下来会对 <code class="highlighter-rouge">value</code> 做判断，对于数组会调用 <code class="highlighter-rouge">observeArray</code> 方法，否则对纯对象调用 <code class="highlighter-rouge">walk</code> 方法。可以看到 <code class="highlighter-rouge">observeArray</code> 是遍历数组再次调用 <code class="highlighter-rouge">observe</code> 方法，而 <code class="highlighter-rouge">walk</code> 方法是遍历对象的 key 调用 <code class="highlighter-rouge">defineReactive</code> 方法，那么我们来看一下这个方法是做什么的。</p>
 
 <h3 id="5definereactive">5、defineReactive</h3>
 <p><code class="highlighter-rouge">defineReactive</code> 的功能就是定义一个响应式对象，给对象动态添加 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>，它的定义在 <code class="highlighter-rouge">src/core/observer/index.js</code> 中：</p>
@@ -350,204 +350,12 @@ export function proxy (target: Object, sourceKey: string, key: string) {
   <span class="p">})</span>
 <span class="p">}</span>
 </code></pre></div></div>
-<p>defineReactive 函数最开始初始化 Dep 对象的实例，接着拿到 obj 的属性描述符，然后对子对象递归调用 observe 方法，这样就保证了无论 obj 的结构多复杂，它的所有子属性也能变成响应式的对象，这样我们访问或修改 obj 中一个嵌套较深的属性，也能触发 getter 和 setter。最后利用 Object.defineProperty 去给 obj 的属性 key 添加 getter 和 setter。</p>
 
-<p>在添加 setter 的过程中，会触发 def 实例的 notify 方法，这个方法就是实现通知订阅该数据的所有订阅者执行他们的 update 方法去更新数据，
-这个方法定义在 <code class="highlighter-rouge">src/core/observer/dep.js</code> 中</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/**
- * A dep is an observable that can have multiple
- * directives subscribing to it.
- */
-export default class Dep {
-  static target: ?Watcher;
-  id: number;
-  subs: Array&lt;Watcher&gt;;
+<p><code class="highlighter-rouge">defineReactive</code> 函数最开始初始化 <code class="highlighter-rouge">Dep</code> 对象的实例，接着拿到 obj 的属性描述符，然后对子对象递归调用 <code class="highlighter-rouge">observe</code> 方法，这样就保证了无论 obj 的结构多复杂，它的所有子属性也能变成响应式的对象，这样我们访问或修改 obj 中一个嵌套较深的属性，也能触发 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>。最后利用 <code class="highlighter-rouge">Object.defineProperty</code> 去给 obj 的属性 key 添加 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>。</p>
 
-  constructor () {
-    this.id = uid++
-    this.subs = []
-  }
-
-  addSub (sub: Watcher) {
-    this.subs.push(sub)
-  }
-
-  removeSub (sub: Watcher) {
-    remove(this.subs, sub)
-  }
-
-  depend () {
-    if (Dep.target) {
-      Dep.target.addDep(this)
-    }
-  }
-
-  notify () {
-    // stabilize the subscriber list first
-    const subs = this.subs.slice()
-    if (process.env.NODE_ENV !== 'production' &amp;&amp; !config.async) {
-      // subs aren't sorted in scheduler if not running async
-      // we need to sort them now to make sure they fire in correct
-      // order
-      subs.sort((a, b) =&gt; a.id - b.id)
-    }
-    for (let i = 0, l = subs.length; i &lt; l; i++) {
-      subs[i].update()
-    }
-  }
-}
-</code></pre></div></div>
-<p>到此，Vue.js 的响应式原理差不多了解得七七八八，接下来用一个简单实例梳理一下整个思路：</p>
-
-<h3 id="6一个简单的例子理解响应式对象">6、一个简单的例子理解响应式对象</h3>
-<p>首先定义一个函数表示视图刷新</p>
-
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">cb</span> <span class="p">(</span><span class="nx">oldVal</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
-    <span class="cm">/* 渲染视图 */</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`数据刷新，旧值：</span><span class="p">${</span><span class="nx">oldVal</span><span class="p">}</span><span class="s2">，新值：</span><span class="p">${</span><span class="nx">newVal</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>接着我们用 Object.defineProperty 来将一个对象 <strong>响应式化</strong>，先定义一个 <code class="highlighter-rouge">defineReactive</code>，这个方法通过 Object.defineProperty 来实现对对象的 <strong>响应式化</strong> ，入参是一个 obj（需要绑定的对象）、key（obj的某一个属性），val（具体的值）。经过 <code class="highlighter-rouge">defineReactive</code> 处理以后，obj 的 key 属性在 <strong>「读」</strong> 的时候会触发 <code class="highlighter-rouge">reactiveGetter</code> 方法，而在该属性被 <strong>「写」</strong> 的时候则会触发 <code class="highlighter-rouge">reactiveSetter</code> 方法。</p>
-
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">defineReactive</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="p">{</span>
-        <span class="na">enumerable</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>       <span class="cm">/* 属性可枚举 */</span>
-        <span class="na">configurable</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>     <span class="cm">/* 属性可被修改或删除 */</span>
-        <span class="na">get</span><span class="p">:</span> <span class="kd">function</span> <span class="nx">reactiveGetter</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>         <span class="cm">/* 实际上会依赖收集，下一小节会讲 */</span>
-        <span class="p">},</span>
-        <span class="na">set</span><span class="p">:</span> <span class="kd">function</span> <span class="nx">reactiveSetter</span> <span class="p">(</span><span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">newVal</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-            <span class="nx">cb</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">});</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>然后我们需要在上面再封装一层 <code class="highlighter-rouge">observer</code> 。这个函数传入一个 value（需要响应式化的对象），通过遍历所有属性的方式对该对象的每一个属性都通过 <code class="highlighter-rouge">defineReactive</code> 处理。（注：实际上 observer 会进行递归调用）</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">observer</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">value</span> <span class="o">||</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">value</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
-        <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">value</span><span class="p">).</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">key</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="nx">defineReactive</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
-    <span class="p">});</span>
-<span class="p">}</span>
-</code></pre></div></div>
-<p>最后，我们用 <code class="highlighter-rouge">observer</code> 来封装一个 Vue，</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Vue</span> <span class="p">{</span>
-    <span class="cm">/* Vue构造类 */</span>
-    <span class="kd">constructor</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_data</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
-        <span class="nx">observer</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_data</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></div>
-<p>如果我们对数据进行变更，则会触发 cb 方法更新视图。</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">o</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
-    <span class="na">data</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">test</span><span class="p">:</span> <span class="dl">"</span><span class="s2">I am test.</span><span class="dl">"</span>
-    <span class="p">}</span>
-<span class="p">});</span>
-<span class="nx">o</span><span class="p">.</span><span class="nx">_data</span><span class="p">.</span><span class="nx">test</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">hello,world.</span><span class="dl">"</span><span class="p">;</span>  <span class="cm">/* 视图更新啦～ */</span>
-</code></pre></div></div>
-
-<h3 id="7总结">7、总结</h3>
-<p>响应式对象，核心就是利用 Object.defineProperty 给数据添加了 getter 和 setter，目的就是为了在我们访问数据以及写数据的时候能自动执行一些逻辑：getter 做的事情是依赖收集，setter 做的事情是派发更新。</p>
-
-<h2 id="三为什么要依赖收集">三、为什么要依赖收集？</h2>
-<p>上面的实现中，无论 Vue 实例中的 data 方法里面的属性有没有被用到，cb 都会被触发去刷新视图，这显然是不太合理的，所以，我们需要做 <strong>「依赖收集」</strong>。
-即，谁订阅了 data 中的数据，我才需要在变化的时候去通知他们更新数据，接下来看下 <strong>「依赖收集」</strong> 是怎么实现的。</p>
-
-<p>实现发布者 <code class="highlighter-rouge">Dep</code>，存放 <code class="highlighter-rouge">Watcher</code> 订阅者对象：</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Dep</span> <span class="p">{</span>
-    <span class="kd">constructor</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="cm">/* 用来存放Watcher对象的数组 */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">subs</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="p">}</span>
-
-    <span class="cm">/* 在subs中添加一个Watcher对象 */</span>
-    <span class="nx">addSub</span> <span class="p">(</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">subs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">sub</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="cm">/* 通知所有Watcher对象更新视图 */</span>
-    <span class="nx">notify</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">subs</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">sub</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-            <span class="nx">sub</span><span class="p">.</span><span class="nx">update</span><span class="p">();</span>
-        <span class="p">})</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>实现订阅者 <code class="highlighter-rouge">Watcher</code></p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Watcher</span> <span class="p">{</span>
-    <span class="kd">constructor</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="cm">/* 在new一个Watcher对象时将该对象赋值给Dep.target，在get中会用到 */</span>
-        <span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="cm">/* 更新视图的方法 */</span>
-    <span class="nx">update</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">视图更新啦～</span><span class="dl">"</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p>接下来我们修改一下 <code class="highlighter-rouge">defineReactive</code> 以及 Vue 的构造函数，来完成依赖收集。</p>
-
-<p>我们在闭包中增加了一个 Dep 类的对象，用来收集 <code class="highlighter-rouge">Watcher</code> 对象。在对象被「读」的时候，会触发 <code class="highlighter-rouge">reactiveGetter</code> 函数把当前的 <code class="highlighter-rouge">Watcher </code>对象（存放在 Dep.target 中）收集到 Dep 类中去。之后如果当该对象被「写」的时候，则会触发 <code class="highlighter-rouge">reactiveSetter</code> 方法，通知 Dep 类调用 <code class="highlighter-rouge">notify</code> 来触发所有 <code class="highlighter-rouge">Watcher</code> 对象的 <code class="highlighter-rouge">update</code> 方法更新对应视图。</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">defineReactive</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-    <span class="cm">/* 一个Dep类对象 */</span>
-    <span class="kd">const</span> <span class="nx">dep</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dep</span><span class="p">();</span>
-    
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="p">{</span>
-        <span class="na">enumerable</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="na">configurable</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="na">get</span><span class="p">:</span> <span class="kd">function</span> <span class="nx">reactiveGetter</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="cm">/* 将Dep.target（即当前的Watcher对象存入dep的subs中） */</span>
-            <span class="nx">dep</span><span class="p">.</span><span class="nx">addSub</span><span class="p">(</span><span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span>
-            <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>         
-        <span class="p">},</span>
-        <span class="na">set</span><span class="p">:</span> <span class="kd">function</span> <span class="nx">reactiveSetter</span> <span class="p">(</span><span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">newVal</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-            <span class="cm">/* 在set的时候触发dep的notify来通知所有的Watcher对象更新视图 */</span>
-            <span class="nx">dep</span><span class="p">.</span><span class="nx">notify</span><span class="p">();</span>
-        <span class="p">}</span>
-    <span class="p">});</span>
-<span class="p">}</span>
-
-<span class="kd">class</span> <span class="nx">Vue</span> <span class="p">{</span>
-    <span class="kd">constructor</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_data</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
-        <span class="nx">observer</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_data</span><span class="p">);</span>
-        <span class="cm">/* 新建一个Watcher订阅者对象，这时候Dep.target会指向这个Watcher对象 */</span>
-        <span class="k">new</span> <span class="nx">Watcher</span><span class="p">();</span>
-        <span class="cm">/* 在这里模拟render的过程，为了触发test属性的get函数 */</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">render~</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_data</span><span class="p">.</span><span class="nx">test</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<h3 id="总结一下">总结一下：</h3>
-
-<p>首先在 <code class="highlighter-rouge">observer</code> 的过程中会注册 <code class="highlighter-rouge">get</code> 方法，该方法用来进行「依赖收集」。在它的闭包中会有一个 Dep 对象，这个对象用来存放 <code class="highlighter-rouge">Watcher</code> 对象的实例。其实「依赖收集」的过程就是把 <code class="highlighter-rouge">Watcher</code> 实例存放到对应的 <code class="highlighter-rouge">Dep</code> 对象中去。get 方法可以让当前的 Watcher 对象（Dep.target）存放到它的 <code class="highlighter-rouge">subs</code> 中（addSub）方法，在数据变化时，<code class="highlighter-rouge">set</code> 会调用 Dep 对象的 <code class="highlighter-rouge">notify</code> 方法通知它内部所有的 <code class="highlighter-rouge">Watcher</code> 对象进行视图更新。</p>
-
-<p>这是 Object.defineProperty 的 set/get 方法处理的事情，那么「依赖收集」的前提条件还有两个：</p>
-<ul>
-  <li>1、触发 get 方法；</li>
-  <li>2、新建一个 Watcher 对象。</li>
-</ul>
-
-<p>这个我们在 Vue 的构造类中处理。新建一个 <code class="highlighter-rouge">Watcher</code> 对象只需要 new 出来，这时候 <code class="highlighter-rouge">Dep.target</code> 已经指向了这个 new 出来的 <code class="highlighter-rouge">Watcher</code> 对象来。而触发 <code class="highlighter-rouge">get</code> 方法也很简单，实际上只要把 render function 进行渲染，那么其中的依赖的对象都会被「读取」，这里我们通过打印来模拟这个过程，读取 test 来触发 <code class="highlighter-rouge">get</code> 进行「依赖收集」。</p>
-
-<p>主要就是 <code class="highlighter-rouge">get</code> 进行「依赖收集」。<code class="highlighter-rouge">set</code> 通过订阅者来更新视图。</p>
+<p>响应式对象的核心就是利用 <code class="highlighter-rouge">Object.defineProperty</code> 给数据添加了 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>，目的就是为了在我们访问数据以及写数据的时候能自动执行一些逻辑：<code class="highlighter-rouge">getter</code> 做的事情是依赖收集，<code class="highlighter-rouge">setter</code> 做的事情是派发更新。这两个步骤分别在 <strong>「系列三」</strong> 和 <strong>「系列四」</strong> 中说明。</p>
 
 <p><strong><em>参考：</em></strong>
-<a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a></p>
-
+<a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a>
+<a href="https://github.com/vuejs/vue">Vue 源码</a></p>
 :ET
