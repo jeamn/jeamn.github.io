@@ -1,4 +1,4 @@
-I"�l<h2 id="一context-由来">一、Context 由来</h2>
+I"�l<h2 id="一context-由来">一、Context 由来</h2>
 <p>在一个典型的 React 应用中，数据是通过 props 属性自上而下进行传递的，但是当组件树比较庞大的时候，这样显示地通过组件树的逐层传递就比较麻烦了。</p>
 
 <h2 id="二旧版-api">二、旧版 API</h2>
@@ -766,7 +766,6 @@
 <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Page</span><span class="o">/&gt;</span><span class="p">,</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#root</span><span class="dl">'</span><span class="p">));</span>
 </code></pre></div></div>
 
-<p><strong><em>借鉴的文档：</em></strong></p>
-
-<p><a href="https://zh-hans.reactjs.org/docs/context.html">React 官方教程</a></p>
+<p><strong><em>借鉴的文档：</em></strong><br />
+<a href="https://zh-hans.reactjs.org/docs/context.html">React 官方教程</a></p>
 :ET

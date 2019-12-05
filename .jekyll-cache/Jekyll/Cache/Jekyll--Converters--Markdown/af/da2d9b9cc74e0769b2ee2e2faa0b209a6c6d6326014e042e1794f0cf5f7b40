@@ -1,4 +1,4 @@
-I"Y�<h2 id="一什么是-react">一、什么是 React</h2>
+I"W�<h2 id="一什么是-react">一、什么是 React</h2>
 <ul>
   <li>React 是一个用于构建用户界面的 JavaScript 库，核心专注于视图层，目的实现组件化开发</li>
 </ul>
@@ -1071,7 +1071,6 @@
 <span class="p">);</span>
 </code></pre></div></div>
 
-<p><strong><em>借鉴的文档：</em></strong></p>
-
-<p><a href="https://zh-hans.reactjs.org/docs">React 官方教程</a></p>
+<p><strong><em>借鉴的文档：</em></strong><br />
+<a href="https://zh-hans.reactjs.org/docs">React 官方教程</a></p>
 :ET
