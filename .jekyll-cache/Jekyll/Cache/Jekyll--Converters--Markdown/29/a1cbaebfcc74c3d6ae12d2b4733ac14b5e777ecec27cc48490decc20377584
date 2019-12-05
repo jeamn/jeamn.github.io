@@ -1,4 +1,4 @@
-I"dx<h2 id="派发更新">派发更新</h2>
+I"`x<h2 id="派发更新">派发更新</h2>
 <p>响应式数据依赖收集的目的就是为了当我们修改数据的时候，可以对相关的依赖派发更新。派发更新的逻辑在 <code class="highlighter-rouge">setter</code> 中，</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">set</span><span class="p">:</span> <span class="kd">function</span> <span class="nx">reactiveSetter</span> <span class="p">(</span><span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">getter</span> <span class="p">?</span> <span class="nx">getter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">:</span> <span class="nx">val</span>
@@ -240,9 +240,7 @@
 <h2 id="总结">总结</h2>
 <p>当数据发生变化的时候，触发 <code class="highlighter-rouge">setter</code> 逻辑，把在依赖过程中订阅的的所有订阅者，也就是 <code class="highlighter-rouge">watcher</code>，都触发它们的 <code class="highlighter-rouge">update</code> 过程，这个过程又利用了队列做了进一步优化，在 <code class="highlighter-rouge">nextTick</code> 后执行所有 <code class="highlighter-rouge">watcher</code> 的 <code class="highlighter-rouge">run</code>，最后执行它们的回调函数。</p>
 
-<p><strong><em>参考：</em></strong></p>
-
-<p><a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a></p>
-
-<p><a href="https://github.com/vuejs/vue">Vue 源码</a></p>
+<p><strong><em>参考：</em></strong><br />
+<a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a><br />
+<a href="https://github.com/vuejs/vue">Vue 源码</a></p>
 :ET
