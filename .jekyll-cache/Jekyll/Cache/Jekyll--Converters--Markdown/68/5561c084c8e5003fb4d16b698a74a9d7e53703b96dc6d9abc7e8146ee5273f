@@ -1,4 +1,4 @@
-I"��<h2 id="依赖收集">依赖收集</h2>
+I"��<h2 id="依赖收集">依赖收集</h2>
 <p>我们知道 Vue 会把普通对象变成响应式对象，响应式对象 getter 相关的逻辑就是做依赖收集，我们来详细分析这个过程。</p>
 
 <p>上面我们知道，<code class="highlighter-rouge">defineReactive</code> 的功能就是定义一个响应式对象。在这个函数中，首先用 <code class="highlighter-rouge">const dep = new Dep()</code> 实例化了一个 Dep 实例，然后，在 get 函数中通过 <code class="highlighter-rouge">dep.depend()</code> 做依赖收集，接下来看下构造函数 Dep：</p>
@@ -472,8 +472,9 @@
 <h3 id="3总结">3、总结</h3>
 <p>收集依赖的目的是为了当这些响应式数据发生变化，触发它们的 <code class="highlighter-rouge">setter</code> 的时候，能知道应该通知哪些订阅者去做相应的逻辑处理，这个过程叫 <strong>「派发更新」</strong>，其实 <code class="highlighter-rouge">Watcher</code> 和 <code class="highlighter-rouge">Dep</code> 就是一个非常经典的观察者设计模式的实现。</p>
 
-<p><strong><em>参考：</em></strong>
-<a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a></p>
+<p><strong><em>参考：</em></strong></p>
+
+<p><a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a></p>
 
 <p><a href="https://github.com/vuejs/vue">Vue 源码</a></p>
 :ET
