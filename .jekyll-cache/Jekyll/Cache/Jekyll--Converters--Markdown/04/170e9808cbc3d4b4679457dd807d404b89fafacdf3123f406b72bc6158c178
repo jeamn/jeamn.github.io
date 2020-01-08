@@ -1,4 +1,4 @@
-I"N]<p>本次服务端部署折腾之旅，完全是出于兴趣爱好。主要是有两个方面：</p>
+I"�[<p>本次服务端部署折腾之旅，完全是出于兴趣爱好。主要是有两个方面：</p>
 <ul>
   <li>node接口服务的简单部署，实现前端在后端接口未实现时，自己模拟开发数据辅助开发</li>
   <li>前端静态资源页面的部署</li>
@@ -79,37 +79,37 @@ vue-app-8081.conf 的内容大致如下：</p>
 
 <h3 id="添加-pm2-部署文件">添加 pm2 部署文件</h3>
 <p>在每个项目的根目录下添加 <code class="highlighter-rouge">ecosystem.json</code> 文件，内容如下：</p>
-<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-    </span><span class="nl">"apps"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"vue-app"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">填要部署的项目名称</span><span class="w">
-            </span><span class="nl">"script"</span><span class="p">:</span><span class="w"> </span><span class="s2">"app.js"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">启动脚本，前端项目好像不需要，可以创建一个空的</span><span class="w"> </span><span class="err">app.js</span><span class="w"> </span><span class="err">文件</span><span class="w">
-            </span><span class="nl">"env"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                </span><span class="nl">"NODE_ENV"</span><span class="p">:</span><span class="w"> </span><span class="s2">"development"</span><span class="p">,</span><span class="w">
-                </span><span class="nl">"COMMON_VARIABLE"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
-            </span><span class="p">},</span><span class="w">
-            </span><span class="nl">"env_production"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                </span><span class="nl">"NODE_ENV"</span><span class="p">:</span><span class="w"> </span><span class="s2">"production"</span><span class="w">
-            </span><span class="p">}</span><span class="w">
-        </span><span class="p">}</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nl">"deploy"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"production"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"root"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">服务器的管理员，root</span><span class="w"> </span><span class="err">是系统默认管理员，可以设置普通权限的管理员</span><span class="w">
-            </span><span class="nl">"host"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"39.108.2.88"</span><span class="p">],</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">服务器的域名</span><span class="w">
-            </span><span class="nl">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">8081</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">服务器要暴露的端口号</span><span class="w">
-            </span><span class="nl">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"origin/master"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">项目仓库的拉取分支</span><span class="w">
-            </span><span class="nl">"repo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"git@gitee.com:jeamnchan/vue-app.git"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">项目代码仓库</span><span class="w">
-            </span><span class="nl">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/www/vue-app"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">项目在服务器端的存放位置</span><span class="w">
-            </span><span class="nl">"ssh_options"</span><span class="p">:</span><span class="w"> </span><span class="s2">"StrictHostKeyChecking=no"</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"post-deploy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cnpm install &amp;&amp; yarn build"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">项目部署命令</span><span class="w">
-            </span><span class="nl">"env"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                </span><span class="nl">"NODE_ENV"</span><span class="p">:</span><span class="w"> </span><span class="s2">"production"</span><span class="w">
-            </span><span class="p">}</span><span class="w">
-        </span><span class="p">}</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre></div></div>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+    <span class="dl">"</span><span class="s2">apps</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">vue-app</span><span class="dl">"</span><span class="p">,</span> <span class="c1">// 填要部署的项目名称</span>
+            <span class="dl">"</span><span class="s2">script</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">app.js</span><span class="dl">"</span><span class="p">,</span> <span class="c1">// 启动脚本，前端项目好像不需要，可以创建一个空的 app.js 文件</span>
+            <span class="dl">"</span><span class="s2">env</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="dl">"</span><span class="s2">NODE_ENV</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">development</span><span class="dl">"</span><span class="p">,</span>
+                <span class="dl">"</span><span class="s2">COMMON_VARIABLE</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">true</span><span class="dl">"</span>
+            <span class="p">},</span>
+            <span class="dl">"</span><span class="s2">env_production</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="dl">"</span><span class="s2">NODE_ENV</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">production</span><span class="dl">"</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="dl">"</span><span class="s2">deploy</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="dl">"</span><span class="s2">production</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="dl">"</span><span class="s2">user</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">root</span><span class="dl">"</span><span class="p">,</span> <span class="c1">// 服务器的管理员，root 是系统默认管理员，可以设置普通权限的管理员</span>
+            <span class="dl">"</span><span class="s2">host</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">39.108.2.88</span><span class="dl">"</span><span class="p">],</span> <span class="c1">// 服务器的域名</span>
+            <span class="dl">"</span><span class="s2">port</span><span class="dl">"</span><span class="p">:</span> <span class="mi">8081</span><span class="p">,</span> <span class="c1">// 服务器要暴露的端口号</span>
+            <span class="dl">"</span><span class="s2">ref</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">origin/master</span><span class="dl">"</span><span class="p">,</span> <span class="c1">// 项目仓库的拉取分支</span>
+            <span class="dl">"</span><span class="s2">repo</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">git@gitee.com:jeamnchan/vue-app.git</span><span class="dl">"</span><span class="p">,</span> <span class="c1">// 项目代码仓库</span>
+            <span class="dl">"</span><span class="s2">path</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">/www/vue-app</span><span class="dl">"</span><span class="p">,</span> <span class="c1">// 项目在服务器端的存放位置</span>
+            <span class="dl">"</span><span class="s2">ssh_options</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">StrictHostKeyChecking=no</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">post-deploy</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">cnpm install &amp;&amp; yarn build</span><span class="dl">"</span><span class="p">,</span> <span class="c1">// 项目部署命令</span>
+            <span class="dl">"</span><span class="s2">env</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="dl">"</span><span class="s2">NODE_ENV</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">production</span><span class="dl">"</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <h3 id="修改-packagejson-文件">修改 <code class="highlighter-rouge">package.json</code> 文件</h3>
 <p>主要是在 scripts 里添加一些便捷命令，如下：</p>
