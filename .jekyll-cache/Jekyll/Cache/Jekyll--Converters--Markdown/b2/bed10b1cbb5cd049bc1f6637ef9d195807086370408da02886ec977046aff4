@@ -1,0 +1,193 @@
+I"N]<p>本次服务端部署折腾之旅，完全是出于兴趣爱好。主要是有两个方面：</p>
+<ul>
+  <li>node接口服务的简单部署，实现前端在后端接口未实现时，自己模拟开发数据辅助开发</li>
+  <li>前端静态资源页面的部署</li>
+</ul>
+
+<p>涉及到的知识点包括： <br />
+Node基础知识、Vue基础知识、PM2 简单使用、阿里云 ECS 服务器的基本知识及安全策略、Nginx基本知识、SSH 登录及权限设置、Git基本操作…</p>
+
+<p>设备环境：
+MacBook Pro、iTerm2</p>
+
+<h2 id="一服务器的搭建">一、服务器的搭建</h2>
+<h3 id="服务器基本配置">服务器基本配置</h3>
+<p>我购买的是阿里云的 ECS 服务器，centOS 系统，最低配置就可以了，1核 CPU ，2G 内存。</p>
+
+<p>购买完服务器可以在阿里云的控制台上的 <code class="highlighter-rouge">云服务器实例列表</code> 找到，其中：<br />
+IP 地址分为公网 IP 和内部私有 IP 地址，这里的私有 IP 是阿里云内网专用 IP，所以我们要用的是公网的 IP 地址；</p>
+
+<p>点操作项可以进入实例的配置，其中我们需要配置的是 <code class="highlighter-rouge">本实例安全组</code>，我们需要在安全组规则里面添加服务器需要暴露的接口，否则是访问不到的。一般会根据这个以及结合服务器的防火墙来对服务器的端口进行安全管理。</p>
+
+<p>这里我们暴露出3001、8081、8082，80开头的作为前端项目的端口，30开头的作为接口服务的端口。</p>
+
+<p>配置好之后，在终端 iTerm2 可以访问服务器，需要输入服务器的密码，密码是在申请实例的时候设置的，可自行更改。</p>
+
+<p>这里我一般会将自己电脑的公钥添加到服务器上，并在自己电脑上设置快捷命令，即，将登录的命令写入 .zshrc 文件中，具体做法入下：<br />
+在服务器 ~ 目录下进入 .ssh 文件夹，新建 <code class="highlighter-rouge">authorized_keys</code> 文件并添加客户端的公钥，客户端的公钥生成方法可以百度下。 
+另一个小技巧是将登录服务器的命令设置成别名，可以在客户端的 ~ 目录下的 <code class="highlighter-rouge">.zshrc</code> 文件中配置 <code class="highlighter-rouge">alias aly="ssh root@39.108.2.88"</code></p>
+
+<p>配置后，直接在 iTerm2 终端键入 aly 便可登录到服务器。</p>
+
+<h3 id="常用软件安装">常用软件安装</h3>
+<p>安装以下软件方便我们操作服务器：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">yum</span> <span class="nx">install</span> <span class="nx">git</span>
+</code></pre></div></div>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">yum</span> <span class="o">-</span><span class="nx">y</span> <span class="nx">install</span> <span class="nx">zsh</span>
+</code></pre></div></div>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">yum</span> <span class="nx">install</span> <span class="nx">epel</span><span class="o">-</span><span class="nx">release</span>
+<span class="nx">yum</span> <span class="nx">install</span> <span class="nx">nodejs</span>
+</code></pre></div></div>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">npm</span> <span class="nx">install</span> <span class="nx">pm2</span> <span class="o">-</span><span class="nx">g</span>
+</code></pre></div></div>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">wget</span> <span class="o">-</span><span class="nx">qO</span><span class="o">-</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash</span>
+</code></pre></div></div>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">wget</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo</span>
+<span class="nx">curl</span> <span class="o">--</span><span class="nx">silent</span> <span class="o">--</span><span class="nx">location</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//rpm.nodesource.com/setup_6.x | bash -</span>
+<span class="nx">yum</span> <span class="nx">install</span> <span class="nx">yarn</span>
+</code></pre></div></div>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">yum</span> <span class="nx">install</span> <span class="nx">nginx</span>
+</code></pre></div></div>
+
+<h3 id="nginx-端口映射">nginx 端口映射</h3>
+<p>Nginx是一款轻量级的Web服务器、反向代理服务器，安装完之后，可以用 <code class="highlighter-rouge">nginx -t</code> 检测 nginx 的具体安装位置：</p>
+<blockquote>
+  <p>nginx: configuration file /etc/nginx/nginx.conf test is successful</p>
+</blockquote>
+
+<p>根据安装位置，Nginx 的默认端口是80，所以我们需要在 <code class="highlighter-rouge">/etc/nginx/conf.d</code> 目录下，新建一些文件，来做端口映射。文件名可以根据项目名称以及配置的端口来命名，这里创建 <code class="highlighter-rouge">vue-app-8081.conf</code> 和 <code class="highlighter-rouge">react-app-8082.conf</code> 两个文件，
+vue-app-8081.conf 的内容大致如下：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">server</span> <span class="p">{</span>
+  <span class="nx">listen</span> <span class="mi">8081</span><span class="p">;</span> <span class="c1">// 浏览器访问的端口</span>
+  <span class="nx">server_name</span> <span class="mf">39.108</span><span class="p">.</span><span class="mf">2.88</span><span class="p">;</span> <span class="c1">// 服务器域名</span>
+  <span class="nx">root</span> <span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">vue</span><span class="o">-</span><span class="nx">app</span><span class="o">/</span><span class="nx">current</span><span class="o">/</span><span class="nx">dist</span><span class="o">/</span><span class="p">;</span> <span class="c1">// 项目目录，这里的位置跟下面 ecosystem.json 文件的配置有关</span>
+  <span class="nx">index</span> <span class="nx">index</span><span class="p">.</span><span class="nx">html</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>接着重启nginx：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">nginx</span> <span class="o">-</span><span class="nx">s</span> <span class="nx">reload</span>
+</code></pre></div></div>
+
+<h2 id="二前端项目的部署">二、前端项目的部署</h2>
+<h3 id="待部署的项目">待部署的项目</h3>
+<p>本次部署的项目有两个，分别是 Vue 和 React 的脚手架。<br />
+可分别通过以下命令直接生成：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">vue</span> <span class="nx">create</span> <span class="nx">vue</span><span class="o">-</span><span class="nx">app</span>
+</code></pre></div></div>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">create</span><span class="o">-</span><span class="nx">react</span><span class="o">-</span><span class="nx">app</span> <span class="nx">react</span><span class="o">-</span><span class="nx">app</span>    
+</code></pre></div></div>
+
+<h3 id="添加-pm2-部署文件">添加 pm2 部署文件</h3>
+<p>在每个项目的根目录下添加 <code class="highlighter-rouge">ecosystem.json</code> 文件，内容如下：</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"apps"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"vue-app"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">填要部署的项目名称</span><span class="w">
+            </span><span class="nl">"script"</span><span class="p">:</span><span class="w"> </span><span class="s2">"app.js"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">启动脚本，前端项目好像不需要，可以创建一个空的</span><span class="w"> </span><span class="err">app.js</span><span class="w"> </span><span class="err">文件</span><span class="w">
+            </span><span class="nl">"env"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"NODE_ENV"</span><span class="p">:</span><span class="w"> </span><span class="s2">"development"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"COMMON_VARIABLE"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"env_production"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"NODE_ENV"</span><span class="p">:</span><span class="w"> </span><span class="s2">"production"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"deploy"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"production"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"root"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">服务器的管理员，root</span><span class="w"> </span><span class="err">是系统默认管理员，可以设置普通权限的管理员</span><span class="w">
+            </span><span class="nl">"host"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"39.108.2.88"</span><span class="p">],</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">服务器的域名</span><span class="w">
+            </span><span class="nl">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">8081</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">服务器要暴露的端口号</span><span class="w">
+            </span><span class="nl">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"origin/master"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">项目仓库的拉取分支</span><span class="w">
+            </span><span class="nl">"repo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"git@gitee.com:jeamnchan/vue-app.git"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">项目代码仓库</span><span class="w">
+            </span><span class="nl">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/www/vue-app"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">项目在服务器端的存放位置</span><span class="w">
+            </span><span class="nl">"ssh_options"</span><span class="p">:</span><span class="w"> </span><span class="s2">"StrictHostKeyChecking=no"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"post-deploy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cnpm install &amp;&amp; yarn build"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">项目部署命令</span><span class="w">
+            </span><span class="nl">"env"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"NODE_ENV"</span><span class="p">:</span><span class="w"> </span><span class="s2">"production"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="修改-packagejson-文件">修改 <code class="highlighter-rouge">package.json</code> 文件</h3>
+<p>主要是在 scripts 里添加一些便捷命令，如下：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="dl">"</span><span class="s2">deployinit</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">pm2 deploy ecosystem.json production setup</span><span class="dl">"</span><span class="p">,</span> <span class="c1">// 首次部署需要初始化项目</span>
+<span class="dl">"</span><span class="s2">deploy</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">pm2 deploy ecosystem.json production</span><span class="dl">"</span> <span class="c1">// 正常部署</span>
+</code></pre></div></div>
+
+<h3 id="将项目部署到-git-仓库">将项目部署到 Git 仓库</h3>
+<p>在 Github 或者 码云 创建两个仓库，用来存储项目代码，具体步骤不赘述。。</p>
+
+<p>到这里就算完成了简单的部署，vue 项目中运行 <code class="highlighter-rouge">yarn deployinit</code> 即可完成项目的初始化，接着运行 <code class="highlighter-rouge">yarn deploy</code> 即可。
+浏览器访问 <code class="highlighter-rouge">39.108.2.88:8081</code> 可看到效果。
+有条件的购买域名，将域名解析到对应的端口即可。由于域名需要备案，这里就省略了。</p>
+
+<h2 id="三node-接口部署">三、Node 接口部署</h2>
+<p>node 服务的部署流程也差不多，这里我们先编写一个简单的 node 脚本，代码如下：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">http</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">((</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="dl">'</span><span class="s1">Hello server</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">});</span>
+<span class="nx">server</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3001</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Server is running on 3001</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>添加 <code class="highlighter-rouge">ecosystem.json</code> 文件：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+    <span class="dl">"</span><span class="s2">apps</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">node-server</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">script</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">app.js</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">env</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="dl">"</span><span class="s2">NODE_ENV</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">development</span><span class="dl">"</span><span class="p">,</span>
+                <span class="dl">"</span><span class="s2">COMMON_VARIABLE</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">true</span><span class="dl">"</span>
+            <span class="p">},</span>
+            <span class="dl">"</span><span class="s2">env_production</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="dl">"</span><span class="s2">NODE_ENV</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">production</span><span class="dl">"</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="dl">"</span><span class="s2">deploy</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="dl">"</span><span class="s2">production</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="dl">"</span><span class="s2">user</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">root</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">host</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">39.108.2.87</span><span class="dl">"</span><span class="p">],</span>
+            <span class="dl">"</span><span class="s2">port</span><span class="dl">"</span><span class="p">:</span> <span class="mi">3001</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">ref</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">origin/master</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">repo</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">git@gitee.com:jeamnchan/node-server.git</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">path</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">/www/node-server</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">ssh_options</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">StrictHostKeyChecking=no</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">post-deploy</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">pm2 start app.js</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">env</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="dl">"</span><span class="s2">NODE_ENV</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">production</span><span class="dl">"</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>在 <code class="highlighter-rouge">/etc/nginx/conf.d</code> 目录下，新建 <code class="highlighter-rouge">node-server-3001.conf</code> 文件，</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">upstream</span> <span class="nx">node</span><span class="o">-</span><span class="nx">server</span> <span class="p">{</span>
+    <span class="nx">server</span> <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">3001</span><span class="p">;</span> <span class="err">#这里的端口号写你</span><span class="nx">node</span><span class="p">.</span><span class="nx">js</span><span class="err">运行的端口号</span>
+    <span class="nx">keepalive</span> <span class="mi">64</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">server</span> <span class="p">{</span>
+    <span class="nx">listen</span> <span class="mi">3001</span><span class="p">;</span>
+    <span class="nx">server_name</span> <span class="mf">39.108</span><span class="p">.</span><span class="mf">2.87</span><span class="p">;</span> <span class="err">#这里是你的服务器名称，也就是别人访问你服务的</span><span class="nx">ip</span><span class="err">地址或域名，可以写多个，用空格隔开</span>
+
+    <span class="nx">location</span> <span class="o">/</span> <span class="p">{</span>
+        <span class="nx">proxy_set_header</span> <span class="nx">X</span><span class="o">-</span><span class="nx">Real</span><span class="o">-</span><span class="nx">IP</span> <span class="nx">$remote_addr</span><span class="p">;</span>
+        <span class="nx">proxy_set_header</span> <span class="nx">X</span><span class="o">-</span><span class="nx">Forwarded</span><span class="o">-</span><span class="nx">For</span> <span class="nx">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+        <span class="nx">proxy_set_header</span> <span class="nx">Host</span> <span class="nx">$http_host</span><span class="p">;</span>
+        <span class="nx">proxy_set_header</span> <span class="nx">X</span><span class="o">-</span><span class="nx">Nginx</span><span class="o">-</span><span class="nb">Proxy</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">proxy_set_header</span> <span class="nx">Connection</span> <span class="dl">""</span><span class="p">;</span>
+        <span class="nx">proxy_pass</span> <span class="na">http</span><span class="p">:</span><span class="c1">//node-server; # 这里要和最上面upstream后的应用名一致，可以自定义</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>node 接口没怎么去写，只是大概跑通了整个流程。有空再整接口这块…</p>
+:ET
