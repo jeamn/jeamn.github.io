@@ -1,4 +1,4 @@
-I"L<h2 id="一js数据类型概念篇">一、JS数据类型————概念篇</h2>
+I"/Q<h2 id="一js数据类型概念篇">一、JS数据类型————概念篇</h2>
 <h3 id="1js-原始数据类型和引用数据类型有哪些">1、JS 原始数据类型和引用数据类型有哪些？</h3>
 <p>原始数据类型7种：String、Number、Boolean、Null、Undefined、Symbol、BigInt<br />
 引用数据类型1种：对象Object（包含普通对象Object、数组对象Array、正则对象RegExp、日期对象Date、数学函数Math、函数对象Function）</p>
@@ -95,10 +95,12 @@ Symbol：抛错
 <blockquote>
   <p>红宝书：闭包是指有权限访问另外一个函数作用域中的变量的函数<br />
 MDN：闭包是指那些能够访问自由变量的函数（自由变量指的是在函数中使用的但既不是函数参数也不是函数局部变量的变量，其实就是另外一个函数作用域中的变量）</p>
-  <h3 id="2闭包产生的原因">2、闭包产生的原因？</h3>
-  <p>（1）首先要明白作用域的概念，在ES5中只存在两种作用域 —- 全局作用域和函数作用域。当访问一个变量时，解释器会首先在当前作用域查找标识符，如果没有找到，就去父作用域找，直到找到该变量或者不在父作用域中，这就是作用域链。
+</blockquote>
+
+<h3 id="2闭包产生的原因">2、闭包产生的原因？</h3>
+<p>（1）首先要明白作用域的概念，在ES5中只存在两种作用域 —- 全局作用域和函数作用域。当访问一个变量时，解释器会首先在当前作用域查找标识符，如果没有找到，就去父作用域找，直到找到该变量或者不在父作用域中，这就是作用域链。
 （2）每一个子函数都会拷贝上级的作用域，形成一个作用域的链条，如：</p>
-  <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="kd">function</span> <span class="nx">f1</span><span class="p">(){</span>
   <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span>
   <span class="kd">function</span> <span class="nx">f2</span><span class="p">(){</span>
@@ -106,10 +108,10 @@ MDN：闭包是指那些能够访问自由变量的函数（自由变量指的�
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
   <span class="p">}</span>
 <span class="p">}</span>
-</code></pre></div>  </div>
-  <p>在这段代码中，f1的作用域指向全局䄦它本身，f2的作用域指向全局、f1和它本身。
+</code></pre></div></div>
+<p>在这段代码中，f1的作用域指向全局䄦它本身，f2的作用域指向全局、f1和它本身。
 （3）闭包产生的本质就是，当前环境中存在指向父级作用域的引用，如：</p>
-  <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">f1</span><span class="p">(){</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">f1</span><span class="p">(){</span>
   <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span>
   <span class="kd">function</span> <span class="nx">f2</span><span class="p">(){</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
@@ -118,12 +120,13 @@ MDN：闭包是指那些能够访问自由变量的函数（自由变量指的�
 <span class="p">}</span>
 <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">f1</span><span class="p">()</span>
 <span class="nx">x</span><span class="p">()</span>
-</code></pre></div>  </div>
-  <p>在当前环境中，含有对f2的引用，而f2引用了window、f1、f2的作用域。因此f2可以访问到f1的作用域的变量。就产生了闭包。</p>
-  <h3 id="3闭包有哪些表现形式">3、闭包有哪些表现形式？</h3>
-  <p>（1）返回一个函数
+</code></pre></div></div>
+<p>在当前环境中，含有对f2的引用，而f2引用了window、f1、f2的作用域。因此f2可以访问到f1的作用域的变量。就产生了闭包。</p>
+
+<h3 id="3闭包有哪些表现形式">3、闭包有哪些表现形式？</h3>
+<p>（1）返回一个函数
 （2）作为函数参数传递</p>
-  <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="kd">function</span> <span class="nx">foo</span><span class="p">(){</span>
   <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span>
   <span class="kd">function</span> <span class="nx">baz</span><span class="p">(){</span>
@@ -135,25 +138,23 @@ MDN：闭包是指那些能够访问自由变量的函数（自由变量指的�
   <span class="nx">fn</span><span class="p">()</span>
 <span class="p">}</span>
 <span class="nx">foo</span><span class="p">()</span> <span class="c1">// 输出2，而不是1</span>
-</code></pre></div>  </div>
-  <p>（3）在定时器、事件监听、Ajax请求、跨窗口通信、或者任何异步中，只要使用了回调函数，实际就是在使用闭包。
-```js
-// 定时器
-setTimeout(function timeHandler(){
-  console.log(‘111’);
-}，100)</p>
-</blockquote>
+</code></pre></div></div>
+<p>（3）在定时器、事件监听、Ajax请求、跨窗口通信、或者任何异步中，只要使用了回调函数，实际就是在使用闭包。</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 定时器</span>
+<span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="nx">timeHandler</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">111</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">}</span><span class="err">，</span><span class="mi">100</span><span class="p">)</span>
 
-<p>// 事件监听
-$(‘#app’).click(function(){
-  console.log(‘DOM Listener’);
-})</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>（4）IIFE创建闭包，保存了全局作用域和当前函数的作用域，因此可以访问全局的变量。
-```js
-var a = 2
-(function(){
-  console.log(a)
-})()
+<span class="c1">// 事件监听</span>
+<span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">#app</span><span class="dl">'</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">DOM Listener</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">})</span>
+</code></pre></div></div>
+<p>（4）IIFE创建闭包，保存了全局作用域和当前函数的作用域，因此可以访问全局的变量。</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+<span class="p">})()</span>
 </code></pre></div></div>
 <h3 id="4如何解决下面的循环输出问题">4、如何解决下面的循环输出问题</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">i</span> <span class="o">++</span><span class="p">){</span>
