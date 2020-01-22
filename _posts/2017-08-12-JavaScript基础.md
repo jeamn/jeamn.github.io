@@ -103,9 +103,110 @@ Symbol：抛错
 > 红宝书：闭包是指有权限访问另外一个函数作用域中的变量的函数  
 > MDN：闭包是指那些能够访问自由变量的函数（自由变量指的是在函数中使用的但既不是函数参数也不是函数局部变量的变量，其实就是另外一个函数作用域中的变量）  
 ### 2、闭包产生的原因？
+（1）首先要明白作用域的概念，在ES5中只存在两种作用域 ---- 全局作用域和函数作用域。当访问一个变量时，解释器会首先在当前作用域查找标识符，如果没有找到，就去父作用域找，直到找到该变量或者不在父作用域中，这就是作用域链。
+（2）每一个子函数都会拷贝上级的作用域，形成一个作用域的链条，如：
+```js
+var a = 1
+function f1(){
+  var a = 2
+  function f2(){
+    var a = 3
+    console.log(a)
+  }
+}
+```
+在这段代码中，f1的作用域指向全局䄦它本身，f2的作用域指向全局、f1和它本身。
+（3）闭包产生的本质就是，当前环境中存在指向父级作用域的引用，如：
+```js
+function f1(){
+  var a = 2
+  function f2(){
+    console.log(a)
+  }
+  return f2
+}
+var x = f1()
+x()
+```
+在当前环境中，含有对f2的引用，而f2引用了window、f1、f2的作用域。因此f2可以访问到f1的作用域的变量。就产生了闭包。  
+### 3、闭包有哪些表现形式？
+（1）返回一个函数
+（2）作为函数参数传递
+```js
+var a = 1
+function foo(){
+  var a = 2
+  function baz(){
+    console.log(a)
+  }
+  bar(baz)
+}
+function bar(fn){
+  fn()
+}
+foo() // 输出2，而不是1
+```
+（3）在定时器、事件监听、Ajax请求、跨窗口通信、或者任何异步中，只要使用了回调函数，实际就是在使用闭包。
+```js
+// 定时器
+setTimeout(function timeHandler(){
+  console.log('111');
+}，100)
 
+// 事件监听
+$('#app').click(function(){
+  console.log('DOM Listener');
+})
+```
+（4）IIFE创建闭包，保存了全局作用域和当前函数的作用域，因此可以访问全局的变量。
+```js
+var a = 2
+(function(){
+  console.log(a)
+})()
+```
+### 4、如何解决下面的循环输出问题
+```js
+for(var i = 1; i <= 5; i ++){
+  setTimeout(function timer(){
+    console.log(i)
+  }, 0)
+}
+```
+解释：因为 setTimeout 是宏任务，由于 JS 中单线程 eventLoop 机制，在主线程同步任务执行完后才去执行宏任务，因此循环结束后，setTimeout 中的回调才依次执行，但输出 i 的时候当前作用域没有 i，就往上一级找，发现 i 的时候，循环已经结束。
+解决方法：
+（1）IIFE，每次for循环时，把此时的 i 变量传递到定时器中，
+```js
+for(var i = 1;i <= 5;i++){
+  (function(j){
+    setTimeout(function timer(){
+      console.log(j)
+    }, 0)
+  })(i)
+}
+```
+（2）给定时器传入第三个参数，作为timer函数的第一个参数，
+```js
+for(var i=1;i<=5;i++){
+  setTimeout(function timer(j){
+    console.log(j)
+  }, 0, i)
+}
+```
+（3）使用 ES6 中的 let
+```js
+for(let i = 1; i <= 5; i++){
+  setTimeout(function timer(){
+    console.log(i)
+  },0)
+}
+```
 
-
-
-
-
+## 五、谈谈你对原型链的理解
+（1）原型对象和构造函数有什么关系？
+在 js 中，每当定义一个函数数据类型的时候，都会自带一个 prototype 属性，这个属性指向函数的原型对象；
+当函数经过 new 调用时，这个函数就成为了构造函数，会返回一个全新的实例对象，这个实例对象中有一个 __proto__ 属性，指向构造函数的原型对象。
+（2）描述一下原型链
+js 对象通过 prototype 属性指向父类对象，直到指向 Object 为止，这样就形成了一个原型指向的链条，即原型链。
+对象的 hasOwnProperty() 可以检查自身中是否含有该属性。
+使用 in 检查对象中是否含有某个属性时，如果对象中没有但是原型链中有，也会返回 true。

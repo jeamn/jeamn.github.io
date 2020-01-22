@@ -37,3 +37,23 @@ let o = new Vue({
     }
 });
 o._data.test = "hello ,world.";  /* 视图更新啦～ */
+
+
+
+for(var i=0; i<5; i++){
+    (function(j){
+        setTimeout(function timer() {
+            console.log(j)
+        }, 0);
+    })(i)
+}
+for(var i=0; i<6; i++){
+    setTimeout((j) => {
+        console.log(j)
+    }, 0, i);
+}
+for(let i=0; i<7; i++){
+    setTimeout(function() {
+        console.log(i)
+    }, 0);
+}

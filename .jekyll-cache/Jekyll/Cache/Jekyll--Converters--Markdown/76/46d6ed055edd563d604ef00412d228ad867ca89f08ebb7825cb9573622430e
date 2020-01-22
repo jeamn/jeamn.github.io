@@ -1,0 +1,199 @@
+I"L<h2 id="一js数据类型概念篇">一、JS数据类型————概念篇</h2>
+<h3 id="1js-原始数据类型和引用数据类型有哪些">1、JS 原始数据类型和引用数据类型有哪些？</h3>
+<p>原始数据类型7种：String、Number、Boolean、Null、Undefined、Symbol、BigInt<br />
+引用数据类型1种：对象Object（包含普通对象Object、数组对象Array、正则对象RegExp、日期对象Date、数学函数Math、函数对象Function）</p>
+<h3 id="2null-是对象吗为什么">2、null 是对象吗？为什么?</h3>
+<p>null 不是对象<br />
+虽然 typeof null 会输出 object，但是这只是 JS 存在的一个悠久 Bug。在 JS 的最初版本中使用的是 32 位系统，为了性能考虑使用低位存储变量的类型信息，000 开头代表是对象然而 null 表示为全零，所以将它错误的判断为 object。</p>
+<h3 id="30102为什么不等于03">3、0.1+0.2为什么不等于0.3？</h3>
+<p>0.1和0.2在转换成二进制数后会无限循环，由于标准位数的限制后面多余的位数会被截掉，此时就出现了精度的损失。<br />
+相加后因浮点小数的限制而截断的二进制数字在转换为十进制时就会变成 0.30000000000000004。</p>
+<h3 id="4如何理解bigint">4、如何理解BigInt?</h3>
+<p>是一种新的数据类型，用于当整数值大于Number数据类型支持的范围时。</p>
+
+<h2 id="二js数据类型检测篇">二、JS数据类型————检测篇</h2>
+<h3 id="1typeof-是否能正确判断类型">1、typeof 是否能正确判断类型</h3>
+<p>对于原始类型来说，除了 null 之外，都可以调用 typeof 显示正确的类型。<br />
+但对于引用数据类型，除了函数之外，都会显示 “object”<br />
+所以采用 typeof 判断对象数据类型是不准确的，可以采用 instanceof ，原理是基于原型链查找的，只要处于原型链上，判断就为 true</p>
+<h3 id="2instanceof-能否判断基本数据类型">2、instanceof 能否判断基本数据类型</h3>
+<p>能，利用 Symbol.hasInstance ，用于判断某对象是否为某构造器的实例</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MyNumber</span> <span class="p">{</span>  
+  <span class="kd">static</span> <span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">hasInstance</span><span class="p">](</span><span class="nx">instance</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">typeof</span> <span class="nx">instance</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">number</span><span class="dl">'</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">1</span> <span class="k">instanceof</span> <span class="nx">MyNumber</span><span class="p">);</span> <span class="c1">// true</span>
+</code></pre></div></div>
+<h3 id="3手动实现一下-instanceof-的功能">3、手动实现一下 instanceof 的功能</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">myInstance</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">){</span>
+  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">left</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">left</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span> <span class="c1">// 基本数据类型直接返回 false</span>
+  <span class="kd">let</span> <span class="nx">proto</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">left</span><span class="p">)</span> <span class="c1">// 获取传入参数的原型对象</span>
+  <span class="k">while</span><span class="p">(</span><span class="kc">true</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">proto</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span> <span class="c1">// 查找到原型链尽头，依旧没找到构造函数</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">proto</span> <span class="o">==</span> <span class="nx">right</span><span class="p">.</span><span class="nx">prototype</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span>
+    <span class="nx">proto</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">proto</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<h3 id="4objectis-和--的区别">4、Object.is 和 === 的区别</h3>
+<p>前者在后者的基础上修复了一些特殊情况下的失误，具体来说就是 +0 和 -0，NaN 和 NaN。<br />
+后者判断中，</p>
+<blockquote>
+  <p>NaN === NaN 为 false，是不对的，应该为 true。
++0 === -0 为 true，是不对的，应该为 false<br />
+源码如下：</p>
+  <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">is</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">){</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">x</span> <span class="o">===</span> <span class="nx">y</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">x</span> <span class="o">!==</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">!==</span> <span class="mi">0</span> <span class="o">||</span> <span class="mi">1</span><span class="o">/</span><span class="nx">x</span> <span class="o">===</span> <span class="mi">1</span><span class="o">/</span><span class="nx">y</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">x</span> <span class="o">!==</span> <span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="nx">y</span> <span class="o">!==</span> <span class="nx">y</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>  </div>
+</blockquote>
+
+<h2 id="三js数据类型转换篇">三、JS数据类型————转换篇</h2>
+<h3 id="1---结果是什么为什么">1、[] == ![] 结果是什么？为什么？</h3>
+<p>== 中，左右两边都需要转换为数字后进行比较。[] 转换为数字是 0，![] 首先是转换为布尔值，由于 [] 作为一个引用类型转换为布尔值为 true，因此 ![] 为 false，再转换为数字为 0。0 == 0，结果为true。</p>
+<h3 id="2js类型转换有哪几种">2、JS类型转换有哪几种？</h3>
+<p>类型转换只有三种，</p>
+<ul>
+  <li>转换成数字</li>
+  <li>转换成布尔值</li>
+  <li>转换成字符串<br />
+规则如下：
+（1）以下转换为布尔值时：
+number：除了0、-0 和 NaN 为 false 之外，其余都为 true<br />
+string：除了空字符串为 false 之外，其余都为 true<br />
+undefined、null：false<br />
+引用类型：true<br />
+（2）以下转换为字符串时：<br />
+number：5 =&gt; ‘5’<br />
+Boolean、函数、Symbol：’true’<br />
+数组：[1,2] =&gt; ‘1,2’<br />
+对象：’[Object Object]’<br />
+（3）以下转换为数字：<br />
+string：’1’ =&gt; 1，’a’ =&gt; NaN<br />
+素组：空数组转化为 0，只有一个元素且元素是数字类型转化为数字，其余转化为 NaN<br />
+null：0<br />
+除了数组的引用类型时：NaN<br />
+Symbol：抛错
+    <h3 id="3-和--有什么区别">3、== 和 === 有什么区别？</h3>
+    <p>=== 是严格相等，指的是左右两边不仅值要相等，类型也要相等。<br />
+== 对于一般情况，只要值相等，就会返回 true，但还会涉及到一些隐式类型转换，规则如下：</p>
+  </li>
+  <li>两边的类型是否相同，相同的话就直接比较值得大小；</li>
+  <li>判断是否是 null 和 undefined，是的话返回 true；</li>
+  <li>判断是否是 String 和 Number，是的话将 String 转化为 Number再进行比较；</li>
+  <li>判断其中一方是否是 Boolean，是的话转成 Number 再进行比较；</li>
+  <li>如果其中一方是 Object，另一方是 String、Number 或者 Symbol，会将 Object 转换成字符串再进行比较；</li>
+</ul>
+
+<h2 id="四谈谈你对闭包的理解">四、谈谈你对闭包的理解</h2>
+<h3 id="1什么是闭包">1、什么是闭包？</h3>
+<blockquote>
+  <p>红宝书：闭包是指有权限访问另外一个函数作用域中的变量的函数<br />
+MDN：闭包是指那些能够访问自由变量的函数（自由变量指的是在函数中使用的但既不是函数参数也不是函数局部变量的变量，其实就是另外一个函数作用域中的变量）</p>
+  <h3 id="2闭包产生的原因">2、闭包产生的原因？</h3>
+  <p>（1）首先要明白作用域的概念，在ES5中只存在两种作用域 —- 全局作用域和函数作用域。当访问一个变量时，解释器会首先在当前作用域查找标识符，如果没有找到，就去父作用域找，直到找到该变量或者不在父作用域中，这就是作用域链。
+（2）每一个子函数都会拷贝上级的作用域，形成一个作用域的链条，如：</p>
+  <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kd">function</span> <span class="nx">f1</span><span class="p">(){</span>
+  <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span>
+  <span class="kd">function</span> <span class="nx">f2</span><span class="p">(){</span>
+    <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>  </div>
+  <p>在这段代码中，f1的作用域指向全局䄦它本身，f2的作用域指向全局、f1和它本身。
+（3）闭包产生的本质就是，当前环境中存在指向父级作用域的引用，如：</p>
+  <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">f1</span><span class="p">(){</span>
+  <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span>
+  <span class="kd">function</span> <span class="nx">f2</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">f2</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">f1</span><span class="p">()</span>
+<span class="nx">x</span><span class="p">()</span>
+</code></pre></div>  </div>
+  <p>在当前环境中，含有对f2的引用，而f2引用了window、f1、f2的作用域。因此f2可以访问到f1的作用域的变量。就产生了闭包。</p>
+  <h3 id="3闭包有哪些表现形式">3、闭包有哪些表现形式？</h3>
+  <p>（1）返回一个函数
+（2）作为函数参数传递</p>
+  <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kd">function</span> <span class="nx">foo</span><span class="p">(){</span>
+  <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span>
+  <span class="kd">function</span> <span class="nx">baz</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="nx">bar</span><span class="p">(</span><span class="nx">baz</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">bar</span><span class="p">(</span><span class="nx">fn</span><span class="p">){</span>
+  <span class="nx">fn</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="nx">foo</span><span class="p">()</span> <span class="c1">// 输出2，而不是1</span>
+</code></pre></div>  </div>
+  <p>（3）在定时器、事件监听、Ajax请求、跨窗口通信、或者任何异步中，只要使用了回调函数，实际就是在使用闭包。
+```js
+// 定时器
+setTimeout(function timeHandler(){
+  console.log(‘111’);
+}，100)</p>
+</blockquote>
+
+<p>// 事件监听
+$(‘#app’).click(function(){
+  console.log(‘DOM Listener’);
+})</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>（4）IIFE创建闭包，保存了全局作用域和当前函数的作用域，因此可以访问全局的变量。
+```js
+var a = 2
+(function(){
+  console.log(a)
+})()
+</code></pre></div></div>
+<h3 id="4如何解决下面的循环输出问题">4、如何解决下面的循环输出问题</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">i</span> <span class="o">++</span><span class="p">){</span>
+  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="nx">timer</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+  <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>解释：因为 setTimeout 是宏任务，由于 JS 中单线程 eventLoop 机制，在主线程同步任务执行完后才去执行宏任务，因此循环结束后，setTimeout 中的回调才依次执行，但输出 i 的时候当前作用域没有 i，就往上一级找，发现 i 的时候，循环已经结束。
+解决方法：
+（1）IIFE，每次for循环时，把此时的 i 变量传递到定时器中，</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+  <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">j</span><span class="p">){</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="nx">timer</span><span class="p">(){</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">j</span><span class="p">)</span>
+    <span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">})(</span><span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>（2）给定时器传入第三个参数，作为timer函数的第一个参数，</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="nx">i</span><span class="o">&lt;=</span><span class="mi">5</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="nx">timer</span><span class="p">(</span><span class="nx">j</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">j</span><span class="p">)</span>
+  <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>（3）使用 ES6 中的 let</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="nx">timer</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+  <span class="p">},</span><span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="五谈谈你对原型链的理解">五、谈谈你对原型链的理解</h2>
+<p>（1）原型对象和构造函数有什么关系？
+在 js 中，每当定义一个函数数据类型的时候，都会自带一个 prototype 属性，这个属性指向函数的原型对象；
+当函数经过 new 调用时，这个函数就成为了构造函数，会返回一个全新的实例对象，这个实例对象中有一个 <strong>proto</strong> 属性，指向构造函数的原型对象。
+（2）描述一下原型链
+js 对象通过 prototype 属性指向父类对象，直到指向 Object 为止，这样就形成了一个原型指向的链条，即原型链。
+对象的 hasOwnProperty() 可以检查自身中是否含有该属性。
+使用 in 检查对象中是否含有某个属性时，如果对象中没有但是原型链中有，也会返回 true。</p>
+:ET
