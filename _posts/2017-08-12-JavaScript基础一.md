@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      JavaScript基础
+title:      JavaScript基础一
 date:       2017-08-12
 author:     Jeamn
 header-img: img/post-bg-ios9-web.jpg
@@ -8,6 +8,7 @@ catalog: true
 tags:
     - JavaScript
 ---
+
 ## 一、JS数据类型————概念篇
 ### 1、JS 原始数据类型和引用数据类型有哪些？
 原始数据类型7种：String、Number、Boolean、Null、Undefined、Symbol、BigInt  
