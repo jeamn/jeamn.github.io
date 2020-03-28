@@ -1,4 +1,4 @@
-I"n�<h2 id="一js数据类型概念篇">一、JS数据类型————概念篇</h2>
+I"x�<h2 id="一js数据类型概念篇">一、JS数据类型————概念篇</h2>
 <h3 id="1js-原始数据类型和引用数据类型有哪些">1、JS 原始数据类型和引用数据类型有哪些？</h3>
 <p>原始数据类型7种：String、Number、Boolean、Null、Undefined、Symbol、BigInt<br />
 引用数据类型1种：对象Object（包含普通对象Object、数组对象Array、正则对象RegExp、日期对象Date、数学函数Math、函数对象Function）</p>
@@ -27,7 +27,7 @@
 </code></pre></div></div>
 <h3 id="3手动实现一下-instanceof-的功能">3、手动实现一下 instanceof 的功能</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">myInstance</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">){</span>
-  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">left</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">left</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span> <span class="c1">// 基本数据类型直接返回 false</span>
+  <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">left</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span> <span class="o">||</span> <span class="nx">left</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span> <span class="c1">// 基本数据类型直接返回 false</span>
   <span class="kd">let</span> <span class="nx">proto</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">left</span><span class="p">)</span> <span class="c1">// 获取传入参数的原型对象</span>
   <span class="k">while</span><span class="p">(</span><span class="kc">true</span><span class="p">){</span>
     <span class="k">if</span><span class="p">(</span><span class="nx">proto</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span> <span class="c1">// 查找到原型链尽头，依旧没找到构造函数</span>
@@ -314,7 +314,7 @@ MDN：闭包是指那些能够访问自由变量的函数（自由变量指的�
 
 <p>两者在查找时的区别：  <br />
 如果去查找一个普通对象的属性，但是在当前对象和原型上都找不到时，会返回 undefined，</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Animal</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span><span class="nx">i8</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Animal</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="nx">Animal</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span>
@@ -324,7 +324,7 @@ MDN：闭包是指那些能够访问自由变量的函数（自由变量指的�
 <span class="c1">//继承</span>
 <span class="nx">Dog</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">Animal</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">dog1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">(</span><span class="dl">'</span><span class="s1">泰迪</span><span class="dl">'</span><span class="p">);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">dog1</span><span class="p">.</span><span class="nx">name1</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">dog1</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>但查找的属性在作用域链中不存在的话就会抛出 ReferenceError。</p>
@@ -365,4 +365,5 @@ MDN：闭包是指那些能够访问自由变量的函数（自由变量指的�
 
 <p>总结：从理论上，所有的函数都是闭包，因为他们都在创建的时候就将上层执行上下文的数据保存起来了。普通函数在访问全局变量就相当于是在访问自由变量。而从实践的角度，以下函数才算是闭包：即使创建函数的上下文已经销毁，它仍然存在（比如内部函数从父函数中返回）；或者在代码中引用了自由变量。</p>
 
+<h2 id="九this解析">九、this解析</h2>
 :ET

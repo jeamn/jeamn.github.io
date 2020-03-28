@@ -40,7 +40,7 @@ console.log(1 instanceof MyNumber); // true
 ### 3、手动实现一下 instanceof 的功能
 ```js
 function myInstance(left, right){
-  if(typeof left !== 'object' && left === null) return false // 基本数据类型直接返回 false
+  if(typeof left !== 'object' || left === null) return false // 基本数据类型直接返回 false
   let proto = Object.getPrototypeOf(left) // 获取传入参数的原型对象
   while(true){
     if(proto == null) return false // 查找到原型链尽头，依旧没找到构造函数
@@ -321,7 +321,7 @@ for(let i = 1; i <= 5; i++){
 两者在查找时的区别：    
 如果去查找一个普通对象的属性，但是在当前对象和原型上都找不到时，会返回 undefined，    
 ```js
-function Animal(name){i8
+function Animal(name){
     this.name = name;
 }
 Animal.prototype.name = 'mike'
@@ -331,7 +331,7 @@ function Dog(dogName){
 //继承
 Dog.prototype = Object.create(Animal.prototype);
 var dog1 = new Dog('泰迪');
-console.log(dog1.name1)
+console.log(dog1.name)
 ```
 
 但查找的属性在作用域链中不存在的话就会抛出 ReferenceError。
@@ -373,3 +373,4 @@ foo();					// 调用函数f()
 
 总结：从理论上，所有的函数都是闭包，因为他们都在创建的时候就将上层执行上下文的数据保存起来了。普通函数在访问全局变量就相当于是在访问自由变量。而从实践的角度，以下函数才算是闭包：即使创建函数的上下文已经销毁，它仍然存在（比如内部函数从父函数中返回）；或者在代码中引用了自由变量。
 
+## 九、this解析
