@@ -1,4 +1,4 @@
-I"�C<h2 id="一个简单的例子理解响应式和依赖收集的过程">一个简单的例子理解响应式和依赖收集的过程</h2>
+I"bF<h2 id="一个简单的例子理解响应式和依赖收集的过程">一个简单的例子理解响应式和依赖收集的过程</h2>
 <p>首先定义一个函数表示视图刷新</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">cb</span> <span class="p">(</span><span class="nx">oldVal</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
@@ -7,7 +7,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>接着我们用 <code class="highlighter-rouge">Object.defineProperty</code> 来将一个对象 <strong>响应式化</strong>，先定义一个 <code class="highlighter-rouge">defineReactive</code>，这个方法通过 <code class="highlighter-rouge">Object.defineProperty</code> 来实现对对象的 <strong>响应式化</strong> ，入参是一个 obj（需要绑定的对象）、key（obj的某一个属性），val（具体的值）。经过 <code class="highlighter-rouge">defineReactive</code> 处理以后，obj 的 key 属性在 <strong>「读」</strong> 的时候会触发 <code class="highlighter-rouge">reactiveGetter</code> 方法，而在该属性被 <strong>「写」</strong> 的时候则会触发 <code class="highlighter-rouge">reactiveSetter</code> 方法。</p>
+<p>接着我们用 <code class="language-plaintext highlighter-rouge">Object.defineProperty</code> 来将一个对象 <strong>响应式化</strong>，先定义一个 <code class="language-plaintext highlighter-rouge">defineReactive</code>，这个方法通过 <code class="language-plaintext highlighter-rouge">Object.defineProperty</code> 来实现对对象的 <strong>响应式化</strong> ，入参是一个 obj（需要绑定的对象）、key（obj的某一个属性），val（具体的值）。经过 <code class="language-plaintext highlighter-rouge">defineReactive</code> 处理以后，obj 的 key 属性在 <strong>「读」</strong> 的时候会触发 <code class="language-plaintext highlighter-rouge">reactiveGetter</code> 方法，而在该属性被 <strong>「写」</strong> 的时候则会触发 <code class="language-plaintext highlighter-rouge">reactiveSetter</code> 方法。</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">defineReactive</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
     <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="p">{</span>
@@ -24,7 +24,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>然后我们需要在上面再封装一层 <code class="highlighter-rouge">observer</code> 。这个函数传入一个 value（需要响应式化的对象），通过遍历所有属性的方式对该对象的每一个属性都通过 <code class="highlighter-rouge">defineReactive</code> 处理。（注：实际上 observer 会进行递归调用）</p>
+<p>然后我们需要在上面再封装一层 <code class="language-plaintext highlighter-rouge">observer</code> 。这个函数传入一个 value（需要响应式化的对象），通过遍历所有属性的方式对该对象的每一个属性都通过 <code class="language-plaintext highlighter-rouge">defineReactive</code> 处理。（注：实际上 observer 会进行递归调用）</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">observer</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">value</span> <span class="o">||</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">value</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
@@ -37,7 +37,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>最后，我们用 <code class="highlighter-rouge">observer</code> 来封装一个 Vue，</p>
+<p>最后，我们用 <code class="language-plaintext highlighter-rouge">observer</code> 来封装一个 Vue，</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Vue</span> <span class="p">{</span>
     <span class="cm">/* Vue构造类 */</span>
@@ -58,7 +58,7 @@
 <span class="nx">o</span><span class="p">.</span><span class="nx">_data</span><span class="p">.</span><span class="nx">test</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">hello,world.</span><span class="dl">"</span><span class="p">;</span>  <span class="cm">/* 视图更新啦～ */</span>
 </code></pre></div></div>
 
-<p>实现发布者 <code class="highlighter-rouge">Dep</code>，存放订阅者对象 <code class="highlighter-rouge">Watcher</code>：</p>
+<p>实现发布者 <code class="language-plaintext highlighter-rouge">Dep</code>，存放订阅者对象 <code class="language-plaintext highlighter-rouge">Watcher</code>：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Dep</span> <span class="p">{</span>
     <span class="kd">constructor</span> <span class="p">()</span> <span class="p">{</span>
@@ -80,7 +80,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>实现订阅者 <code class="highlighter-rouge">Watcher</code></p>
+<p>实现订阅者 <code class="language-plaintext highlighter-rouge">Watcher</code></p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Watcher</span> <span class="p">{</span>
     <span class="kd">constructor</span> <span class="p">()</span> <span class="p">{</span>
@@ -97,9 +97,9 @@
 <span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 </code></pre></div></div>
 
-<p>接下来我们修改一下 <code class="highlighter-rouge">defineReactive</code> 以及 Vue 的构造函数，来模拟依赖收集。</p>
+<p>接下来我们修改一下 <code class="language-plaintext highlighter-rouge">defineReactive</code> 以及 Vue 的构造函数，来模拟依赖收集。</p>
 
-<p>我们在闭包中增加了一个 Dep 类的对象，用来收集 <code class="highlighter-rouge">Watcher</code> 对象。在对象被「读」的时候，会触发 <code class="highlighter-rouge">reactiveGetter</code> 函数把当前的 <code class="highlighter-rouge">Watcher </code>对象（存放在 Dep.target 中）收集到 Dep 类中去。之后如果当该对象被「写」的时候，则会触发 <code class="highlighter-rouge">reactiveSetter</code> 方法，通知 Dep 类调用 <code class="highlighter-rouge">notify</code> 来触发所有 <code class="highlighter-rouge">Watcher</code> 对象的 <code class="highlighter-rouge">update</code> 方法更新对应视图。</p>
+<p>我们在闭包中增加了一个 Dep 类的对象，用来收集 <code class="language-plaintext highlighter-rouge">Watcher</code> 对象。在对象被「读」的时候，会触发 <code class="language-plaintext highlighter-rouge">reactiveGetter</code> 函数把当前的 <code class="language-plaintext highlighter-rouge">Watcher </code>对象（存放在 Dep.target 中）收集到 Dep 类中去。之后如果当该对象被「写」的时候，则会触发 <code class="language-plaintext highlighter-rouge">reactiveSetter</code> 方法，通知 Dep 类调用 <code class="language-plaintext highlighter-rouge">notify</code> 来触发所有 <code class="language-plaintext highlighter-rouge">Watcher</code> 对象的 <code class="language-plaintext highlighter-rouge">update</code> 方法更新对应视图。</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">defineReactive</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
     <span class="cm">/* 一个Dep类对象 */</span>
@@ -135,7 +135,7 @@
 
 <h3 id="总结一下">总结一下：</h3>
 
-<p>首先在 <code class="highlighter-rouge">observer</code> 的过程中会注册 <code class="highlighter-rouge">get</code> 方法，该方法用来进行「依赖收集」。在它的闭包中会有一个 Dep 对象，这个对象用来存放 <code class="highlighter-rouge">Watcher</code> 对象的实例。其实「依赖收集」的过程就是把 <code class="highlighter-rouge">Watcher</code> 实例存放到对应的 <code class="highlighter-rouge">Dep</code> 对象中去。get 方法可以让当前的 Watcher 对象（Dep.target）存放到它的 <code class="highlighter-rouge">subs</code> 中（addSub）方法，在数据变化时，<code class="highlighter-rouge">set</code> 会调用 Dep 对象的 <code class="highlighter-rouge">notify</code> 方法通知它内部所有的 <code class="highlighter-rouge">Watcher</code> 对象进行视图更新。</p>
+<p>首先在 <code class="language-plaintext highlighter-rouge">observer</code> 的过程中会注册 <code class="language-plaintext highlighter-rouge">get</code> 方法，该方法用来进行「依赖收集」。在它的闭包中会有一个 Dep 对象，这个对象用来存放 <code class="language-plaintext highlighter-rouge">Watcher</code> 对象的实例。其实「依赖收集」的过程就是把 <code class="language-plaintext highlighter-rouge">Watcher</code> 实例存放到对应的 <code class="language-plaintext highlighter-rouge">Dep</code> 对象中去。get 方法可以让当前的 Watcher 对象（Dep.target）存放到它的 <code class="language-plaintext highlighter-rouge">subs</code> 中（addSub）方法，在数据变化时，<code class="language-plaintext highlighter-rouge">set</code> 会调用 Dep 对象的 <code class="language-plaintext highlighter-rouge">notify</code> 方法通知它内部所有的 <code class="language-plaintext highlighter-rouge">Watcher</code> 对象进行视图更新。</p>
 
 <p>这是 Object.defineProperty 的 set/get 方法处理的事情，那么「依赖收集」的前提条件还有两个：</p>
 <ul>
@@ -143,7 +143,7 @@
   <li>2、新建一个 Watcher 对象。</li>
 </ul>
 
-<p>这个我们在 Vue 的构造类中处理。新建一个 <code class="highlighter-rouge">Watcher</code> 对象只需要 new 出来，这时候 <code class="highlighter-rouge">Dep.target</code> 已经指向了这个 new 出来的 <code class="highlighter-rouge">Watcher</code> 对象来。而触发 <code class="highlighter-rouge">get</code> 方法也很简单，实际上只要把 render function 进行渲染，那么其中的依赖的对象都会被「读取」，这里我们通过打印来模拟这个过程，读取 test 来触发 <code class="highlighter-rouge">get</code> 进行「依赖收集」。</p>
+<p>这个我们在 Vue 的构造类中处理。新建一个 <code class="language-plaintext highlighter-rouge">Watcher</code> 对象只需要 new 出来，这时候 <code class="language-plaintext highlighter-rouge">Dep.target</code> 已经指向了这个 new 出来的 <code class="language-plaintext highlighter-rouge">Watcher</code> 对象来。而触发 <code class="language-plaintext highlighter-rouge">get</code> 方法也很简单，实际上只要把 render function 进行渲染，那么其中的依赖的对象都会被「读取」，这里我们通过打印来模拟这个过程，读取 test 来触发 <code class="language-plaintext highlighter-rouge">get</code> 进行「依赖收集」。</p>
 
-<p>主要就是 <code class="highlighter-rouge">get</code> 进行「依赖收集」。<code class="highlighter-rouge">set</code> 通过订阅者来更新视图。</p>
+<p>主要就是 <code class="language-plaintext highlighter-rouge">get</code> 进行「依赖收集」。<code class="language-plaintext highlighter-rouge">set</code> 通过订阅者来更新视图。</p>
 :ET

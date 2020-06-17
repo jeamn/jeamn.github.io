@@ -1,10 +1,10 @@
-I"��<h2 id="依赖收集">依赖收集</h2>
+I"��<h2 id="依赖收集">依赖收集</h2>
 <p>我们知道 Vue 会把普通对象变成响应式对象，响应式对象 getter 相关的逻辑就是做依赖收集，我们来详细分析这个过程。</p>
 
-<p>上面我们知道，<code class="highlighter-rouge">defineReactive</code> 的功能就是定义一个响应式对象。在这个函数中，首先用 <code class="highlighter-rouge">const dep = new Dep()</code> 实例化了一个 Dep 实例，然后，在 get 函数中通过 <code class="highlighter-rouge">dep.depend()</code> 做依赖收集，接下来看下构造函数 Dep：</p>
+<p>上面我们知道，<code class="language-plaintext highlighter-rouge">defineReactive</code> 的功能就是定义一个响应式对象。在这个函数中，首先用 <code class="language-plaintext highlighter-rouge">const dep = new Dep()</code> 实例化了一个 Dep 实例，然后，在 get 函数中通过 <code class="language-plaintext highlighter-rouge">dep.depend()</code> 做依赖收集，接下来看下构造函数 Dep：</p>
 
 <h3 id="1dep">1、Dep</h3>
-<p><code class="highlighter-rouge">Dep</code> 是整个 getter 依赖收集的核心，它定义在 <code class="highlighter-rouge">src/core/observer/dep.js</code> 中，</p>
+<p><code class="language-plaintext highlighter-rouge">Dep</code> 是整个 getter 依赖收集的核心，它定义在 <code class="language-plaintext highlighter-rouge">src/core/observer/dep.js</code> 中，</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* @flow */</span>
 
 <span class="k">import</span> <span class="nx">type</span> <span class="nx">Watcher</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./watcher</span><span class="dl">'</span>
@@ -72,9 +72,9 @@
   <span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">targetStack</span><span class="p">[</span><span class="nx">targetStack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div></div>
-<p><code class="highlighter-rouge">Dep</code> 是一个 Class，定义了一些属性和方法，它有一个静态属性 <code class="highlighter-rouge">target</code>，这是一个全局唯一 <code class="highlighter-rouge">Watcher</code>，因为在同一时间只能有一个全局的 <code class="highlighter-rouge">Watcher</code> 被计算，另外它的自身属性 <code class="highlighter-rouge">subs</code> 也是 <code class="highlighter-rouge">Watcher</code> 的数组。</p>
+<p><code class="language-plaintext highlighter-rouge">Dep</code> 是一个 Class，定义了一些属性和方法，它有一个静态属性 <code class="language-plaintext highlighter-rouge">target</code>，这是一个全局唯一 <code class="language-plaintext highlighter-rouge">Watcher</code>，因为在同一时间只能有一个全局的 <code class="language-plaintext highlighter-rouge">Watcher</code> 被计算，另外它的自身属性 <code class="language-plaintext highlighter-rouge">subs</code> 也是 <code class="language-plaintext highlighter-rouge">Watcher</code> 的数组。</p>
 
-<p><code class="highlighter-rouge">Dep</code> 实际上就是对 <code class="highlighter-rouge">Watcher</code> 的一种管理，<code class="highlighter-rouge">Dep</code> 脱离 <code class="highlighter-rouge">Watcher</code> 单独存在是没有意义的，为了完整地理解依赖收集过程，我们可以看一下 <code class="highlighter-rouge">Watcher</code> 的一些相关实现，它的定义在 <code class="highlighter-rouge">src/core/observer/watcher.js</code> 中：</p>
+<p><code class="language-plaintext highlighter-rouge">Dep</code> 实际上就是对 <code class="language-plaintext highlighter-rouge">Watcher</code> 的一种管理，<code class="language-plaintext highlighter-rouge">Dep</code> 脱离 <code class="language-plaintext highlighter-rouge">Watcher</code> 单独存在是没有意义的，为了完整地理解依赖收集过程，我们可以看一下 <code class="language-plaintext highlighter-rouge">Watcher</code> 的一些相关实现，它的定义在 <code class="language-plaintext highlighter-rouge">src/core/observer/watcher.js</code> 中：</p>
 
 <h3 id="2watcher">2、Watcher</h3>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* @flow */</span>
@@ -322,12 +322,12 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">Watcher</code> 是一个 Class 构造函数，在实例化一个 <code class="highlighter-rouge">watcher</code> 时，首先进入构造函数逻辑，会执行它的 <code class="highlighter-rouge">this.get()</code> 方法，进入 <code class="highlighter-rouge">get</code> 函数，
+<p><code class="language-plaintext highlighter-rouge">Watcher</code> 是一个 Class 构造函数，在实例化一个 <code class="language-plaintext highlighter-rouge">watcher</code> 时，首先进入构造函数逻辑，会执行它的 <code class="language-plaintext highlighter-rouge">this.get()</code> 方法，进入 <code class="language-plaintext highlighter-rouge">get</code> 函数，
 首先会执行：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">pushTarget</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>该方法定义在 <code class="highlighter-rouge">src/core/observer/dep.js</code> 中：</p>
+<p>该方法定义在 <code class="language-plaintext highlighter-rouge">src/core/observer/dep.js</code> 中：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nx">pushTarget</span> <span class="p">(</span><span class="nx">target</span><span class="p">:</span> <span class="p">?</span><span class="nx">Watcher</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">targetStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span>
@@ -335,17 +335,17 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>实际上就是把 <code class="highlighter-rouge">Dep.target</code> 赋值为当前的渲染 <code class="highlighter-rouge">watcher</code> 并压栈 <code class="highlighter-rouge">targetStack</code>（为了恢复用）。接着又执行了：</p>
+<p>实际上就是把 <code class="language-plaintext highlighter-rouge">Dep.target</code> 赋值为当前的渲染 <code class="language-plaintext highlighter-rouge">watcher</code> 并压栈 <code class="language-plaintext highlighter-rouge">targetStack</code>（为了恢复用）。接着又执行了：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="nx">vm</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">this.getter</code> 对应就是 <code class="highlighter-rouge">updateComponent</code> 函数，这实际上就是在执行：</p>
+<p><code class="language-plaintext highlighter-rouge">this.getter</code> 对应就是 <code class="language-plaintext highlighter-rouge">updateComponent</code> 函数，这实际上就是在执行：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">vm</span><span class="p">.</span><span class="nx">_update</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">_render</span><span class="p">(),</span> <span class="nx">hydrating</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>它会先执行 <code class="highlighter-rouge">vm._render()</code> 方法，因为之前分析过这个方法会生成 渲染 VNode，并且在这个过程中会对 vm 上的数据访问，这个时候就触发了数据对象的 getter。</p>
+<p>它会先执行 <code class="language-plaintext highlighter-rouge">vm._render()</code> 方法，因为之前分析过这个方法会生成 渲染 VNode，并且在这个过程中会对 vm 上的数据访问，这个时候就触发了数据对象的 getter。</p>
 
 <p>那么每个对象值的 getter 都持有一个 dep，在触发 getter 的时候会调用 dep.depend() 方法，也就会执行 Dep.target.addDep(this)。</p>
 
@@ -364,9 +364,9 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>这时候会做一些逻辑判断（保证同一数据不会被添加多次）后执行 <code class="highlighter-rouge">dep.addSub(this)</code>，那么就会执行 <code class="highlighter-rouge">this.subs.push(sub)</code>，也就是说把当前的 <code class="highlighter-rouge">watcher</code> 订阅到这个数据持有的 <code class="highlighter-rouge">dep</code> 的 <code class="highlighter-rouge">subs</code> 中，这个目的是为后续数据变化时候能通知到那些订阅者 <code class="highlighter-rouge">subs</code> 做准备。</p>
+<p>这时候会做一些逻辑判断（保证同一数据不会被添加多次）后执行 <code class="language-plaintext highlighter-rouge">dep.addSub(this)</code>，那么就会执行 <code class="language-plaintext highlighter-rouge">this.subs.push(sub)</code>，也就是说把当前的 <code class="language-plaintext highlighter-rouge">watcher</code> 订阅到这个数据持有的 <code class="language-plaintext highlighter-rouge">dep</code> 的 <code class="language-plaintext highlighter-rouge">subs</code> 中，这个目的是为后续数据变化时候能通知到那些订阅者 <code class="language-plaintext highlighter-rouge">subs</code> 做准备。</p>
 
-<p>所以在 <code class="highlighter-rouge">vm._render()</code> 过程中，会触发所有数据的 <code class="highlighter-rouge">getter</code>，这样实际上已经完成了一个依赖收集的过程。</p>
+<p>所以在 <code class="language-plaintext highlighter-rouge">vm._render()</code> 过程中，会触发所有数据的 <code class="language-plaintext highlighter-rouge">getter</code>，这样实际上已经完成了一个依赖收集的过程。</p>
 
 <p>依赖收集完毕之后，代码中有段 finally 执行的：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">finally</span> <span class="p">{</span>
@@ -380,7 +380,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">traverse(value)</code> 是递归去访问 <code class="highlighter-rouge">value</code> ，触发它所有子项的 <code class="highlighter-rouge">getter</code> ，代码如下：</p>
+<p><code class="language-plaintext highlighter-rouge">traverse(value)</code> 是递归去访问 <code class="language-plaintext highlighter-rouge">value</code> ，触发它所有子项的 <code class="language-plaintext highlighter-rouge">getter</code> ，代码如下：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Recursively traverse an object to evoke all converted
  * getters, so that every nested property inside the object
@@ -415,7 +415,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>接下来执行 <code class="highlighter-rouge">popTarget()</code> ，代码在 <code class="highlighter-rouge">src/core/observer/dep.js</code> ，如下：</p>
+<p>接下来执行 <code class="language-plaintext highlighter-rouge">popTarget()</code> ，代码在 <code class="language-plaintext highlighter-rouge">src/core/observer/dep.js</code> ，如下：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// The current target watcher being evaluated.</span>
 <span class="c1">// This is globally unique because only one watcher</span>
@@ -429,7 +429,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>实际上就是把 <code class="highlighter-rouge">Dep.target</code> 恢复成上一个状态，因为当前 vm 的数据依赖收集已经完成，那么对应的渲染 <code class="highlighter-rouge">Dep.target</code> 也需要改变。最后执行：<code class="highlighter-rouge">this.cleanupDeps()</code>，代码如下：</p>
+<p>实际上就是把 <code class="language-plaintext highlighter-rouge">Dep.target</code> 恢复成上一个状态，因为当前 vm 的数据依赖收集已经完成，那么对应的渲染 <code class="language-plaintext highlighter-rouge">Dep.target</code> 也需要改变。最后执行：<code class="language-plaintext highlighter-rouge">this.cleanupDeps()</code>，代码如下：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Clean up for dependency collection.
@@ -453,7 +453,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>这里是清空依赖的过程。考虑到 Vue 是数据驱动的，所以每次数据变化都会重新 render，那么 <code class="highlighter-rouge">vm._render()</code> 方法又会再次执行，并再次触发数据的 <code class="highlighter-rouge">getters</code>，所以 <code class="highlighter-rouge">Wathcer</code> 在构造函数中会初始化 2 个 <code class="highlighter-rouge">Dep</code> 实例数组，<code class="highlighter-rouge">newDeps</code> 表示新添加的 <code class="highlighter-rouge">Dep</code> 实例数组，而 <code class="highlighter-rouge">deps</code> 表示上一次添加的 <code class="highlighter-rouge">Dep</code> 实例数组。所以我们可以看到，在 <code class="highlighter-rouge">Watcher</code> 构造函数中，会有一些数据的初始化：</p>
+<p>这里是清空依赖的过程。考虑到 Vue 是数据驱动的，所以每次数据变化都会重新 render，那么 <code class="language-plaintext highlighter-rouge">vm._render()</code> 方法又会再次执行，并再次触发数据的 <code class="language-plaintext highlighter-rouge">getters</code>，所以 <code class="language-plaintext highlighter-rouge">Wathcer</code> 在构造函数中会初始化 2 个 <code class="language-plaintext highlighter-rouge">Dep</code> 实例数组，<code class="language-plaintext highlighter-rouge">newDeps</code> 表示新添加的 <code class="language-plaintext highlighter-rouge">Dep</code> 实例数组，而 <code class="language-plaintext highlighter-rouge">deps</code> 表示上一次添加的 <code class="language-plaintext highlighter-rouge">Dep</code> 实例数组。所以我们可以看到，在 <code class="language-plaintext highlighter-rouge">Watcher</code> 构造函数中，会有一些数据的初始化：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">this</span><span class="p">.</span><span class="nx">deps</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span> <span class="o">=</span> <span class="p">[]</span>
@@ -461,16 +461,16 @@
 <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Set</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p>在执行 <code class="highlighter-rouge">cleanupDeps</code> 函数的时候，会首先遍历 <code class="highlighter-rouge">deps</code>，移除对 <code class="highlighter-rouge">dep.subs</code> 数组中 <code class="highlighter-rouge">Wathcer</code> 的订阅，然后把 <code class="highlighter-rouge">newDepIds</code> 和 <code class="highlighter-rouge">depIds</code> 交换，<code class="highlighter-rouge">newDeps</code> 和 <code class="highlighter-rouge">deps</code> 交换，并把 <code class="highlighter-rouge">newDepIds</code> 和 <code class="highlighter-rouge">newDeps</code> 清空。</p>
+<p>在执行 <code class="language-plaintext highlighter-rouge">cleanupDeps</code> 函数的时候，会首先遍历 <code class="language-plaintext highlighter-rouge">deps</code>，移除对 <code class="language-plaintext highlighter-rouge">dep.subs</code> 数组中 <code class="language-plaintext highlighter-rouge">Wathcer</code> 的订阅，然后把 <code class="language-plaintext highlighter-rouge">newDepIds</code> 和 <code class="language-plaintext highlighter-rouge">depIds</code> 交换，<code class="language-plaintext highlighter-rouge">newDeps</code> 和 <code class="language-plaintext highlighter-rouge">deps</code> 交换，并把 <code class="language-plaintext highlighter-rouge">newDepIds</code> 和 <code class="language-plaintext highlighter-rouge">newDeps</code> 清空。</p>
 
-<p>那么为什么需要做 <code class="highlighter-rouge">deps</code> 订阅的移除呢，在添加 <code class="highlighter-rouge">deps</code> 的订阅过程，已经能通过 <code class="highlighter-rouge">id</code> 去重避免重复订阅了。</p>
+<p>那么为什么需要做 <code class="language-plaintext highlighter-rouge">deps</code> 订阅的移除呢，在添加 <code class="language-plaintext highlighter-rouge">deps</code> 的订阅过程，已经能通过 <code class="language-plaintext highlighter-rouge">id</code> 去重避免重复订阅了。</p>
 
 <p>考虑到一种场景，我们的模板会根据 v-if 去渲染不同子模板 a 和 b，当我们满足某种条件的时候渲染 a 的时候，会访问到 a 中的数据，这时候我们对 a 使用的数据添加了 getter，做了依赖收集，那么当我们去修改 a 的数据的时候，理应通知到这些订阅者。那么如果我们一旦改变了条件渲染了 b 模板，又会对 b 使用的数据添加了 getter，如果我们没有依赖移除的过程，那么这时候我去修改 a 模板的数据，会通知 a 数据的订阅的回调，这显然是有浪费的。</p>
 
 <p>因此 Vue 设计了在每次添加完新的订阅，会移除掉旧的订阅，这样就保证了在我们刚才的场景中，如果渲染 b 模板的时候去修改 a 模板的数据，a 数据订阅回调已经被移除了，所以不会有任何浪费。</p>
 
 <h3 id="3总结">3、总结</h3>
-<p>收集依赖的目的是为了当这些响应式数据发生变化，触发它们的 <code class="highlighter-rouge">setter</code> 的时候，能知道应该通知哪些订阅者去做相应的逻辑处理，这个过程叫 <strong>「派发更新」</strong>，其实 <code class="highlighter-rouge">Watcher</code> 和 <code class="highlighter-rouge">Dep</code> 就是一个非常经典的观察者设计模式的实现。</p>
+<p>收集依赖的目的是为了当这些响应式数据发生变化，触发它们的 <code class="language-plaintext highlighter-rouge">setter</code> 的时候，能知道应该通知哪些订阅者去做相应的逻辑处理，这个过程叫 <strong>「派发更新」</strong>，其实 <code class="language-plaintext highlighter-rouge">Watcher</code> 和 <code class="language-plaintext highlighter-rouge">Dep</code> 就是一个非常经典的观察者设计模式的实现。</p>
 
 <p><strong><em>参考：</em></strong><br />
 <a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a><br />

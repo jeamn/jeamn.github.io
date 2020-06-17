@@ -1,4 +1,4 @@
-I"[<h2 id="一javascript内存机制数据是如何存储的">一、JavaScript内存机制————数据是如何存储的？</h2>
+I"n<h2 id="一javascript内存机制数据是如何存储的">一、JavaScript内存机制————数据是如何存储的？</h2>
 <p>基本数据类型用栈存储，引用数据类型和闭包用堆存储。</p>
 
 <h2 id="二如何理解eventloop宏任务和微任务篇">二、如何理解EventLoop————宏任务和微任务篇</h2>
@@ -41,6 +41,6 @@
 <p>浏览器中的微任务是在每个相应的宏任务中执行的，而 nodejs 中的微任务是在不同阶段执行的。</p>
 
 <h3 id="4关于-processnexttick-的一点说明">4、关于 process.nextTick 的一点说明</h3>
-<p>process.nextTick 是一个独立于 eventLoop 的任务队列，在每一个 eventLoop 阶段完成后悔去检查这个队列，如果有任务，会让这部分任务 <code class="highlighter-rouge">优先于微任务</code> 执行。</p>
+<p>process.nextTick 是一个独立于 eventLoop 的任务队列，在每一个 eventLoop 阶段完成后悔去检查这个队列，如果有任务，会让这部分任务 <code class="language-plaintext highlighter-rouge">优先于微任务</code> 执行。</p>
 
 :ET

@@ -1,4 +1,4 @@
-I"�)<h1 id="git多人协作是怎样的">git多人协作是怎样的？？？</h1>
+I"�*<h1 id="git多人协作是怎样的">git多人协作是怎样的？？？</h1>
 
 <p>git对版本管理的贡献是毋庸置疑的。本文不会全面介绍 git 的各种命令以及它们的使用方法，本文假设你已经有 git 的基础，如果没有的话，建议先看一下以下的这些教程。</p>
 
@@ -35,7 +35,7 @@
 </code></pre></div></div>
 <p>配置完之后，输入命令以下命令打开存放你密钥的文件夹，</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>open ~/.ssh
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>open ~/.ssh
 </code></pre></div></div>
 <p>用记事本打开 id_rsa.pub 复制密钥，然后发给 John 添加到公共 github 的 ssh 中。这时候权限的配置就完成。</p>
 
@@ -50,38 +50,38 @@
 
 <p>拷贝公共仓库地址</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone 拷贝的地址
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone 拷贝的地址
 </code></pre></div></div>
 <p><strong>步骤 2、</strong></p>
 
 <p>进入该仓库文件夹，查看本地和远程的所有分支，这时候看到的本地分支只有 master ，远程有一个主分支 master 和一个默认分支 remotes/origin/HEAD -&gt; origin/master，这是一个指针，指向默认的分支，不懂的可不必理会</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git branch -a
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git branch -a
 </code></pre></div></div>
 <p><strong>步骤 3、</strong></p>
 
 <p>在本地创建一个自己的分支，并切换到该分支</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout -b mybranch
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout -b mybranch
 </code></pre></div></div>
 <p><strong>步骤 4、</strong></p>
 
 <p>把新建的本地分支 push 到远程服务器，远程分支与本地分支同名（当然可以随意起名），推荐同名</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push origin mybranch:mybranch
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push origin mybranch:mybranch
 </code></pre></div></div>
 <p><strong>步骤 5、</strong></p>
 
 <p>这个时候你可以查看当前所有分支，会发现多了两个你刚刚创建的分支</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git branch -a
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git branch -a
 </code></pre></div></div>
 
 <p><strong>步骤 6、</strong></p>
 
 <p>这时当前分支是你本地的个人分支，就可以进行提交代码了。假设小伙伴 A 添加了一个文件 addFile.js ，添加完之后他需要先把此次的更改添加到本地暂存区，然后再提交到本地仓库，接着再推送到远程分支 mybranch</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add .
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add .
 git commit -m "添加了一个文件"
 git push origin mybranch
 </code></pre></div></div>
@@ -93,26 +93,26 @@ git push origin mybranch
 
 <p>此时我们已经完成了个人分支的代码推送到远程的个人分支，接下来我们需要在本地切换分支为本地的 master 分支</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout master
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout master
 </code></pre></div></div>
 <p><strong>步骤 8、</strong></p>
 
 <p>然后将远程的 master 主分支 pull 下来，防止 push 的时候发生冲突</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git pull origin master
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git pull origin master
 </code></pre></div></div>
 <p><strong>步骤 9、</strong></p>
 
 <p>接下来将个人分支 mybranch 与 主分支 master 合并，然后推送到远程仓库的 master 主分支</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git merge mybranch
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git merge mybranch
 git push origin master
 </code></pre></div></div>
 <p><strong>步骤 10、</strong></p>
 
 <p>到这里已经完成了个人资料提交到远程仓库的步骤，可以在公共 github 上面看到你的提交。然后我们就可以删除我们最初创建的个人分支了，将远程的和本地的个人分支都删除</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push origin --delete mybranch  //远程删除
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push origin --delete mybranch  //远程删除
 git branch -D mybranch             //本地删除
 </code></pre></div></div>
 
@@ -148,7 +148,7 @@ git branch -D mybranch             //本地删除
 
 <p>比如：我 fork 了 仓库 A 的项目，项目负责人是 mike ，然后克隆到了自己本地进行开发。接着，我需要添加仓库 A 项目的源地址</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote add mike 源项目地址
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote add mike 源项目地址
 git fetch mike
 git merge mike/master
 </code></pre></div></div>

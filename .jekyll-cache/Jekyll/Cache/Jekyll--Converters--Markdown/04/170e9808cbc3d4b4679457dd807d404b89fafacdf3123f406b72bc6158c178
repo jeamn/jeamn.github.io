@@ -1,4 +1,4 @@
-I"�[<p>本次服务端部署折腾之旅，完全是出于兴趣爱好。主要是有两个方面：</p>
+I")]<p>本次服务端部署折腾之旅，完全是出于兴趣爱好。主要是有两个方面：</p>
 <ul>
   <li>node接口服务的简单部署，实现前端在后端接口未实现时，自己模拟开发数据辅助开发</li>
   <li>前端静态资源页面的部署</li>
@@ -14,18 +14,18 @@ MacBook Pro、iTerm2</p>
 <h3 id="服务器基本配置">服务器基本配置</h3>
 <p>我购买的是阿里云的 ECS 服务器，centOS 系统，最低配置就可以了，1核 CPU ，2G 内存。</p>
 
-<p>购买完服务器可以在阿里云的控制台上的 <code class="highlighter-rouge">云服务器实例列表</code> 找到，其中：<br />
+<p>购买完服务器可以在阿里云的控制台上的 <code class="language-plaintext highlighter-rouge">云服务器实例列表</code> 找到，其中：<br />
 IP 地址分为公网 IP 和内部私有 IP 地址，这里的私有 IP 是阿里云内网专用 IP，所以我们要用的是公网的 IP 地址；</p>
 
-<p>点操作项可以进入实例的配置，其中我们需要配置的是 <code class="highlighter-rouge">本实例安全组</code>，我们需要在安全组规则里面添加服务器需要暴露的接口，否则是访问不到的。一般会根据这个以及结合服务器的防火墙来对服务器的端口进行安全管理。</p>
+<p>点操作项可以进入实例的配置，其中我们需要配置的是 <code class="language-plaintext highlighter-rouge">本实例安全组</code>，我们需要在安全组规则里面添加服务器需要暴露的接口，否则是访问不到的。一般会根据这个以及结合服务器的防火墙来对服务器的端口进行安全管理。</p>
 
 <p>这里我们暴露出3001、8081、8082，80开头的作为前端项目的端口，30开头的作为接口服务的端口。</p>
 
 <p>配置好之后，在终端 iTerm2 可以访问服务器，需要输入服务器的密码，密码是在申请实例的时候设置的，可自行更改。</p>
 
 <p>这里我一般会将自己电脑的公钥添加到服务器上，并在自己电脑上设置快捷命令，即，将登录的命令写入 .zshrc 文件中，具体做法入下：<br />
-在服务器 ~ 目录下进入 .ssh 文件夹，新建 <code class="highlighter-rouge">authorized_keys</code> 文件并添加客户端的公钥，客户端的公钥生成方法可以百度下。 
-另一个小技巧是将登录服务器的命令设置成别名，可以在客户端的 ~ 目录下的 <code class="highlighter-rouge">.zshrc</code> 文件中配置 <code class="highlighter-rouge">alias aly="ssh root@39.108.2.88"</code></p>
+在服务器 ~ 目录下进入 .ssh 文件夹，新建 <code class="language-plaintext highlighter-rouge">authorized_keys</code> 文件并添加客户端的公钥，客户端的公钥生成方法可以百度下。 
+另一个小技巧是将登录服务器的命令设置成别名，可以在客户端的 ~ 目录下的 <code class="language-plaintext highlighter-rouge">.zshrc</code> 文件中配置 <code class="language-plaintext highlighter-rouge">alias aly="ssh root@39.108.2.88"</code></p>
 
 <p>配置后，直接在 iTerm2 终端键入 aly 便可登录到服务器。</p>
 
@@ -50,12 +50,12 @@ IP 地址分为公网 IP 和内部私有 IP 地址，这里的私有 IP 是阿�
 </code></pre></div></div>
 
 <h3 id="nginx-端口映射">nginx 端口映射</h3>
-<p>Nginx是一款轻量级的Web服务器、反向代理服务器，安装完之后，可以用 <code class="highlighter-rouge">nginx -t</code> 检测 nginx 的具体安装位置：</p>
+<p>Nginx是一款轻量级的Web服务器、反向代理服务器，安装完之后，可以用 <code class="language-plaintext highlighter-rouge">nginx -t</code> 检测 nginx 的具体安装位置：</p>
 <blockquote>
   <p>nginx: configuration file /etc/nginx/nginx.conf test is successful</p>
 </blockquote>
 
-<p>根据安装位置，Nginx 的默认端口是80，所以我们需要在 <code class="highlighter-rouge">/etc/nginx/conf.d</code> 目录下，新建一些文件，来做端口映射。文件名可以根据项目名称以及配置的端口来命名，这里创建 <code class="highlighter-rouge">vue-app-8081.conf</code> 和 <code class="highlighter-rouge">react-app-8082.conf</code> 两个文件，
+<p>根据安装位置，Nginx 的默认端口是80，所以我们需要在 <code class="language-plaintext highlighter-rouge">/etc/nginx/conf.d</code> 目录下，新建一些文件，来做端口映射。文件名可以根据项目名称以及配置的端口来命名，这里创建 <code class="language-plaintext highlighter-rouge">vue-app-8081.conf</code> 和 <code class="language-plaintext highlighter-rouge">react-app-8082.conf</code> 两个文件，
 vue-app-8081.conf 的内容大致如下：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">server</span> <span class="p">{</span>
   <span class="nx">listen</span> <span class="mi">8081</span><span class="p">;</span> <span class="c1">// 浏览器访问的端口</span>
@@ -78,7 +78,7 @@ vue-app-8081.conf 的内容大致如下：</p>
 </code></pre></div></div>
 
 <h3 id="添加-pm2-部署文件">添加 pm2 部署文件</h3>
-<p>在每个项目的根目录下添加 <code class="highlighter-rouge">ecosystem.json</code> 文件，内容如下：</p>
+<p>在每个项目的根目录下添加 <code class="language-plaintext highlighter-rouge">ecosystem.json</code> 文件，内容如下：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
     <span class="dl">"</span><span class="s2">apps</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
@@ -111,7 +111,7 @@ vue-app-8081.conf 的内容大致如下：</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h3 id="修改-packagejson-文件">修改 <code class="highlighter-rouge">package.json</code> 文件</h3>
+<h3 id="修改-packagejson-文件">修改 <code class="language-plaintext highlighter-rouge">package.json</code> 文件</h3>
 <p>主要是在 scripts 里添加一些便捷命令，如下：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="dl">"</span><span class="s2">deployinit</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">pm2 deploy ecosystem.json production setup</span><span class="dl">"</span><span class="p">,</span> <span class="c1">// 首次部署需要初始化项目</span>
 <span class="dl">"</span><span class="s2">deploy</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">pm2 deploy ecosystem.json production</span><span class="dl">"</span> <span class="c1">// 正常部署</span>
@@ -120,8 +120,8 @@ vue-app-8081.conf 的内容大致如下：</p>
 <h3 id="将项目部署到-git-仓库">将项目部署到 Git 仓库</h3>
 <p>在 Github 或者 码云 创建两个仓库，用来存储项目代码，具体步骤不赘述。。</p>
 
-<p>到这里就算完成了简单的部署，vue 项目中运行 <code class="highlighter-rouge">yarn deployinit</code> 即可完成项目的初始化，接着运行 <code class="highlighter-rouge">yarn deploy</code> 即可。
-浏览器访问 <code class="highlighter-rouge">39.108.2.88:8081</code> 可看到效果。
+<p>到这里就算完成了简单的部署，vue 项目中运行 <code class="language-plaintext highlighter-rouge">yarn deployinit</code> 即可完成项目的初始化，接着运行 <code class="language-plaintext highlighter-rouge">yarn deploy</code> 即可。
+浏览器访问 <code class="language-plaintext highlighter-rouge">39.108.2.88:8081</code> 可看到效果。
 有条件的购买域名，将域名解析到对应的端口即可。由于域名需要备案，这里就省略了。</p>
 
 <h2 id="三node-接口部署">三、Node 接口部署</h2>
@@ -135,7 +135,7 @@ vue-app-8081.conf 的内容大致如下：</p>
 <span class="p">})</span>
 </code></pre></div></div>
 
-<p>添加 <code class="highlighter-rouge">ecosystem.json</code> 文件：</p>
+<p>添加 <code class="language-plaintext highlighter-rouge">ecosystem.json</code> 文件：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
     <span class="dl">"</span><span class="s2">apps</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
@@ -168,7 +168,7 @@ vue-app-8081.conf 的内容大致如下：</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>在 <code class="highlighter-rouge">/etc/nginx/conf.d</code> 目录下，新建 <code class="highlighter-rouge">node-server-3001.conf</code> 文件，</p>
+<p>在 <code class="language-plaintext highlighter-rouge">/etc/nginx/conf.d</code> 目录下，新建 <code class="language-plaintext highlighter-rouge">node-server-3001.conf</code> 文件，</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">upstream</span> <span class="nx">node</span><span class="o">-</span><span class="nx">server</span> <span class="p">{</span>
     <span class="nx">server</span> <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">3001</span><span class="p">;</span> <span class="err">#这里的端口号写你</span><span class="nx">node</span><span class="p">.</span><span class="nx">js</span><span class="err">运行的端口号</span>
     <span class="nx">keepalive</span> <span class="mi">64</span><span class="p">;</span>

@@ -1,4 +1,4 @@
-I"x�<h2 id="一js数据类型概念篇">一、JS数据类型————概念篇</h2>
+I"�<h2 id="一js数据类型概念篇">一、JS数据类型————概念篇</h2>
 <h3 id="1js-原始数据类型和引用数据类型有哪些">1、JS 原始数据类型和引用数据类型有哪些？</h3>
 <p>原始数据类型7种：String、Number、Boolean、Null、Undefined、Symbol、BigInt<br />
 引用数据类型1种：对象Object（包含普通对象Object、数组对象Array、正则对象RegExp、日期对象Date、数学函数Math、函数对象Function）</p>
@@ -152,7 +152,7 @@ Symbol：抛错</li>
 
 <h3 id="变量环境">变量环境</h3>
 <p>变量环境也是一种词法环境，因此具有词法环境的所有属性。  <br />
-在 ES6 中，词法环境用于存储 <code class="highlighter-rouge">函数声明和变量（let、const）绑定</code>，变量环境用于存储 <code class="highlighter-rouge">变量（var）绑定</code>。</p>
+在 ES6 中，词法环境用于存储 <code class="language-plaintext highlighter-rouge">函数声明和变量（let、const）绑定</code>，变量环境用于存储 <code class="language-plaintext highlighter-rouge">变量（var）绑定</code>。</p>
 
 <h3 id="变量提升原因">变量提升原因</h3>
 <p>在执行上下文创建阶段，函数声明存储在环境中，而 var 定义的变量会被设置为 undefined 。</p>
@@ -176,7 +176,7 @@ MDN：闭包是指那些能够访问自由变量的函数（自由变量指的�
   <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
-<p>在这段代码中，f1的作用域指向全局䄦它本身，f2的作用域指向全局、f1和它本身。
+<p>在这段代码中，f1的作用域指向全局了它本身，f2的作用域指向全局、f1和它本身。
 （3）闭包产生的本质就是，当前环境中存在指向父级作用域的引用，如：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">f1</span><span class="p">(){</span>
   <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span>
@@ -302,7 +302,7 @@ MDN：闭包是指那些能够访问自由变量的函数（自由变量指的�
 <p>当访问一个变量时，解释器会首先在当前作用域查找标识符，如果没找到会去父作用域找，直到找到该变量的标识符或者不在父作用域中，这就是作用域链。作用域链的顶端是全局对象，在全局环境中定义的变量会绑定到全局对象中。</p>
 
 <h3 id="2原型链">2、原型链</h3>
-<p>在 JavaScript 中，一共有两种类型的值，原始值和对象值。每个对象都有一个 <code class="highlighter-rouge">__proto__</code> 属性，此属性指向该对象的构造函数的原型。所以对象可以通过 <code class="highlighter-rouge">__proto__</code> 与上游的构造函数的原型对象连接起来，而上游的原型对象也有一个 <code class="highlighter-rouge">__proto__</code> 属性，这样就形成了原型链。原型链的顶端是 null，即 <code class="highlighter-rouge">Object.prototype.__proto__</code>。</p>
+<p>在 JavaScript 中，一共有两种类型的值，原始值和对象值。每个对象都有一个 <code class="language-plaintext highlighter-rouge">__proto__</code> 属性，此属性指向该对象的构造函数的原型。所以对象可以通过 <code class="language-plaintext highlighter-rouge">__proto__</code> 与上游的构造函数的原型对象连接起来，而上游的原型对象也有一个 <code class="language-plaintext highlighter-rouge">__proto__</code> 属性，这样就形成了原型链。原型链的顶端是 null，即 <code class="language-plaintext highlighter-rouge">Object.prototype.__proto__</code>。</p>
 
 <p>对象的 hasOwnProperty() 可以检查自身中是否含有该属性。</p>
 

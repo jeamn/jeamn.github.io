@@ -1,4 +1,4 @@
-I"q�<h2 id="响应式对象">响应式对象</h2>
+I"��<h2 id="响应式对象">响应式对象</h2>
 <p>Vue.js 基于 ES5 的 <strong>Object.defineProperty</strong> 属性，在 init 的阶段会进行初始化，对数据进行 <strong>响应式化</strong>，实现响应式系统。</p>
 
 <p><strong>Object.defineProperty</strong> 方法会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性， 并返回这个对象，</p>
@@ -22,7 +22,7 @@
 <p>一旦对象拥有了 getter 和 setter，我们可以简单地把这个对象称为响应式对象。那么 Vue.js 把哪些对象变成了响应式对象了呢？</p>
 
 <h3 id="1initstate">1、initState</h3>
-<p>在 Vue 的初始化阶段，<code class="highlighter-rouge">_init</code> 方法执行的时候，会执行 <code class="highlighter-rouge">initState(vm)</code> 方法，它的定义在 <code class="highlighter-rouge">src/core/instance/state.js</code> 中。</p>
+<p>在 Vue 的初始化阶段，<code class="language-plaintext highlighter-rouge">_init</code> 方法执行的时候，会执行 <code class="language-plaintext highlighter-rouge">initState(vm)</code> 方法，它的定义在 <code class="language-plaintext highlighter-rouge">src/core/instance/state.js</code> 中。</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nx">initState</span> <span class="p">(</span><span class="nx">vm</span><span class="p">:</span> <span class="nx">Component</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">vm</span><span class="p">.</span><span class="nx">_watchers</span> <span class="o">=</span> <span class="p">[]</span>
   <span class="kd">const</span> <span class="nx">opts</span> <span class="o">=</span> <span class="nx">vm</span><span class="p">.</span><span class="nx">$options</span>
@@ -39,7 +39,7 @@
   <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
-<p>initState 方法主要是对 <code class="highlighter-rouge">props</code>、<code class="highlighter-rouge">methods</code>、<code class="highlighter-rouge">data</code>、<code class="highlighter-rouge">computed</code> 和 <code class="highlighter-rouge">wathcer</code> 等属性做了初始化操作。这里先看下 props 和 data，</p>
+<p>initState 方法主要是对 <code class="language-plaintext highlighter-rouge">props</code>、<code class="language-plaintext highlighter-rouge">methods</code>、<code class="language-plaintext highlighter-rouge">data</code>、<code class="language-plaintext highlighter-rouge">computed</code> 和 <code class="language-plaintext highlighter-rouge">wathcer</code> 等属性做了初始化操作。这里先看下 props 和 data，</p>
 <ul>
   <li>initProps</li>
 </ul>
@@ -93,7 +93,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">props</code> 的初始化主要过程，就是遍历定义的 <code class="highlighter-rouge">props</code> 配置。遍历的过程主要做两件事情：一个是调用 <code class="highlighter-rouge">defineReactive</code> 方法把每个 <code class="highlighter-rouge">prop</code> 对应的值变成响应式，可以通过 vm._props.xxx 访问到定义 props 中对应的属性。另一个是通过 proxy 把 vm._props.xxx 的访问代理到 vm.xxx 上。</p>
+<p><code class="language-plaintext highlighter-rouge">props</code> 的初始化主要过程，就是遍历定义的 <code class="language-plaintext highlighter-rouge">props</code> 配置。遍历的过程主要做两件事情：一个是调用 <code class="language-plaintext highlighter-rouge">defineReactive</code> 方法把每个 <code class="language-plaintext highlighter-rouge">prop</code> 对应的值变成响应式，可以通过 vm._props.xxx 访问到定义 props 中对应的属性。另一个是通过 proxy 把 vm._props.xxx 的访问代理到 vm.xxx 上。</p>
 
 <ul>
   <li>initData</li>
@@ -142,12 +142,12 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">data</code> 的初始化主要过程也是做两件事，一个是对定义 <code class="highlighter-rouge">data</code> 函数返回的对象的遍历，通过 <code class="highlighter-rouge">proxy</code> 把每一个值 vm._data.xxx 都代理到 vm.xxx 上；另一个是调用 <code class="highlighter-rouge">observe</code> 方法观测整个 <code class="highlighter-rouge">data</code> 的变化，把 <code class="highlighter-rouge">data</code> 也变成响应式，可以通过 vm._data.xxx 访问到定义 <code class="highlighter-rouge">data</code> 返回函数中对应的属性。</p>
+<p><code class="language-plaintext highlighter-rouge">data</code> 的初始化主要过程也是做两件事，一个是对定义 <code class="language-plaintext highlighter-rouge">data</code> 函数返回的对象的遍历，通过 <code class="language-plaintext highlighter-rouge">proxy</code> 把每一个值 vm._data.xxx 都代理到 vm.xxx 上；另一个是调用 <code class="language-plaintext highlighter-rouge">observe</code> 方法观测整个 <code class="language-plaintext highlighter-rouge">data</code> 的变化，把 <code class="language-plaintext highlighter-rouge">data</code> 也变成响应式，可以通过 vm._data.xxx 访问到定义 <code class="language-plaintext highlighter-rouge">data</code> 返回函数中对应的属性。</p>
 
 <p>可以看到，无论是 props 或是 data 的初始化都是把它们变成响应式对象。</p>
 
 <h3 id="2proxy">2、proxy</h3>
-<p>首先介绍一下代理，代理的作用是把 <code class="highlighter-rouge">props</code> 和 <code class="highlighter-rouge">data</code> 上的属性代理到 <code class="highlighter-rouge">vm</code> 实例上，这也就是为什么比如我们定义了如下 props，却可以通过 vm 实例访问到它。</p>
+<p>首先介绍一下代理，代理的作用是把 <code class="language-plaintext highlighter-rouge">props</code> 和 <code class="language-plaintext highlighter-rouge">data</code> 上的属性代理到 <code class="language-plaintext highlighter-rouge">vm</code> 实例上，这也就是为什么比如我们定义了如下 props，却可以通过 vm 实例访问到它。</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">comP</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">props</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">msg</span><span class="p">:</span> <span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span>
@@ -161,7 +161,7 @@
 </code></pre></div></div>
 
 <p>我们可以在 say 函数中通过 this.msg 访问到我们定义在 props 中的 msg，这个过程发生在 proxy 阶段：</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const sharedPropertyDefinition = {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const sharedPropertyDefinition = {
   enumerable: true,
   configurable: true,
   get: noop,
@@ -179,10 +179,10 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 }
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">proxy</code> 方法的实现很简单，通过 <code class="highlighter-rouge">Object.defineProperty</code> 把 <code class="highlighter-rouge">target[sourceKey][key]</code> 的读写变成了对 <code class="highlighter-rouge">target[key]</code> 的读写。所以对于 <code class="highlighter-rouge">props</code> 而言，对 vm._props.xxx 的读写变成了 vm.xxx 的读写，而对于 vm._props.xxx 我们可以访问到定义在 props 中的属性，所以我们就可以通过 vm.xxx 访问到定义在 props 中的 xxx 属性了。同理，对于 data 而言，对 vm._data.xxxx 的读写变成了对 vm.xxxx 的读写，而对于 vm._data.xxxx 我们可以访问到定义在 data 函数返回对象中的属性，所以我们就可以通过 vm.xxxx 访问到定义在 data 函数返回对象中的 xxxx 属性了。</p>
+<p><code class="language-plaintext highlighter-rouge">proxy</code> 方法的实现很简单，通过 <code class="language-plaintext highlighter-rouge">Object.defineProperty</code> 把 <code class="language-plaintext highlighter-rouge">target[sourceKey][key]</code> 的读写变成了对 <code class="language-plaintext highlighter-rouge">target[key]</code> 的读写。所以对于 <code class="language-plaintext highlighter-rouge">props</code> 而言，对 vm._props.xxx 的读写变成了 vm.xxx 的读写，而对于 vm._props.xxx 我们可以访问到定义在 props 中的属性，所以我们就可以通过 vm.xxx 访问到定义在 props 中的 xxx 属性了。同理，对于 data 而言，对 vm._data.xxxx 的读写变成了对 vm.xxxx 的读写，而对于 vm._data.xxxx 我们可以访问到定义在 data 函数返回对象中的属性，所以我们就可以通过 vm.xxxx 访问到定义在 data 函数返回对象中的 xxxx 属性了。</p>
 
 <h3 id="3observe">3、observe</h3>
-<p><code class="highlighter-rouge">observe</code> 的功能就是用来监测数据的变化，它的定义在 <code class="highlighter-rouge">src/core/observer/index.js</code> 中：</p>
+<p><code class="language-plaintext highlighter-rouge">observe</code> 的功能就是用来监测数据的变化，它的定义在 <code class="language-plaintext highlighter-rouge">src/core/observer/index.js</code> 中：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Attempt to create an observer instance for a value,
  * returns the new observer if successfully observed,
@@ -211,10 +211,10 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">observe</code> 方法的作用就是给非 VNode 的对象类型数据添加一个 <code class="highlighter-rouge">Observer</code>，如果已经添加过则直接返回，否则在满足一定条件下去实例化一个 <code class="highlighter-rouge">Observer</code> 对象实例。接下来看一下 Observer 的作用。</p>
+<p><code class="language-plaintext highlighter-rouge">observe</code> 方法的作用就是给非 VNode 的对象类型数据添加一个 <code class="language-plaintext highlighter-rouge">Observer</code>，如果已经添加过则直接返回，否则在满足一定条件下去实例化一个 <code class="language-plaintext highlighter-rouge">Observer</code> 对象实例。接下来看一下 Observer 的作用。</p>
 
 <h3 id="4observer">4、Observer</h3>
-<p><code class="highlighter-rouge">Observer</code> 是一个类，它的作用是给对象的属性添加 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>，用于依赖收集和派发更新：</p>
+<p><code class="language-plaintext highlighter-rouge">Observer</code> 是一个类，它的作用是给对象的属性添加 <code class="language-plaintext highlighter-rouge">getter</code> 和 <code class="language-plaintext highlighter-rouge">setter</code>，用于依赖收集和派发更新：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Observer class that is attached to each observed
  * object. Once attached, the observer converts the target
@@ -266,7 +266,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">Observer</code> 的构造函数逻辑很简单，首先实例化 <code class="highlighter-rouge">Dep</code> 对象，这块稍后会介绍，接着通过执行 <code class="highlighter-rouge">def</code> 函数把自身实例添加到数据对象 value 的 <code class="highlighter-rouge">__ob__</code> 属性上，<code class="highlighter-rouge">def</code> 的定义在 <code class="highlighter-rouge">src/core/util/lang.js</code> 中：</p>
+<p><code class="language-plaintext highlighter-rouge">Observer</code> 的构造函数逻辑很简单，首先实例化 <code class="language-plaintext highlighter-rouge">Dep</code> 对象，这块稍后会介绍，接着通过执行 <code class="language-plaintext highlighter-rouge">def</code> 函数把自身实例添加到数据对象 value 的 <code class="language-plaintext highlighter-rouge">__ob__</code> 属性上，<code class="language-plaintext highlighter-rouge">def</code> 的定义在 <code class="language-plaintext highlighter-rouge">src/core/util/lang.js</code> 中：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Define a property.
  */</span>
@@ -280,12 +280,12 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">def</code> 函数是一个非常简单的 <code class="highlighter-rouge">Object.defineProperty</code> 的封装，这就是为什么我在开发中输出 data 上对象类型的数据，会发现该对象多了一个 <code class="highlighter-rouge">__ob__</code> 的属性。</p>
+<p><code class="language-plaintext highlighter-rouge">def</code> 函数是一个非常简单的 <code class="language-plaintext highlighter-rouge">Object.defineProperty</code> 的封装，这就是为什么我在开发中输出 data 上对象类型的数据，会发现该对象多了一个 <code class="language-plaintext highlighter-rouge">__ob__</code> 的属性。</p>
 
-<p>回到 <code class="highlighter-rouge">Observer</code> 的构造函数，接下来会对 <code class="highlighter-rouge">value</code> 做判断，对于数组会调用 <code class="highlighter-rouge">observeArray</code> 方法，否则对纯对象调用 <code class="highlighter-rouge">walk</code> 方法。可以看到 <code class="highlighter-rouge">observeArray</code> 是遍历数组再次调用 <code class="highlighter-rouge">observe</code> 方法，而 <code class="highlighter-rouge">walk</code> 方法是遍历对象的 key 调用 <code class="highlighter-rouge">defineReactive</code> 方法，那么我们来看一下这个方法是做什么的。</p>
+<p>回到 <code class="language-plaintext highlighter-rouge">Observer</code> 的构造函数，接下来会对 <code class="language-plaintext highlighter-rouge">value</code> 做判断，对于数组会调用 <code class="language-plaintext highlighter-rouge">observeArray</code> 方法，否则对纯对象调用 <code class="language-plaintext highlighter-rouge">walk</code> 方法。可以看到 <code class="language-plaintext highlighter-rouge">observeArray</code> 是遍历数组再次调用 <code class="language-plaintext highlighter-rouge">observe</code> 方法，而 <code class="language-plaintext highlighter-rouge">walk</code> 方法是遍历对象的 key 调用 <code class="language-plaintext highlighter-rouge">defineReactive</code> 方法，那么我们来看一下这个方法是做什么的。</p>
 
 <h3 id="5definereactive">5、defineReactive</h3>
-<p><code class="highlighter-rouge">defineReactive</code> 的功能就是定义一个响应式对象，给对象动态添加 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>，它的定义在 <code class="highlighter-rouge">src/core/observer/index.js</code> 中：</p>
+<p><code class="language-plaintext highlighter-rouge">defineReactive</code> 的功能就是定义一个响应式对象，给对象动态添加 <code class="language-plaintext highlighter-rouge">getter</code> 和 <code class="language-plaintext highlighter-rouge">setter</code>，它的定义在 <code class="language-plaintext highlighter-rouge">src/core/observer/index.js</code> 中：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
  * Define a reactive property on an Object.
  */</span>
@@ -351,9 +351,9 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">defineReactive</code> 函数最开始初始化 <code class="highlighter-rouge">Dep</code> 对象的实例，接着拿到 obj 的属性描述符，然后对子对象递归调用 <code class="highlighter-rouge">observe</code> 方法，这样就保证了无论 obj 的结构多复杂，它的所有子属性也能变成响应式的对象，这样我们访问或修改 obj 中一个嵌套较深的属性，也能触发 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>。最后利用 <code class="highlighter-rouge">Object.defineProperty</code> 去给 obj 的属性 key 添加 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>。</p>
+<p><code class="language-plaintext highlighter-rouge">defineReactive</code> 函数最开始初始化 <code class="language-plaintext highlighter-rouge">Dep</code> 对象的实例，接着拿到 obj 的属性描述符，然后对子对象递归调用 <code class="language-plaintext highlighter-rouge">observe</code> 方法，这样就保证了无论 obj 的结构多复杂，它的所有子属性也能变成响应式的对象，这样我们访问或修改 obj 中一个嵌套较深的属性，也能触发 <code class="language-plaintext highlighter-rouge">getter</code> 和 <code class="language-plaintext highlighter-rouge">setter</code>。最后利用 <code class="language-plaintext highlighter-rouge">Object.defineProperty</code> 去给 obj 的属性 key 添加 <code class="language-plaintext highlighter-rouge">getter</code> 和 <code class="language-plaintext highlighter-rouge">setter</code>。</p>
 
-<p>响应式对象的核心就是利用 <code class="highlighter-rouge">Object.defineProperty</code> 给数据添加了 <code class="highlighter-rouge">getter</code> 和 <code class="highlighter-rouge">setter</code>，目的就是为了在我们访问数据以及写数据的时候能自动执行一些逻辑：<code class="highlighter-rouge">getter</code> 做的事情是依赖收集，<code class="highlighter-rouge">setter</code> 做的事情是派发更新。这两个步骤分别在 <strong><a href="http://www.jeamn.com/2019/09/06/Vue-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89/">「系列三」</a></strong> 和 <strong><a href="http://www.jeamn.com/2019/09/10/Vue-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E5%9B%9B/">「系列四」</a></strong> 中说明。</p>
+<p>响应式对象的核心就是利用 <code class="language-plaintext highlighter-rouge">Object.defineProperty</code> 给数据添加了 <code class="language-plaintext highlighter-rouge">getter</code> 和 <code class="language-plaintext highlighter-rouge">setter</code>，目的就是为了在我们访问数据以及写数据的时候能自动执行一些逻辑：<code class="language-plaintext highlighter-rouge">getter</code> 做的事情是依赖收集，<code class="language-plaintext highlighter-rouge">setter</code> 做的事情是派发更新。这两个步骤分别在 <strong><a href="http://www.jeamn.com/2019/09/06/Vue-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89/">「系列三」</a></strong> 和 <strong><a href="http://www.jeamn.com/2019/09/10/Vue-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E5%9B%9B/">「系列四」</a></strong> 中说明。</p>
 
 <p><strong><em>参考：</em></strong><br />
 <a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a><br />

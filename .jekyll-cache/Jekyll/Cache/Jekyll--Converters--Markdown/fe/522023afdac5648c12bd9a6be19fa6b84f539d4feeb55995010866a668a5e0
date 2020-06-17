@@ -1,6 +1,6 @@
-I"�y<h2 id="一vuejs-的源码目录">一、Vue.js 的源码目录</h2>
+I"�|<h2 id="一vuejs-的源码目录">一、Vue.js 的源码目录</h2>
 <p>Vue.js 源码的目录主要是放在 src 目录下</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>src
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>src
 ├── compiler        # 编译相关（包含编译相关的代码，将模板解析成 ast 语法树，ast 优化，代码生成等）
 ├── core            # 核心代码（包含内置组件、全局API封装、Vue实例化、订阅者、虚拟DOM、工具函数等）
 ├── platforms       # 不同平台（Vue 框架是跨平台的，可以打包成 web 和 weex 运行的 vue.js）
@@ -14,7 +14,7 @@
 Vue.js 让我们只需要关系视图层和模型层，vm 则是 Vue.js 的灵魂所在。</p>
 
 <h2 id="三new-vue-发生了什么">三、new Vue 发生了什么？</h2>
-<p>通过源码入口，<code class="highlighter-rouge">src/core/instance/index.js</code>
+<p>通过源码入口，<code class="language-plaintext highlighter-rouge">src/core/instance/index.js</code>
 我们可以知道，源码定义了一个 Vue 的构造函数，代码如下：</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">initMixin</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./init</span><span class="dl">'</span>
 <span class="k">import</span> <span class="p">{</span> <span class="nx">stateMixin</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./state</span><span class="dl">'</span>
@@ -40,7 +40,7 @@ Vue.js 让我们只需要关系视图层和模型层，vm 则是 Vue.js 的灵�
 
 <span class="k">export</span> <span class="k">default</span> <span class="nx">Vue</span>
 </code></pre></div></div>
-<p>从代码中可以看出，只能通过 <code class="highlighter-rouge">new</code> 来初始化 Vue 实例，会调用初始化 <code class="highlighter-rouge">_init</code> 方法，该方法在同目录下的 init.js 文件下，</p>
+<p>从代码中可以看出，只能通过 <code class="language-plaintext highlighter-rouge">new</code> 来初始化 Vue 实例，会调用初始化 <code class="language-plaintext highlighter-rouge">_init</code> 方法，该方法在同目录下的 init.js 文件下，</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* @flow */</span>
 
 <span class="k">import</span> <span class="nx">config</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../config</span><span class="dl">'</span>
@@ -171,9 +171,9 @@ Vue.js 让我们只需要关系视图层和模型层，vm 则是 Vue.js 的灵�
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>可以看出，<code class="highlighter-rouge">Vue</code> 初始化做了以下几件事：</p>
+<p>可以看出，<code class="language-plaintext highlighter-rouge">Vue</code> 初始化做了以下几件事：</p>
 <h3 id="1初始化及挂载">1、初始化及挂载</h3>
-<p>在 <code class="highlighter-rouge">new Vue()</code> 之后，Vue 会调用 <code class="highlighter-rouge">_init</code> 函数进行初始化，会初始化<code class="highlighter-rouge">生命周期</code>、<code class="highlighter-rouge">事件</code>、<code class="highlighter-rouge">props</code>、<code class="highlighter-rouge">methods</code>、<code class="highlighter-rouge">data</code>、<code class="highlighter-rouge">computed</code> 与 <code class="highlighter-rouge">watch</code> 等，通过 <code class="highlighter-rouge">Object.defineProperty</code> 设置 <code class="highlighter-rouge">setter</code> 和 <code class="highlighter-rouge">getter</code> 函数，用来实现 <strong>「响应式」</strong> 和 <strong>「依赖收集」</strong>，初始化之后调用 <code class="highlighter-rouge">$mount</code>会挂载组件。</p>
+<p>在 <code class="language-plaintext highlighter-rouge">new Vue()</code> 之后，Vue 会调用 <code class="language-plaintext highlighter-rouge">_init</code> 函数进行初始化，会初始化<code class="language-plaintext highlighter-rouge">生命周期</code>、<code class="language-plaintext highlighter-rouge">事件</code>、<code class="language-plaintext highlighter-rouge">props</code>、<code class="language-plaintext highlighter-rouge">methods</code>、<code class="language-plaintext highlighter-rouge">data</code>、<code class="language-plaintext highlighter-rouge">computed</code> 与 <code class="language-plaintext highlighter-rouge">watch</code> 等，通过 <code class="language-plaintext highlighter-rouge">Object.defineProperty</code> 设置 <code class="language-plaintext highlighter-rouge">setter</code> 和 <code class="language-plaintext highlighter-rouge">getter</code> 函数，用来实现 <strong>「响应式」</strong> 和 <strong>「依赖收集」</strong>，初始化之后调用 <code class="language-plaintext highlighter-rouge">$mount</code>会挂载组件。</p>
 
 <h3 id="2编译">2、编译</h3>
 <p>首先解释一下什么是编译：</p>
@@ -190,27 +190,27 @@ Vue.js 让我们只需要关系视图层和模型层，vm 则是 Vue.js 的灵�
 
 <p>虽然我们可以直接给组件编写 render 函数，但一般我们会选择使用单文件组件编写 template 模板，因为这比较简单。</p>
 
-<p>所以，如果代码是运行时编译，即不存在 render function 但是又有 template 的情况，则需要进行 <code class="highlighter-rouge">「编译」</code> 步骤。具体的编译步骤会在另外的系列博客进行分析。</p>
+<p>所以，如果代码是运行时编译，即不存在 render function 但是又有 template 的情况，则需要进行 <code class="language-plaintext highlighter-rouge">「编译」</code> 步骤。具体的编译步骤会在另外的系列博客进行分析。</p>
 
-<p>complile 编译可以分成 <code class="highlighter-rouge">parse</code>、<code class="highlighter-rouge">optimize</code>与<code class="highlighter-rouge">generate</code>三个阶段，最终的目的是得到 render function。</p>
+<p>complile 编译可以分成 <code class="language-plaintext highlighter-rouge">parse</code>、<code class="language-plaintext highlighter-rouge">optimize</code>与<code class="language-plaintext highlighter-rouge">generate</code>三个阶段，最终的目的是得到 render function。</p>
 <h4 id="1parse">（1）parse</h4>
 <p>parse 会利用正则等方式解析模板中的指令、class、style等数据，形成 AST 语法树</p>
 <h4 id="2optimize">（2）optimize</h4>
-<p><code class="highlighter-rouge">optimize</code> 的主要作用是标记 <code class="highlighter-rouge">static</code> 静态节点，这是 Vue 在编译过程中的一处优化，后面当 <code class="highlighter-rouge">update</code>更新界面时，会有一个 <code class="highlighter-rouge">patch</code> 过程，diff 算法会直接跳过静态节点，从而减少了比较的过程，优化了 <code class="highlighter-rouge">patch</code> 的性能。</p>
+<p><code class="language-plaintext highlighter-rouge">optimize</code> 的主要作用是标记 <code class="language-plaintext highlighter-rouge">static</code> 静态节点，这是 Vue 在编译过程中的一处优化，后面当 <code class="language-plaintext highlighter-rouge">update</code>更新界面时，会有一个 <code class="language-plaintext highlighter-rouge">patch</code> 过程，diff 算法会直接跳过静态节点，从而减少了比较的过程，优化了 <code class="language-plaintext highlighter-rouge">patch</code> 的性能。</p>
 <h4 id="3generate">（3）generate</h4>
-<p><code class="highlighter-rouge">generate</code>是将 AST 转化为 render function 字符串的过程，得到 render 的字符串以及 staticRenderFns 字符串。</p>
+<p><code class="language-plaintext highlighter-rouge">generate</code>是将 AST 转化为 render function 字符串的过程，得到 render 的字符串以及 staticRenderFns 字符串。</p>
 
 <p>在经历编译的是三个阶段后，组件中就会存在渲染 VNode 所需的 render function 了。</p>
 
 <h3 id="3响应式">3、响应式</h3>
-<p>组件渲染函数被执行前，会对数据层的数据进行响应式化。响应式化大致就是使用 <code class="highlighter-rouge">Object.defineProperty</code> 把数据转为 <code class="highlighter-rouge">getter/setter</code>，并为每个数据添加一个订阅者列表 subs 的过程。这个列表是 <code class="highlighter-rouge">getter</code> 闭包中的属性，将会记录所有依赖这个数据的组件。</p>
+<p>组件渲染函数被执行前，会对数据层的数据进行响应式化。响应式化大致就是使用 <code class="language-plaintext highlighter-rouge">Object.defineProperty</code> 把数据转为 <code class="language-plaintext highlighter-rouge">getter/setter</code>，并为每个数据添加一个订阅者列表 subs 的过程。这个列表是 <code class="language-plaintext highlighter-rouge">getter</code> 闭包中的属性，将会记录所有依赖这个数据的组件。</p>
 
 <p>也就是说，响应式化后的数据相当于发布者。</p>
 
-<p>每个组件都对应一个 <code class="highlighter-rouge">Watcher</code> 订阅者。当每个组件的渲染函数被执行时，都会将本组件的 Watcher 放到自己所依赖的响应式数据（发布者 Dep）的订阅者列表 subs 里，这就相当于完成了订阅，一般这个过程被称为 <code class="highlighter-rouge">「依赖收集」</code> 。简单点说，依赖收集的目的，就是将订阅者 <code class="highlighter-rouge">Watcher</code> 对象存放到当前闭包中的发布者 Dep 的 订阅者列表 subs 中。</p>
+<p>每个组件都对应一个 <code class="language-plaintext highlighter-rouge">Watcher</code> 订阅者。当每个组件的渲染函数被执行时，都会将本组件的 Watcher 放到自己所依赖的响应式数据（发布者 Dep）的订阅者列表 subs 里，这就相当于完成了订阅，一般这个过程被称为 <code class="language-plaintext highlighter-rouge">「依赖收集」</code> 。简单点说，依赖收集的目的，就是将订阅者 <code class="language-plaintext highlighter-rouge">Watcher</code> 对象存放到当前闭包中的发布者 Dep 的 订阅者列表 subs 中。</p>
 
 <p>组件渲染函数执行的结果是生成虚拟 DOM 树，这个树生成后将被映射为浏览器上的真实的 DOM 树，也就是用户所看到的页面视图。
-当响应式数据发生变化的时候，也就是触发了 <code class="highlighter-rouge">setter</code> 时，<code class="highlighter-rouge">setter</code> 会负责通知该数据的订阅者列表里的每一个 <code class="highlighter-rouge">Watcher</code>，告诉它们自己的值改变了，需要重新渲染视图，<code class="highlighter-rouge">Watcher</code> 会调用 <code class="highlighter-rouge">update</code> 来更新视图。</p>
+当响应式数据发生变化的时候，也就是触发了 <code class="language-plaintext highlighter-rouge">setter</code> 时，<code class="language-plaintext highlighter-rouge">setter</code> 会负责通知该数据的订阅者列表里的每一个 <code class="language-plaintext highlighter-rouge">Watcher</code>，告诉它们自己的值改变了，需要重新渲染视图，<code class="language-plaintext highlighter-rouge">Watcher</code> 会调用 <code class="language-plaintext highlighter-rouge">update</code> 来更新视图。</p>
 
 <h3 id="4virtual-dom">4、Virtual DOM</h3>
 <p>render function 会被转化成 VNode 节点，Virtual DOM 实际上就是一棵以 JavaScript 对象作为基础的树，用对象属性来描述节点，是对真实 DOM的抽象，核心定义无非就几个关键属性，标签名、数据、子节点、键值等。Virtual DOM 除了它的数据结构的定义，映射到真实的 DOM 实际上要经历 VNode 的 create、diff、patch 等过程。</p>
@@ -218,7 +218,7 @@ Vue.js 让我们只需要关系视图层和模型层，vm 则是 Vue.js 的灵�
 <h3 id="5更新视图">5、更新视图</h3>
 <p>在修改一个对象值的时候，会通过 setter -&gt; Watcher -&gt; update 的流程来修改对应的视图，那么最终是如何更新视图的呢？</p>
 
-<p>当数据变化后，执行 render function 就可以得到一个新的 VNode 节点，我们会将新的 VNode 与旧的 VNode 一起传入 <code class="highlighter-rouge">patch</code> 进行比较，经过 diff 算法得出它们的差异。最后我们只需要将这些差异的对应 DOM 进行修改即可。</p>
+<p>当数据变化后，执行 render function 就可以得到一个新的 VNode 节点，我们会将新的 VNode 与旧的 VNode 一起传入 <code class="language-plaintext highlighter-rouge">patch</code> 进行比较，经过 diff 算法得出它们的差异。最后我们只需要将这些差异的对应 DOM 进行修改即可。</p>
 
 <p><strong><em>参考：</em></strong><br />
 <a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a></p>
