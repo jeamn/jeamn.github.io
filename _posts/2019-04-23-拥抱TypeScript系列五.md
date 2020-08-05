@@ -4,7 +4,7 @@ title:      拥抱TypeScript系列五
 subtitle:   类型变换、类型声明
 date:       2019-04-23
 author:     Jeamn
-header-img: img/post-bg-ios9-web.jpg
+header-img: img/post-bg-github-cup.jpg
 catalog: true
 tags:
     - TypeScript

@@ -4,7 +4,7 @@ title:      拥抱TypeScript系列一
 subtitle:   基本概念、安装编译、数据类型、函数
 date:       2019-04-01
 author:     Jeamn
-header-img: img/post-bg-ios9-web.jpg
+header-img: img/post-bg-keybord.jpg
 catalog: true
 tags:
     - TypeScript

@@ -4,7 +4,7 @@ title:      拥抱TypeScript系列二
 subtitle:   类
 date:       2019-04-01
 author:     Jeamn
-header-img: img/post-bg-ios9-web.jpg
+header-img: img/post-bg-github-cup.jpg
 catalog: true
 tags:
     - TypeScript
