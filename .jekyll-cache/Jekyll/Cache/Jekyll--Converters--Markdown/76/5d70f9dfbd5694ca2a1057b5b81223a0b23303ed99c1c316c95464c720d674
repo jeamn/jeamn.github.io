@@ -1,0 +1,524 @@
+I"b�<h2 id="一函数式编程的特性">一、函数式编程的特性</h2>
+<ul>
+  <li>纯函数</li>
+  <li>柯里化</li>
+  <li>函数组合</li>
+</ul>
+
+<h2 id="二为什么学习函数式编程">二、为什么学习函数式编程</h2>
+<ul>
+  <li>随着 React 的流行受到越来越多的关注</li>
+  <li>Vue3 开始拥抱函数式编程</li>
+  <li>函数式编程可以抛弃 this</li>
+  <li>打包过程中可以更好地利用 tree shaking 过滤无用代码</li>
+  <li>方便测试，方便并行处理</li>
+  <li>函数式编程库：lodash、underscore、ramda</li>
+</ul>
+
+<h2 id="三函数式编程概念">三、函数式编程概念</h2>
+<ul>
+  <li>函数式编程（Functional Programming FP），其他范式有面向过程编程、面向对象编程</li>
+  <li>面向对象编程：把现实世界中的事物抽象成程序世界中的类和对象，通过封装、继承、多肽来演示事物之间的联系</li>
+  <li>函数式编程：把现实世界的事物和事物之间的联系抽象到程序世界（对运算过程进行抽象）</li>
+  <li>函数式编程的函数，是属于数学中的函数，即映射关系</li>
+  <li>相同的输入会得到相同的输出</li>
+  <li>用来描述数据之间的映射</li>
+</ul>
+
+<h2 id="四函数是一等公民是高阶函数函数柯里化的基础">四、函数是一等公民（是高阶函数、函数柯里化的基础）</h2>
+<ul>
+  <li>函数可以存储在变量中</li>
+  <li>函数可以作为参数</li>
+  <li>函数可以作为返回值</li>
+</ul>
+
+<h2 id="五高阶函数higher-order-function">五、高阶函数（Higher-order function）</h2>
+<ul>
+  <li>高阶函数可以把函数作为参数传递给另外一个函数</li>
+  <li>forEach 模拟</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">forEach</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">fn</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="nx">fn</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>filter 模拟</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">filter</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">fn</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">fn</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">])){</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">results</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>高阶函数可以把函数作为另一个函数的返回结果</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">makeFn</span><span class="p">(){</span>
+    <span class="kd">let</span> <span class="nx">msg</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">jeman</span><span class="dl">'</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li>只执行一次的函数（once）</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">once</span><span class="p">(</span><span class="nx">fn</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">done</span><span class="p">){</span>
+            <span class="nx">done</span> <span class="o">=</span> <span class="kc">true</span>
+            <span class="k">return</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">pay</span> <span class="o">=</span> <span class="nx">once</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">money</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`支付了 </span><span class="p">${</span><span class="nx">money</span><span class="p">}</span><span class="s2"> 元。`</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="nx">pay</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="nx">pay</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="五高阶函数的意义">五、高阶函数的意义</h2>
+<ul>
+  <li>高阶函数帮我们屏蔽细节，只需要关注我们的目标</li>
+  <li>高阶函数用来抽象通用的问题</li>
+</ul>
+
+<h2 id="六常用的高阶函数">六、常用的高阶函数</h2>
+<ul>
+  <li>forEach</li>
+  <li>map</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">map</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">fn</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">results</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>filter</li>
+  <li>every</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">every</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">flag</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="nx">flag</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">flag</span><span class="p">)</span> <span class="k">break</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">flag</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>some</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">some</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">flag</span> <span class="o">=</span> <span class="kc">false</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="nx">flag</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">flag</span><span class="p">)</span> <span class="k">break</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">flag</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>find/findIndex</li>
+  <li>reduce</li>
+  <li>sort</li>
+  <li>…</li>
+</ul>
+
+<h2 id="七闭包概念">七、闭包概念</h2>
+<ul>
+  <li>函数和其周围的状态（词法环境）的引用捆绑在一起形成闭包</li>
+  <li>可以在另一个作用域中调用一个函数的内部函数并访问到该函数作用域中的成员</li>
+</ul>
+
+<h2 id="八纯函数概念">八、纯函数概念</h2>
+<ul>
+  <li>相同的额输入永远会得到相同的输出，而且没有任何可观察的副作用</li>
+  <li>不会保留计算中间的结果，所以变量是无状态的</li>
+  <li>可以把一个函数执行的结果交给另一个函数去处理</li>
+</ul>
+
+<h2 id="九纯函数的好处">九、纯函数的好处</h2>
+<ul>
+  <li>可缓存，因为相同输入有相同输出，所以可以把纯函数的结果缓存起来</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">lodash</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">function</span> <span class="nx">getArea</span><span class="p">(</span><span class="nx">r</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span> <span class="o">*</span> <span class="nx">r</span> <span class="o">*</span> <span class="nx">r</span> 
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">getAreaWithMemoize</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">memoize</span><span class="p">(</span><span class="nx">getArea</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getAreaWithMemoize</span><span class="p">(</span><span class="mi">4</span><span class="p">));</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getAreaWithMemoize</span><span class="p">(</span><span class="mi">4</span><span class="p">));</span>
+
+<span class="c1">// 模拟memoize</span>
+<span class="kd">function</span> <span class="nx">memoize</span><span class="p">(</span><span class="nx">fn</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">cache</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">arguments</span><span class="p">)</span>
+        <span class="nx">cache</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">cache</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">||</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nx">cache</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>可测试</li>
+  <li>并行处理
+    <ul>
+      <li>在多线程环境下操作共享内存的数据可能会出现意外情况</li>
+      <li>纯函数不需要访问共享内存中的数据，所以在并行环境下可以任意运行纯函数</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="十副作用">十、副作用</h2>
+<p>副作用来源：</p>
+<ul>
+  <li>配置文件</li>
+  <li>数据库</li>
+  <li>获取用户的输入</li>
+</ul>
+
+<p>所有外部交互都可能产生副作用，副作用会使得方法通用性下降不适合扩展和可重用性，同时会带来安全隐患。</p>
+
+<h2 id="十柯里化">十、柯里化</h2>
+<ul>
+  <li>当一个函数有多个参数的时候，先传递一部分参数调用它（这部分参数以后永远不变）</li>
+  <li>然后返回一个新的函数接收剩余的参数，返回结果</li>
+</ul>
+
+<h2 id="十一lodash中的柯里化">十一、lodash中的柯里化</h2>
+<ul>
+  <li>_.curry(func)</li>
+  <li>功能：创建一个函数，该函数接收一个或多个func的参数，如果func所需要的参数都被提供则执行func并返回执行的结果。否则继续返回该函数并等待接收剩余的参数。</li>
+  <li>参数：需要柯里化的函数</li>
+  <li>返回值：柯里化后的函数</li>
+</ul>
+
+<h2 id="十二柯里化案例">十二、柯里化案例</h2>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">lodash</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">match</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">curry</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">reg</span><span class="p">,</span> <span class="nx">str</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">reg</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="kd">const</span> <span class="nx">haveSpace</span> <span class="o">=</span> <span class="nx">match</span><span class="p">(</span><span class="sr">/</span><span class="se">\s</span><span class="sr">+/g</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">haveSpace</span><span class="p">(</span><span class="dl">'</span><span class="s1">hello world))
+</span></code></pre></div></div>
+
+<h2 id="十三柯里化原理模拟">十三、柯里化原理模拟</h2>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">lodash</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">function</span> <span class="nx">getSum</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span> <span class="o">+</span> <span class="nx">c</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">curried</span> <span class="o">=</span> <span class="nx">curry</span><span class="p">(</span><span class="nx">getSum</span><span class="p">)</span>
+
+<span class="c1">// 传递的参数个数与原函数所需要的参数相同，直接执行计算函数返回值</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">curried</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">));</span>
+
+<span class="c1">// 传递的参数个数少于原函数所需要的参数，会返回一个函数，可继续调用传入欠缺参数个数，参数个数达到时会计算函数返回结果</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">curried</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span> 
+
+
+<span class="kd">function</span> <span class="nx">curry</span><span class="p">(</span><span class="nx">func</span><span class="p">){</span>
+    <span class="k">return</span> <span class="kd">function</span> <span class="nx">curriedFn</span><span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">func</span><span class="p">.</span><span class="nx">length</span><span class="p">){</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+                <span class="k">return</span> <span class="nx">curriedFn</span><span class="p">(...</span><span class="nx">args</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="nx">arguments</span><span class="p">)))</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">func</span><span class="p">(...</span><span class="nx">args</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 总结：</span>
+<span class="c1">// 1、通过柯里化可以给一个函数传递较少的参数从而得到一个已经记录了某些固定参数的新函数</span>
+<span class="c1">// 2、柯里化使用闭包对函数参数进行缓存</span>
+<span class="c1">// 3、让函数变得更灵活，函数粒度更小</span>
+<span class="c1">// 4、可以使一元函数转换为多元函数，可以组合使用函数产生强大功能</span>
+</code></pre></div></div>
+
+<h2 id="十四函数组合概念">十四、函数组合概念</h2>
+<ul>
+  <li>纯函数和柯里化很容易写出洋葱代码</li>
+  <li>函数组合可以把细粒度的函数重新组合生成一个新的函数</li>
+  <li>概念：如果一个函数要经过多个函数处理才能得到最终值，这个时候可以把中间过程的函数合并成一个函数</li>
+  <li>函数组合默认是从右到左执行</li>
+</ul>
+
+<h2 id="十五lodash中的函数组合">十五、lodash中的函数组合</h2>
+<ul>
+  <li>lodash 中的组合函数 flow() 或者 flowRight()</li>
+  <li>flow() 是从左到右</li>
+  <li>flowRight() 是从右到左，使用比较多</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">lodash</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">reverse</span> <span class="o">=</span> <span class="nx">arr</span> <span class="o">=&gt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">reverse</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">first</span> <span class="o">=</span> <span class="nx">arr</span> <span class="o">=&gt;</span> <span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="kd">const</span> <span class="nx">toUpper</span> <span class="o">=</span> <span class="nx">str</span> <span class="o">=&gt;</span> <span class="nx">str</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span>
+
+<span class="kd">const</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">flowRight</span><span class="p">(</span><span class="nx">toUpper</span><span class="p">,</span> <span class="nx">first</span><span class="p">,</span> <span class="nx">reverse</span><span class="p">)</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">fn</span><span class="p">([</span><span class="dl">'</span><span class="s1">one</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">two</span><span class="dl">'</span><span class="p">]));</span>
+</code></pre></div></div>
+
+<h2 id="十六组合函数原理">十六、组合函数原理</h2>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 原理分析：</span>
+<span class="c1">// 1、传入的参数都是纯函数，并且参数个数至少2个，长度不限</span>
+<span class="c1">// 2、初始值为第一次调用函数时传进来的参数</span>
+
+<span class="kd">function</span> <span class="nx">compose</span><span class="p">(...</span><span class="nx">args</span><span class="p">){</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">return</span> <span class="nx">args</span><span class="p">.</span><span class="nx">reverse</span><span class="p">().</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">acc</span><span class="p">,</span> <span class="nx">fn</span><span class="p">){</span>
+            <span class="k">return</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">acc</span><span class="p">)</span>
+        <span class="p">},</span> <span class="nx">value</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// ES6 化简</span>
+<span class="c1">// const compose = (...args) =&gt; value =&gt; args.reverse().reduce((acc, fn) =&gt; fn(acc), value)</span>
+</code></pre></div></div>
+
+<h2 id="十七函数组合-结合律">十七、函数组合-结合律</h2>
+<ul>
+  <li>类似数学中的加法结合律</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">lodash</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">reverse</span> <span class="o">=</span> <span class="nx">arr</span> <span class="o">=&gt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">reverse</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">first</span> <span class="o">=</span> <span class="nx">arr</span> <span class="o">=&gt;</span> <span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="kd">const</span> <span class="nx">toUpper</span> <span class="o">=</span> <span class="nx">str</span> <span class="o">=&gt;</span> <span class="nx">str</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span>
+
+<span class="kd">const</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">flowRight</span><span class="p">(</span><span class="nx">toUpper</span><span class="p">,</span> <span class="nx">_</span><span class="p">.</span><span class="nx">flowRight</span><span class="p">(</span><span class="nx">first</span><span class="p">,</span> <span class="nx">reverse</span><span class="p">))</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">fn</span><span class="p">([</span><span class="dl">'</span><span class="s1">one</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">two</span><span class="dl">'</span><span class="p">]));</span>
+</code></pre></div></div>
+
+<h2 id="十八组合函数的调试">十八、组合函数的调试</h2>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">lodash</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">reverse</span> <span class="o">=</span> <span class="nx">arr</span> <span class="o">=&gt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">reverse</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">first</span> <span class="o">=</span> <span class="nx">arr</span> <span class="o">=&gt;</span> <span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="kd">const</span> <span class="nx">toUpper</span> <span class="o">=</span> <span class="nx">str</span> <span class="o">=&gt;</span> <span class="nx">str</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span>
+
+<span class="kd">const</span> <span class="nx">log</span> <span class="o">=</span> <span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">value</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">trace</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">curry</span><span class="p">(</span><span class="nx">log</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">flowRight</span><span class="p">(</span><span class="nx">toUpper</span><span class="p">,</span> <span class="nx">trace</span><span class="p">(</span><span class="dl">'</span><span class="s1">first 之后</span><span class="dl">'</span><span class="p">),</span> <span class="nx">first</span><span class="p">,</span> <span class="nx">trace</span><span class="p">(</span><span class="dl">'</span><span class="s1">reverse 之后</span><span class="dl">'</span><span class="p">),</span> <span class="nx">reverse</span><span class="p">)</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">fn</span><span class="p">([</span><span class="dl">'</span><span class="s1">one</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">two</span><span class="dl">'</span><span class="p">]));</span>
+</code></pre></div></div>
+
+<h2 id="十九lodash-中的-fp-模块">十九、lodash 中的 fp 模块</h2>
+<ul>
+  <li>当我们在使用函数组合解决问题的时候，会使用lodash中的方法，如果这些方法有很多个参数，我们需要对其进行柯里化处理，比较麻烦，所以：</li>
+  <li>lodash 中的 fp 提供了使用的对函数式编程友好的方法</li>
+  <li>提供了不可变 auto-curried iteratee-first data-last 的方法</li>
+</ul>
+
+<p>引用 lodash：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">lodash</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">split</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">curry</span><span class="p">((</span><span class="nx">sep</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">sep</span><span class="p">))</span>
+<span class="kd">const</span> <span class="nx">join</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">curry</span><span class="p">((</span><span class="nx">sep</span><span class="p">,</span> <span class="nx">array</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">sep</span><span class="p">))</span>
+<span class="kd">const</span> <span class="nx">map</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">curry</span><span class="p">((</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">array</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">fn</span><span class="p">))</span>
+
+<span class="kd">const</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">flowRight</span><span class="p">(</span><span class="nx">join</span><span class="p">(</span><span class="dl">'</span><span class="s1">-</span><span class="dl">'</span><span class="p">),</span> <span class="nx">map</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">toLower</span><span class="p">),</span> <span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="s1"> </span><span class="dl">'</span><span class="p">))</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">f</span><span class="p">(</span><span class="dl">'</span><span class="s1">HI JEAMN</span><span class="dl">'</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>引用 lodash 中的 fp，则不需要手动柯里化：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">fp</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">lodash/fp</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">fp</span><span class="p">.</span><span class="nx">flowRight</span><span class="p">(</span><span class="nx">fp</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="dl">'</span><span class="s1">-</span><span class="dl">'</span><span class="p">),</span> <span class="nx">fp</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">fp</span><span class="p">.</span><span class="nx">toLower</span><span class="p">),</span> <span class="nx">fp</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="s1"> </span><span class="dl">'</span><span class="p">))</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">fn</span><span class="p">(</span><span class="dl">'</span><span class="s1">HI JEAMN</span><span class="dl">'</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="二十point-free">二十、Point Free</h2>
+<ul>
+  <li>不需要指明处理的数据</li>
+  <li>只需要合成运算过程ßs</li>
+  <li>需要定义一些辅助的基本运算函数</li>
+</ul>
+
+<h2 id="二十一functor-函子">二十一、Functor 函子</h2>
+<ul>
+  <li>
+    <p>为什么？
+在函数式编程中，如何把副作用控制在可控范围内、异常处理、异步操作等。</p>
+  </li>
+  <li>
+    <p>概念？
+容器：包含值和值的变形关系（这个变形关系就是函数）
+函子：是一个特殊的容器，通过一个普通的对象来实现。该对象具有map方法，map方法可以运行一个函数对值进行处理（变形关系）</p>
+  </li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Container</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="k">of</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Container</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_value</span> <span class="o">=</span> <span class="nx">value</span>
+    <span class="p">}</span>
+
+    <span class="nx">map</span><span class="p">(</span><span class="nx">fn</span><span class="p">){</span>
+        <span class="k">return</span> <span class="nx">Container</span><span class="p">.</span><span class="k">of</span><span class="p">(</span><span class="nx">fn</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_value</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">Container</span><span class="p">.</span><span class="k">of</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span> <span class="o">=&gt;</span> <span class="nx">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span> <span class="o">=&gt;</span> <span class="nx">x</span> <span class="o">*</span> <span class="nx">x</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>总结：</p>
+<ul>
+  <li>函数式编程的运算不直接操作值，而是由函子完成</li>
+  <li>函子就是一个实现了 map 契约的对象</li>
+  <li>可以把函子想象成一个盒子，盒子里封装了一个值</li>
+  <li>想要处理盒子中的值，我们需要给盒子的 map 方法传递一个处理值得函数（纯函数），由这个函数来对值进行处理</li>
+  <li>最终 map 方法返回一个包含新值得盒子（新的函子）</li>
+</ul>
+
+<h2 id="二十二maybe-函子">二十二、MayBe 函子</h2>
+<ul>
+  <li>处理函子中 map 函数返回空值的问题
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MayBe</span> <span class="p">{</span>
+  <span class="kd">static</span> <span class="k">of</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nx">MayBe</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_value</span> <span class="o">=</span> <span class="nx">value</span>
+  <span class="p">}</span>
+
+  <span class="nx">map</span><span class="p">(</span><span class="nx">fn</span><span class="p">){</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">isNothing</span><span class="p">()</span> <span class="p">?</span> <span class="nx">MayBe</span><span class="p">.</span><span class="k">of</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span> <span class="p">:</span> <span class="nx">MayBe</span><span class="p">.</span><span class="k">of</span><span class="p">(</span><span class="nx">fn</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_value</span><span class="p">))</span>
+  <span class="p">}</span>
+
+  <span class="nx">isNothing</span><span class="p">(){</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_value</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_value</span> <span class="o">===</span> <span class="kc">undefined</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">MayBe</span><span class="p">.</span><span class="k">of</span><span class="p">(</span><span class="kc">null</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span> <span class="o">=&gt;</span> <span class="nx">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span> <span class="o">=&gt;</span> <span class="nx">x</span> <span class="o">*</span> <span class="nx">x</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="二十三either-函子">二十三、Either 函子</h2>
+<ul>
+  <li>处理多次调用map函数不能定位是哪次返回null的问题</li>
+  <li>类似于 if…else…</li>
+  <li>异常会让函数变得不纯，Either 函子可以用来做异常处理</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Left</span><span class="p">{</span>
+    <span class="kd">static</span> <span class="k">of</span> <span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Left</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_value</span> <span class="o">=</span> <span class="nx">value</span>
+    <span class="p">}</span>
+
+    <span class="nx">map</span><span class="p">(</span><span class="nx">fn</span><span class="p">){</span>
+        <span class="k">return</span> <span class="k">this</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">Right</span><span class="p">{</span>
+    <span class="kd">static</span> <span class="k">of</span> <span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Right</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_value</span> <span class="o">=</span> <span class="nx">value</span>
+    <span class="p">}</span>
+
+    <span class="nx">map</span><span class="p">(</span><span class="nx">fn</span><span class="p">){</span>
+        <span class="k">return</span> <span class="nx">Right</span><span class="p">.</span><span class="k">of</span><span class="p">(</span><span class="nx">fn</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_value</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">parseJSON</span><span class="p">(</span><span class="nx">str</span><span class="p">){</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Right</span><span class="p">.</span><span class="k">of</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">str</span><span class="p">))</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Left</span><span class="p">.</span><span class="k">of</span><span class="p">({</span><span class="na">error</span><span class="p">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">parseJSON</span><span class="p">(</span><span class="dl">'</span><span class="s1">{name: jeamn}</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span> <span class="c1">// Left { _value: { error: 'Unexpected token n in JSON at position 1' } }</span>
+
+<span class="kd">let</span> <span class="nx">r2</span> <span class="o">=</span> <span class="nx">parseJSON</span><span class="p">(</span><span class="dl">'</span><span class="s1">{"name": "jeamn"}</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">r2</span><span class="p">)</span> <span class="c1">// Right { _value: { name: 'jeamn' } }</span>
+</code></pre></div></div>
+
+<h2 id="二十四io-函子">二十四、IO 函子</h2>
+<ul>
+  <li>IO 函子中的 _value 是一个函数，这里是把函数作为值来处理</li>
+  <li>IO 函子可以把不纯的动作存储到 _value 中，延迟执行这个不纯的操作（惰性执行），包装当前的纯操作</li>
+  <li>把不纯的操作交给调用者来处理</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">fp</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">lodash/fp</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">class</span> <span class="nx">IO</span><span class="p">{</span>
+    <span class="kd">static</span> <span class="k">of</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">IO</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+            <span class="k">return</span> <span class="nx">value</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">fn</span><span class="p">){</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_value</span> <span class="o">=</span> <span class="nx">fn</span>
+    <span class="p">}</span>
+
+    <span class="nx">map</span><span class="p">(</span><span class="nx">fn</span><span class="p">){</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">IO</span><span class="p">(</span><span class="nx">fp</span><span class="p">.</span><span class="nx">flowRight</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_value</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 调用</span>
+<span class="kd">let</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">IO</span><span class="p">.</span><span class="k">of</span><span class="p">(</span><span class="nx">process</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">p</span> <span class="o">=&gt;</span> <span class="nx">p</span><span class="p">.</span><span class="nx">execPath</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">_value</span><span class="p">())</span>
+</code></pre></div></div>
+:ET

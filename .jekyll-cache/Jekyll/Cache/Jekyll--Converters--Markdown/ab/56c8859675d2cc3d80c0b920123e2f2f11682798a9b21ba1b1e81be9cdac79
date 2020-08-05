@@ -1,0 +1,475 @@
+I"�<h2 id="一redux-应用场景">一、Redux 应用场景</h2>
+<ul>
+  <li>在React中，数据在组件中是单向流动的</li>
+  <li>数据从一个方向父组件流向子组件(通过props)，由于这个特征，两个非父子关系的组件（或者称作兄弟组件）之间的通信就比较麻烦</li>
+</ul>
+
+<h2 id="二redux设计思想">二、Redux设计思想</h2>
+<ul>
+  <li>Redux是将整个应用状态存储到到一个地方，称为 store</li>
+  <li>里面保存一棵状态树 state tree</li>
+  <li>组件可以派发 dispatch 行为 action 给 store,而不是直接通知其它组件</li>
+  <li>其它组件可以通过订阅 store 中的状态(state)来刷新自己的视图</li>
+</ul>
+
+<p><img src="http://ww1.sinaimg.cn/large/8b50d584ly1g365teko8qj20m80bljw3.jpg" alt="" /></p>
+
+<h2 id="三redux三大原则">三、Redux三大原则</h2>
+<ul>
+  <li>整个应用的 state 被储存在一棵 object tree 中，并且这个 object tree 只存在于唯一一个 store 中</li>
+  <li>State 是只读的，惟一改变 state 的方法就是触发 action，action 是一个用于描述已发生事件的普通对象 使用纯函数来执行修改，为了描述 action 如何改变 state tree ，需要编写 reducers</li>
+  <li>单一数据源的设计让React的组件之间的通信更加方便，同时也便于状态的统一管理</li>
+</ul>
+
+<h2 id="四-redux-实现原生计数器">四、 Redux 实现原生计数器</h2>
+<ul>
+  <li>index.html (public文件夹)</li>
+</ul>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"utf-8"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"shortcut icon"</span> <span class="na">href=</span><span class="s">"%PUBLIC_URL%/favicon.ico"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">"viewport"</span> <span class="na">content=</span><span class="s">"width=device-width, initial-scale=1"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">"theme-color"</span> <span class="na">content=</span><span class="s">"#000000"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"manifest"</span> <span class="na">href=</span><span class="s">"%PUBLIC_URL%/manifest.json"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;title&gt;</span>React App<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"conuter"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">"counter-value"</span><span class="nt">&gt;</span>0<span class="nt">&lt;/p&gt;</span>
+        <span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">"increment-btn"</span><span class="nt">&gt;</span>+<span class="nt">&lt;/button&gt;</span>
+        <span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">"decrement-btn"</span><span class="nt">&gt;</span>-<span class="nt">&lt;/button&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+<ul>
+  <li>index.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span class="nx">createStore</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">redux</span><span class="dl">'</span><span class="p">;</span>   <span class="c1">// 导入一个创建仓库的方法</span>
+<span class="kd">let</span> <span class="nx">counterValue</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">counter-value</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">incrementBtn</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">increment-btn</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">decrementBtn</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">decrement-btn</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">INCREMENT</span><span class="o">=</span><span class="dl">'</span><span class="s1">INCREMENT</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">DECREMENT</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">DECREMENT</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">initState</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kd">function</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="nx">initState</span><span class="p">,</span><span class="nx">action</span><span class="p">){</span>  <span class="c1">// 老状态、动作（要干什么）</span>
+    <span class="k">switch</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">){</span>
+        <span class="k">case</span> <span class="nx">INCREMENT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nx">state</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">case</span> <span class="nx">DECREMENT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nx">state</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="nl">default</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nx">state</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">store</span><span class="o">=</span><span class="nx">createStore</span><span class="p">(</span><span class="nx">reducer</span><span class="p">);</span>  <span class="c1">// 传入一个 reducer 处理器，和状态初始值，创建一个仓库</span>
+<span class="kd">function</span> <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">counterValue</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">();</span>     <span class="c1">// store.getState() 获取仓库中状态</span>
+<span class="p">}</span>
+<span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">render</span><span class="p">);</span>    <span class="c1">//订阅之后，只要数据更新就会通知订阅者，即每次状态发生改变之后，会执行 render 方法</span>
+<span class="nx">render</span><span class="p">();</span>
+<span class="nx">incrementBtn</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span><span class="nx">INCREMENT</span><span class="p">});</span>
+<span class="p">});</span>
+<span class="nx">decrementBtn</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span><span class="nx">DECREMENT</span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<h2 id="五redux-原理">五、Redux 原理</h2>
+<h3 id="1createstore-方法创建仓库">1、createStore 方法（创建仓库）</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">ActionTypes</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./utils/actionTypes</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">isPlainObject</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./utils/isPlainObject</span><span class="dl">'</span>
+<span class="cm">/**
+ * 创建一个存放状态对象的Redux仓库
+ * @param {*} reducer  通过传入当前状态树和动作返回下一个状态树的一个函数
+ * @param {*} preloadedState  初始状态
+ */</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">function</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">reducer</span><span class="p">,</span> <span class="nx">preloadedState</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">reducer</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Expected the reducer to be a function.</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="kd">let</span> <span class="nx">currentReducer</span> <span class="o">=</span> <span class="nx">reducer</span> <span class="c1">//当前的reducer</span>
+    <span class="kd">let</span> <span class="nx">currentState</span> <span class="o">=</span> <span class="nx">preloadedState</span> <span class="c1">//当前的状态</span>
+    <span class="kd">let</span> <span class="nx">currentListeners</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">//当前的监听数组</span>
+
+    <span class="c1">//读取仓库中状态树中的状态</span>
+    <span class="kd">function</span> <span class="nx">getState</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">currentState</span>
+    <span class="p">}</span>
+
+    <span class="c1">//增加一个状态变化监听函数。它将在每次动作被派发的时候调用</span>
+    <span class="kd">function</span> <span class="nx">subscribe</span><span class="p">(</span><span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">isSubscribed</span> <span class="o">=</span> <span class="kc">true</span>
+        <span class="nx">currentListeners</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">listener</span><span class="p">)</span> <span class="c1">//向新的数组中添加监听函数</span>
+        <span class="k">return</span> <span class="kd">function</span> <span class="nx">unsubscribe</span><span class="p">()</span> <span class="p">{</span> <span class="c1">//返回一个取消监听函数</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isSubscribed</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//如果已经取消了，则直接返回</span>
+                <span class="k">return</span>
+            <span class="p">}</span>
+            <span class="nx">isSubscribed</span> <span class="o">=</span> <span class="kc">false</span>
+            <span class="kd">const</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">currentListeners</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">listener</span><span class="p">)</span>
+            <span class="nx">currentListeners</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">//删除此函数</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">//派发一个动作，它是唯一能触发状态更新的方法</span>
+    <span class="kd">function</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//如果不是纯对象，就报错</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isPlainObject</span><span class="p">(</span><span class="nx">action</span><span class="p">))</span> <span class="p">{</span>
+            <span class="c1">//动作必须是一个纯对象，使用自定义中间件实现异步动作  </span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">`动作必须是一个纯对象，如果想进行异步操作请使用中间件`</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="c1">//如果动作类型是 undefined 也报一个错误，动作不能有一个未定义的type属性 </span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">action</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">undefined</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">`动作不能一个值为undefined的type属性`</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="c1">//把老状态和 action 传给当前的 reducer，reducer 负责算出新状态</span>
+        <span class="nx">currentState</span> <span class="o">=</span> <span class="nx">currentReducer</span><span class="p">(</span><span class="nx">currentState</span><span class="p">,</span> <span class="nx">action</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">currentListeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">const</span> <span class="nx">listener</span> <span class="o">=</span> <span class="nx">currentListeners</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+            <span class="nx">listener</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">action</span> <span class="c1">//返回派发的动作</span>
+    <span class="p">}</span>
+
+    <span class="c1">//当一个仓库被创建的时候，会派发一个 INIT 动作，以便让 reducer 返回初始值，这个可以高效的填充初始状态树</span>
+    <span class="nx">dispatch</span><span class="p">({</span>
+        <span class="na">type</span><span class="p">:</span> <span class="nx">ActionTypes</span><span class="p">.</span><span class="nx">INIT</span>
+    <span class="p">})</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">dispatch</span><span class="p">,</span>
+        <span class="nx">subscribe</span><span class="p">,</span>
+        <span class="nx">getState</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<h3 id="2isplainobject-方法判断一个对象是否是纯对象">2、isPlainObject 方法（判断一个对象是否是纯对象）</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * @param {any} obj   The object to inspect.
+ * @returns {boolean} True if the argument appears to be a plain object.
+ */</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">function</span> <span class="nx">isPlainObject</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">obj</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span> <span class="o">||</span> <span class="nx">obj</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span>
+
+    <span class="kd">let</span> <span class="nx">proto</span> <span class="o">=</span> <span class="nx">obj</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">proto</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">proto</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">proto</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getPrototypeOf</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">===</span> <span class="nx">proto</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<h3 id="3actiontypes-随机返回一个作为-action-的-type-的初始值">3、actionTypes 随机返回一个作为 action 的 type 的初始值</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">randomString</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span>
+  <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">36</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">''</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="dl">'</span><span class="s1">.</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">ActionTypes</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">INIT</span><span class="p">:</span> <span class="s2">`@@redux/INIT</span><span class="p">${</span><span class="nx">randomString</span><span class="p">()}</span><span class="s2">`</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">ActionTypes</span>
+
+</code></pre></div></div>
+
+<h2 id="六react-实现一个计数器">六、React 实现一个计数器</h2>
+<ul>
+  <li>index.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">Component</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">createStore</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./redux</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">class</span> <span class="nx">Counter</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">value</span><span class="p">:</span> <span class="mi">0</span> <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">unsubscribe</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="na">value</span><span class="p">:</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span> <span class="p">}));</span>
+    <span class="p">}</span>
+    <span class="nx">componentWillUnmount</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">value</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">INCREMENT</span><span class="dl">'</span> <span class="p">})}</span><span class="o">&gt;+&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">DECREMENT</span><span class="dl">'</span> <span class="p">})}</span><span class="o">&gt;-&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span>
+                    <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                        <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                            <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">INCREMENT</span><span class="dl">'</span> <span class="p">})</span>
+                        <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span><span class="o">&gt;</span><span class="mi">1</span><span class="nx">秒后加1</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nx">action</span><span class="p">){</span>
+    <span class="k">switch</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">){</span>
+        <span class="k">case</span> <span class="dl">'</span><span class="s1">INCREMENT</span><span class="dl">'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nx">state</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">case</span> <span class="dl">'</span><span class="s1">DECREMENT</span><span class="dl">'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nx">state</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="nl">default</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nx">state</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">reducer</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Counter</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h2 id="七-boundactioncreators-集中管理派发动作">七、 boundActionCreators 集中管理派发动作</h2>
+<ul>
+  <li>index.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">createStore</span><span class="p">,</span> <span class="nx">bindActionCreators</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./redux</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">function</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nx">action</span><span class="p">){</span>
+    <span class="k">switch</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">){</span>
+        <span class="k">case</span> <span class="dl">'</span><span class="s1">INCREMENT</span><span class="dl">'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nx">state</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">case</span> <span class="dl">'</span><span class="s1">DECREMENT</span><span class="dl">'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nx">state</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="nl">default</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nx">state</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">reducer</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span> 
+<span class="kd">const</span> <span class="nx">actions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">increment</span><span class="p">(){</span>
+        <span class="k">return</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span><span class="dl">'</span><span class="s1">INCREMENT</span><span class="dl">'</span><span class="p">};</span>
+    <span class="p">},</span>
+    <span class="nx">decrement</span><span class="p">(){</span>
+        <span class="k">return</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span><span class="dl">'</span><span class="s1">DECREMENT</span><span class="dl">'</span><span class="p">};</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="kd">const</span> <span class="nx">boundActions</span> <span class="o">=</span> <span class="nx">bindActionCreators</span><span class="p">(</span><span class="nx">actions</span><span class="p">,</span><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">);</span>
+
+<span class="kd">class</span> <span class="nx">Counter</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">value</span><span class="p">:</span> <span class="mi">0</span> <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">unsubscribe</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="na">value</span><span class="p">:</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span> <span class="p">}));</span>
+    <span class="p">}</span>
+    <span class="nx">componentWillUnmount</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">value</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">boundActions</span><span class="p">.</span><span class="nx">increment</span><span class="p">}</span><span class="o">&gt;+&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">boundActions</span><span class="p">.</span><span class="nx">decrement</span><span class="p">}</span><span class="o">&gt;-&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Counter</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<ul>
+  <li>boundActionCreators 方法</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">bindActionCreator</span><span class="p">(</span><span class="nx">actionCreator</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">actionCreator</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">))</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">function</span> <span class="nx">bindActionCreators</span><span class="p">(</span><span class="nx">actionCreators</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">actionCreators</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">bindActionCreator</span><span class="p">(</span><span class="nx">actionCreators</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="kd">const</span> <span class="nx">boundActionCreators</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">actionCreators</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">actionCreator</span> <span class="o">=</span> <span class="nx">actionCreators</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">actionCreator</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">boundActionCreators</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">bindActionCreator</span><span class="p">(</span><span class="nx">actionCreator</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">boundActionCreators</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="八combinereducers-合并-reducer">八、combineReducers 合并 reducer</h2>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">combineReducers</span><span class="p">(</span><span class="nx">reducers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">reducerKeys</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">reducers</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kd">function</span> <span class="nx">combination</span><span class="p">(</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">hasChanged</span> <span class="o">=</span> <span class="kc">false</span>
+        <span class="kd">const</span> <span class="nx">nextState</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">reducerKeys</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">const</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">reducerKeys</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+            <span class="kd">const</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="nx">reducers</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+            <span class="kd">const</span> <span class="nx">previousStateForKey</span> <span class="o">=</span> <span class="nx">state</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+            <span class="kd">const</span> <span class="nx">nextStateForKey</span> <span class="o">=</span> <span class="nx">reducer</span><span class="p">(</span><span class="nx">previousStateForKey</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span>
+            <span class="nx">nextState</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">nextStateForKey</span>
+            <span class="nx">hasChanged</span> <span class="o">=</span> <span class="nx">hasChanged</span> <span class="o">||</span> <span class="nx">nextStateForKey</span> <span class="o">!==</span> <span class="nx">previousStateForKey</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">hasChanged</span> <span class="p">?</span> <span class="nx">nextState</span> <span class="p">:</span> <span class="nx">state</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="九react-redux">九、react-redux</h2>
+<h3 id="1在根目录-indexjs-从-react-redux-引入一个-provider">1、在根目录 index.js 从 react-redux 引入一个 Provider</h3>
+<ul>
+  <li>index.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Counter</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./components/Counter</span><span class="dl">'</span>
+<span class="c1">// import Counter1 from './components/Counter1'</span>
+<span class="c1">// import Counter2 from './components/Counter2'</span>
+<span class="c1">// import Counter3 from './components/Counter3'</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">Provider</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-redux</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">store</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./store</span><span class="dl">'</span>
+
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Provider</span> <span class="nx">store</span><span class="o">=</span><span class="p">{</span><span class="nx">store</span><span class="p">}</span><span class="o">&gt;&lt;</span><span class="nx">Counter</span><span class="o">/&gt;&lt;</span><span class="sr">/Provider&gt;, document.getElementById</span><span class="se">(</span><span class="sr">'root'</span><span class="se">))</span><span class="err">;
+</span></code></pre></div></div>
+
+<h3 id="2编写-counter-组件通过-connect-连接组件和仓库">2、编写 Counter 组件，通过 connect 连接组件和仓库</h3>
+<ul>
+  <li>src/components/Counter.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">Component</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">actions</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../store/action</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">connect</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-redux</span><span class="dl">'</span>
+
+<span class="kd">class</span> <span class="nx">Counter</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">increment</span><span class="p">}</span><span class="o">&gt;+&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">decrement</span><span class="p">}</span><span class="o">&gt;-&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// connect 用来连接组件和仓库（做映射，让组件可以获取仓库中的状态）为什么要做映射呢？</span>
+<span class="kd">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">=&gt;</span> <span class="nx">state</span>
+<span class="k">export</span> <span class="k">default</span> <span class="nx">connect</span><span class="p">(</span>
+    <span class="nx">mapStateToProps</span><span class="p">,</span>
+    <span class="nx">actions</span>
+<span class="p">)(</span><span class="nx">Counter</span><span class="p">)</span>
+</code></pre></div></div>
+<ul>
+  <li>为什么要做映射呢？</li>
+</ul>
+
+<blockquote>
+  <p>仓库只有一个，状态树只有一个，但是每个组件需要用到的状态是不一样的，A 组件取状态树中的状态的时候，不需要把状态树种 B 组件的状态拿过来，所以需要做映射。</p>
+</blockquote>
+
+<h3 id="3react-redux-原理">3、react-redux 原理</h3>
+<ul>
+  <li>src/react-redux/index.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">Provider</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./Provider</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">connect</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./connect</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">export</span> <span class="p">{</span>
+    <span class="nx">Provider</span><span class="p">,</span>
+    <span class="nx">connect</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li>src/react-redux/context.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span>
+
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">ReactReduxContext</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createContext</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">ReactReduxContext</span>
+</code></pre></div></div>
+
+<ul>
+  <li>src/react-redux/connect.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">bindActionCreators</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../redux</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ReactReduxContext</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./context</span><span class="dl">'</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mapStateToProps</span><span class="p">,</span><span class="nx">mapDispatchToProps</span><span class="p">){</span>
+    <span class="k">return</span> <span class="kd">function</span> <span class="nx">wrapWithConnect</span><span class="p">(</span><span class="nx">WrappedComponent</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kd">class</span>  <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+            <span class="kd">static</span> <span class="nx">contextType</span> <span class="o">=</span> <span class="nx">ReactReduxContext</span><span class="p">;</span>
+            <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">,</span><span class="nx">context</span><span class="p">){</span>
+                <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">mapStateToProps</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">());</span>
+            <span class="p">}</span>
+            <span class="nx">componentDidMount</span><span class="p">(){</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">unsubscribe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span>
+                    <span class="p">()</span><span class="o">=&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">mapStateToProps</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()))</span>
+                <span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">componentWillUnmount</span><span class="p">(){</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="nx">render</span><span class="p">(){</span>
+                <span class="kd">let</span> <span class="nx">actions</span> <span class="o">=</span> <span class="nx">bindActionCreators</span><span class="p">(</span><span class="nx">mapDispatchToProps</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">);</span>
+                <span class="k">return</span> <span class="o">&lt;</span><span class="nx">WrappedComponent</span> <span class="p">{...</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">}</span> <span class="p">{...</span><span class="nx">actions</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
+</span>            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>src/react-redux/Provider.js</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">PropTypes</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">prop-types</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ReactReduxContext</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./context</span><span class="dl">'</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">Provider</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="nx">propTypes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">store</span><span class="p">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">shape</span><span class="p">({</span>
+          <span class="na">subscribe</span><span class="p">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+          <span class="na">dispatch</span><span class="p">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+          <span class="na">getState</span><span class="p">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span>
+        <span class="p">}),</span>
+        <span class="na">children</span><span class="p">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">any</span>
+    <span class="p">}</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+          <span class="o">&lt;</span><span class="nx">ReactReduxContext</span><span class="p">.</span><span class="nx">Provider</span> <span class="nx">value</span><span class="o">=&gt;</span>
+            <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">children</span><span class="p">}</span>
+          <span class="o">&lt;</span><span class="sr">/ReactReduxContext.Provider</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+      <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

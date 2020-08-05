@@ -1,0 +1,771 @@
+I"nl<h2 id="一context-由来">一、Context 由来</h2>
+<p>在一个典型的 React 应用中，数据是通过 props 属性自上而下进行传递的，但是当组件树比较庞大的时候，这样显示地通过组件树的逐层传递就比较麻烦了。</p>
+
+<h2 id="二旧版-api">二、旧版 API</h2>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,{</span><span class="nx">Component</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">PropTypes</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">prop-types</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">Header</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                 <span class="nx">header</span>
+                <span class="o">&lt;</span><span class="nx">Title</span><span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Title</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+    <span class="kd">static</span> <span class="nx">contextTypes</span><span class="o">=</span><span class="p">{</span>
+        <span class="na">color</span><span class="p">:</span><span class="nx">PropTypes</span><span class="p">.</span><span class="nx">string</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">title</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Main</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">main</span>
+                <span class="o">&lt;</span><span class="nx">Content</span><span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Content</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+    <span class="kd">static</span> <span class="nx">contextTypes</span><span class="o">=</span><span class="p">{</span>
+        <span class="na">color</span><span class="p">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">string</span><span class="p">,</span>
+        <span class="na">changeColor</span><span class="p">:</span><span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">Content</span>
+                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span><span class="o">=&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">changeColor</span><span class="p">(</span><span class="dl">'</span><span class="s1">green</span><span class="dl">'</span><span class="p">)}</span><span class="o">&gt;</span><span class="nx">绿色</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span><span class="o">=&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">changeColor</span><span class="p">(</span><span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">)}</span><span class="o">&gt;</span><span class="nx">橙色</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Page</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="o">=</span><span class="p">{</span><span class="na">color</span><span class="p">:</span><span class="dl">'</span><span class="s1">red</span><span class="dl">'</span><span class="p">};</span>
+    <span class="p">}</span>
+    <span class="kd">static</span> <span class="nx">childContextTypes</span><span class="o">=</span><span class="p">{</span>
+        <span class="na">color</span><span class="p">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">string</span><span class="p">,</span>
+        <span class="na">changeColor</span><span class="p">:</span><span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span>
+    <span class="p">}</span>
+    <span class="nx">getChildContext</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="na">color</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">color</span><span class="p">,</span>
+            <span class="na">changeColor</span><span class="p">:(</span><span class="nx">color</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">color</span><span class="p">})</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+               <span class="nx">page</span>
+                <span class="o">&lt;</span><span class="nx">Header</span><span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="nx">Main</span><span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Page</span><span class="o">/&gt;</span><span class="p">,</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h2 id="三新版-api">三、新版 API</h2>
+<h3 id="1类组件">1、类组件</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">ThemeContext</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createContext</span><span class="p">(</span><span class="dl">'</span><span class="s1">theme</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">class</span> <span class="nx">Header</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">header</span>
+                <span class="o">&lt;</span><span class="nx">Title</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Title</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="nx">contextType</span> <span class="o">=</span> <span class="nx">ThemeContext</span><span class="p">;</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">title</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Main</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">main</span>
+                <span class="o">&lt;</span><span class="nx">Content</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Content</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="nx">contextType</span> <span class="o">=</span> <span class="nx">ThemeContext</span><span class="p">;</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">Content</span>
+                    <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">changeColor</span><span class="p">(</span><span class="dl">'</span><span class="s1">green</span><span class="dl">'</span><span class="p">)}</span><span class="o">&gt;</span><span class="nx">绿色</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                    <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">changeColor</span><span class="p">(</span><span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">)}</span><span class="o">&gt;</span><span class="nx">橙色</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Page</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">red</span><span class="dl">'</span> <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">changeColor</span> <span class="o">=</span> <span class="p">(</span><span class="nx">color</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">color</span> <span class="p">})</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">contextVal</span> <span class="o">=</span> <span class="p">{</span> <span class="na">color</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">color</span><span class="p">,</span> <span class="na">changeColor</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">changeColor</span> <span class="p">};</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">ThemeContext</span><span class="p">.</span><span class="nx">Provider</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">contextVal</span><span class="p">}</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                    <span class="nx">page</span>
+                    <span class="o">&lt;</span><span class="nx">Header</span> <span class="o">/&gt;</span>
+                    <span class="o">&lt;</span><span class="nx">Main</span> <span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/ThemeContext.Provider</span><span class="err">&gt;
+</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Page</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h3 id="2类组件原理实现">2、类组件原理实现</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">createContext</span><span class="p">(){</span>
+    <span class="kd">class</span> <span class="nx">Provider</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+        <span class="kd">static</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">){</span>
+            <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+            <span class="nx">Provider</span><span class="p">.</span><span class="nx">value</span><span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">value</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">value</span><span class="p">:</span><span class="nx">props</span><span class="p">.</span><span class="nx">value</span><span class="p">};</span>
+        <span class="p">}</span>
+        <span class="kd">static</span> <span class="nx">getDerivedStateFromProps</span><span class="p">(</span><span class="nx">nextProps</span><span class="p">,</span> <span class="nx">prevState</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Provider</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">nextProps</span><span class="p">.</span><span class="nx">value</span>
+            <span class="k">return</span> <span class="p">{</span><span class="na">value</span><span class="p">:</span><span class="nx">nextProps</span><span class="p">.</span><span class="nx">value</span><span class="p">};</span>
+        <span class="p">}</span>
+        <span class="nx">render</span><span class="p">(){</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">children</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kd">class</span> <span class="nx">Consumer</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+        <span class="nx">render</span><span class="p">(){</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="nx">Provider</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">Provider</span><span class="p">,</span>
+        <span class="nx">Consumer</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">ThemeContext</span> <span class="o">=</span> <span class="nx">createContext</span><span class="p">(</span><span class="dl">'</span><span class="s1">theme</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">class</span> <span class="nx">Header</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">header</span>
+                <span class="o">&lt;</span><span class="nx">Title</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Title</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(){</span>
+        <span class="k">super</span><span class="p">()</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">context2</span> <span class="o">=</span> <span class="nx">Title</span><span class="p">.</span><span class="nx">contextType</span><span class="p">.</span><span class="nx">Provider</span><span class="p">.</span><span class="nx">value</span>
+    <span class="p">}</span>
+    <span class="kd">static</span> <span class="nx">contextType</span> <span class="o">=</span> <span class="nx">ThemeContext</span><span class="p">;</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">context2</span> <span class="o">=</span> <span class="nx">Title</span><span class="p">.</span><span class="nx">contextType</span><span class="p">.</span><span class="nx">Provider</span><span class="p">.</span><span class="nx">value</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">title</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Main</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">main</span>
+                <span class="o">&lt;</span><span class="nx">Content</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Content</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(){</span>
+        <span class="k">super</span><span class="p">()</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">context2</span> <span class="o">=</span> <span class="nx">Title</span><span class="p">.</span><span class="nx">contextType</span><span class="p">.</span><span class="nx">Provider</span><span class="p">.</span><span class="nx">value</span>
+    <span class="p">}</span>
+    <span class="kd">static</span> <span class="nx">contextType</span> <span class="o">=</span> <span class="nx">ThemeContext</span><span class="p">;</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">context2</span> <span class="o">=</span> <span class="nx">Title</span><span class="p">.</span><span class="nx">contextType</span><span class="p">.</span><span class="nx">Provider</span><span class="p">.</span><span class="nx">value</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">Content</span>
+                    <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">context2</span><span class="p">.</span><span class="nx">changeColor</span><span class="p">(</span><span class="dl">'</span><span class="s1">green</span><span class="dl">'</span><span class="p">)}</span><span class="o">&gt;</span><span class="nx">绿色</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                    <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">context2</span><span class="p">.</span><span class="nx">changeColor</span><span class="p">(</span><span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">)}</span><span class="o">&gt;</span><span class="nx">橙色</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Page</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">red</span><span class="dl">'</span> <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">changeColor</span> <span class="o">=</span> <span class="p">(</span><span class="nx">color</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">color</span> <span class="p">})</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">contextVal</span> <span class="o">=</span> <span class="p">{</span> <span class="na">color</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">color</span><span class="p">,</span> <span class="na">changeColor</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">changeColor</span> <span class="p">};</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">ThemeContext</span><span class="p">.</span><span class="nx">Provider</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">contextVal</span><span class="p">}</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                    <span class="nx">page</span>
+                    <span class="o">&lt;</span><span class="nx">Header</span> <span class="o">/&gt;</span>
+                    <span class="o">&lt;</span><span class="nx">Main</span> <span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/ThemeContext.Provider</span><span class="err">&gt;
+</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Page</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h3 id="3函数组件">3、函数组件</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">ThemeContext</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createContext</span><span class="p">(</span><span class="dl">'</span><span class="s1">theme</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">class</span> <span class="nx">Header</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">header</span>
+                <span class="o">&lt;</span><span class="nx">Title</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">Title</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="o">&lt;</span><span class="nx">ThemeContext</span><span class="p">.</span><span class="nx">Consumer</span><span class="o">&gt;</span>
+            <span class="p">{</span>
+                <span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">(</span>
+                    <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                        <span class="nx">title</span>
+                    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>                <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="o">&lt;</span><span class="sr">/ThemeContext.Consumer</span><span class="err">&gt;
+</span>    <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">Main</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                <span class="nx">main</span>
+                <span class="o">&lt;</span><span class="nx">Content</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Content</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="nx">contextType</span> <span class="o">=</span> <span class="nx">ThemeContext</span><span class="p">;</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">ThemeContext</span><span class="p">.</span><span class="nx">Consumer</span><span class="o">&gt;</span>
+                <span class="p">{</span>
+                    <span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">(</span>
+                        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                            <span class="nx">Content</span>
+                            <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="nx">value</span><span class="p">.</span><span class="nx">changeColor</span><span class="p">(</span><span class="dl">'</span><span class="s1">green</span><span class="dl">'</span><span class="p">)}</span><span class="o">&gt;</span><span class="nx">绿色</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                            <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="nx">value</span><span class="p">.</span><span class="nx">changeColor</span><span class="p">(</span><span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">)}</span><span class="o">&gt;</span><span class="nx">橙色</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                        <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>                    <span class="p">)</span>
+                <span class="p">}</span>
+            <span class="o">&lt;</span><span class="sr">/ThemeContext.Consumer</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Page</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">red</span><span class="dl">'</span> <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">changeColor</span> <span class="o">=</span> <span class="p">(</span><span class="nx">color</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">color</span> <span class="p">})</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">contextVal</span> <span class="o">=</span> <span class="p">{</span> <span class="na">color</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">color</span><span class="p">,</span> <span class="na">changeColor</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">changeColor</span> <span class="p">};</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">ThemeContext</span><span class="p">.</span><span class="nx">Provider</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">contextVal</span><span class="p">}</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span>
+                    <span class="nx">page</span>
+                    <span class="o">&lt;</span><span class="nx">Header</span> <span class="o">/&gt;</span>
+                    <span class="o">&lt;</span><span class="nx">Main</span> <span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/ThemeContext.Provider</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Page</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h3 id="4函数组件实现原理">4、函数组件实现原理</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">createContext</span><span class="p">(){</span>
+    <span class="kd">class</span> <span class="nx">Provider</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+        <span class="kd">static</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">){</span>
+            <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+            <span class="nx">Provider</span><span class="p">.</span><span class="nx">value</span><span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">value</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">value</span><span class="p">:</span><span class="nx">props</span><span class="p">.</span><span class="nx">value</span><span class="p">};</span>
+        <span class="p">}</span>
+        <span class="kd">static</span> <span class="nx">getDerivedStateFromProps</span><span class="p">(</span><span class="nx">nextProps</span><span class="p">,</span> <span class="nx">prevState</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Provider</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">nextProps</span><span class="p">.</span><span class="nx">value</span>
+            <span class="k">return</span> <span class="p">{</span><span class="na">value</span><span class="p">:</span><span class="nx">nextProps</span><span class="p">.</span><span class="nx">value</span><span class="p">};</span>
+        <span class="p">}</span>
+        <span class="nx">render</span><span class="p">(){</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">children</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kd">class</span> <span class="nx">Consumer</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+        <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">){</span>
+            <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">render</span><span class="p">(){</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="nx">Provider</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">Provider</span><span class="p">,</span>
+        <span class="nx">Consumer</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">ThemeContext</span> <span class="o">=</span> <span class="nx">createContext</span><span class="p">(</span><span class="dl">'</span><span class="s1">theme</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h2 id="四-purecomponent">四、 PureComponent</h2>
+<h3 id="1纯组件由来">（1）纯组件由来</h3>
+<p>取代其前身 PureRenderMixin，PureComponent 是优化 React 应用程序最重要的方法之一，易于实施，只要把继承类从 Component 换成 PureComponent 即可，可以减少不必要的 render 操作的次数，从而提高性能，而且可以少写 shouldComponentUpdate 函数</p>
+<h3 id="2纯组件原理">（2）纯组件原理</h3>
+<p>PureComponent 通过 prop 和 state 的浅比较来实现 shouldComponentUpdate，当组件更新时，如果组件的 props 和 state 都没发生改变，render 方法就不会触发，省去 Virtual DOM 的生成和比对过程，达到提升性能的目的。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">function</span> <span class="nx">shallowEqual</span><span class="p">(</span><span class="nx">obj1</span><span class="p">,</span><span class="nx">obj2</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">obj1</span> <span class="o">===</span> <span class="nx">obj2</span><span class="p">){</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">obj1</span> <span class="o">!=</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span> <span class="o">||</span> <span class="nx">obj1</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">||</span><span class="k">typeof</span> <span class="nx">obj2</span> <span class="o">!=</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span> <span class="o">||</span> <span class="nx">obj2</span> <span class="o">===</span> <span class="kc">null</span> <span class="p">){</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">let</span> <span class="nx">keys1</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj1</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">keys2</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj2</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">keys1</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">keys2</span><span class="p">.</span><span class="nx">length</span><span class="p">){</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">key</span> <span class="k">of</span> <span class="nx">keys1</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">obj2</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">||</span> <span class="nx">obj1</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">obj2</span><span class="p">[</span><span class="nx">key</span><span class="p">]){</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">PureComponent</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+    <span class="nx">isPureReactComponent</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="nx">shouldComponentUpdate</span><span class="p">(</span><span class="nx">nextProps</span><span class="p">,</span><span class="nx">nextState</span><span class="p">){</span>
+        <span class="k">return</span> <span class="o">!</span><span class="nx">shallowEqual</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">,</span><span class="nx">nextProps</span><span class="p">)</span><span class="o">||!</span><span class="nx">shallowEqual</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span><span class="nx">nextState</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="五高阶组件">五、高阶组件</h2>
+<ul>
+  <li>高阶组件就是一个函数，传给它一个组件，返回一个新的组件</li>
+  <li>高阶组件的作用是为了组件之间代码的复用
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">NewComponent</span> <span class="o">=</span> <span class="nx">higherOrderComponent</span><span class="p">(</span><span class="nx">OldComponent</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="1日志组件">1、日志组件</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,{</span><span class="nx">Component</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">logger</span> <span class="o">=</span> <span class="p">(</span><span class="nx">WrappedComponent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">class</span> <span class="nx">LoggerComponent</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+      <span class="nx">componentWillMount</span><span class="p">(){</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+      <span class="p">}</span>  
+      <span class="nx">componentDidMount</span><span class="p">(){</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">((</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">start</span><span class="p">)</span><span class="o">+</span><span class="dl">'</span><span class="s1">ms</span><span class="dl">'</span><span class="p">)</span>
+      <span class="p">}</span>
+      <span class="nx">render</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">&lt;</span><span class="nx">WrappedComponent</span> <span class="o">/&gt;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">LoggerComponent</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="kd">let</span> <span class="nx">Hello</span> <span class="o">=</span> <span class="nx">logger</span><span class="p">(</span><span class="nx">props</span><span class="o">=&gt;&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">hello</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span><span class="se">)</span><span class="err">;
+</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Hello</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h3 id="2多层高阶组件">2、多层高阶组件</h3>
+<h4 id="1从-localstorage-中加载">（1）从 localStorage 中加载</h4>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,{</span><span class="nx">Component</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">fromLocal</span> <span class="o">=</span> <span class="p">(</span><span class="nx">WrappedComponent</span><span class="p">,</span><span class="nx">name</span><span class="p">)</span> <span class="o">=&gt;</span><span class="p">{</span>
+    <span class="kd">class</span> <span class="nx">NewComponent</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+        <span class="kd">constructor</span><span class="p">(){</span>
+            <span class="k">super</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">value</span><span class="p">:</span><span class="kc">null</span><span class="p">};</span>
+        <span class="p">}</span>
+        <span class="nx">componentWillMount</span><span class="p">(){</span>
+            <span class="kd">let</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+             <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">value</span><span class="p">});</span>
+        <span class="p">}</span>
+        <span class="nx">render</span><span class="p">(){</span>
+            <span class="k">return</span> <span class="o">&lt;</span><span class="nx">WrappedComponent</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">value</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
+</span>        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">NewComponent</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">const</span> <span class="nx">UserName</span> <span class="o">=</span> <span class="p">({</span><span class="nx">value</span><span class="p">})</span><span class="o">=&gt;</span><span class="p">(</span>
+    <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">defaultValue</span> <span class="o">=</span> <span class="p">{</span><span class="nx">value</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
+</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">UserNameFromLocal</span> <span class="o">=</span> <span class="nx">fromLocal</span><span class="p">(</span><span class="nx">UserName</span><span class="p">,</span><span class="dl">'</span><span class="s1">username</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">UserNameFromLocal</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h4 id="2从-ajax-中加载">（2）从 ajax 中加载</h4>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,{</span><span class="nx">Component</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">fromLocal</span> <span class="o">=</span> <span class="p">(</span><span class="nx">WrappedComponent</span><span class="p">,</span><span class="nx">name</span><span class="p">)</span> <span class="o">=&gt;</span><span class="p">{</span>
+    <span class="kd">class</span> <span class="nx">NewComponent</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+        <span class="kd">constructor</span><span class="p">(){</span>
+            <span class="k">super</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">id</span><span class="p">:</span><span class="kc">null</span><span class="p">};</span>
+        <span class="p">}</span>
+        <span class="nx">componentWillMount</span><span class="p">(){</span>
+            <span class="kd">let</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">id</span><span class="p">});</span>
+        <span class="p">}</span>
+        <span class="nx">render</span><span class="p">(){</span>
+            <span class="k">return</span> <span class="o">&lt;</span><span class="nx">WrappedComponent</span> <span class="nx">id</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
+</span>        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">NewComponent</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">const</span> <span class="nx">fromAjax</span> <span class="o">=</span> <span class="p">(</span><span class="nx">WrappedComponent</span><span class="p">)</span> <span class="o">=&gt;</span><span class="p">{</span>
+    <span class="kd">class</span> <span class="nx">NewComponent</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+        <span class="kd">constructor</span><span class="p">(){</span>
+            <span class="k">super</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="na">value</span><span class="p">:{}};</span>
+        <span class="p">}</span>
+        <span class="nx">componentDidMount</span><span class="p">(){</span>
+            <span class="nx">fetch</span><span class="p">(</span><span class="s2">`/</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="s2">.json`</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span><span class="o">=&gt;</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()).</span><span class="nx">then</span><span class="p">(</span><span class="nx">value</span><span class="o">=&gt;</span><span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">value</span><span class="p">});</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+        <span class="nx">render</span><span class="p">(){</span>
+            <span class="k">return</span> <span class="o">&lt;</span><span class="nx">WrappedComponent</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">value</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
+</span>        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">NewComponent</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">const</span> <span class="nx">UserName</span> <span class="o">=</span> <span class="p">({</span><span class="nx">value</span><span class="p">})</span><span class="o">=&gt;</span><span class="p">{</span>
+  <span class="k">return</span> <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">defaultValue</span> <span class="o">=</span> <span class="p">{</span><span class="nx">value</span><span class="p">.</span><span class="nx">username</span><span class="p">}</span><span class="sr">/&gt;</span><span class="err">;
+</span><span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">UserNameFromAjax</span> <span class="o">=</span> <span class="nx">fromAjax</span><span class="p">(</span><span class="nx">UserName</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">UserNameFromLocal</span> <span class="o">=</span> <span class="nx">fromLocal</span><span class="p">(</span><span class="nx">UserNameFromAjax</span><span class="p">,</span><span class="dl">'</span><span class="s1">username</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">UserNameFromLocal</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h2 id="六render-props">六、render props</h2>
+<ul>
+  <li>render props 是指一种在 React 组a件之间使用一个值为函数的 prop 共享代码的简单技术</li>
+  <li>具有 render prop 的组件接受一个函数，该函数返回一个 React 元素并调用它而不是实现自己的渲染逻辑</li>
+  <li>render prop 是一个用于告知组件需要渲染什么内容的函数 prop</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">DataProvider</span> <span class="nx">render</span><span class="o">=</span><span class="p">{</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="p">(</span>
+  <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Hello</span> <span class="p">{</span><span class="nx">data</span><span class="p">.</span><span class="nx">target</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
+</span><span class="p">)}</span><span class="sr">/</span><span class="err">&gt;
+</span></code></pre></div></div>
+
+<h3 id="1原生实现">1、原生实现</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MouseTracker</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">0</span> <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="nx">handleMouseMove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+            <span class="na">x</span><span class="p">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientX</span><span class="p">,</span>
+            <span class="na">y</span><span class="p">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientY</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">onMouseMove</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleMouseMove</span><span class="p">}</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">移动鼠标</span><span class="o">!&lt;</span><span class="sr">/h1</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">当前的鼠标位置是</span> <span class="p">({</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">x</span><span class="p">},</span> <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">y</span><span class="p">})</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="2-children">2、 children</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MouseTracker</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">0</span> <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="nx">handleMouseMove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+            <span class="na">x</span><span class="p">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientX</span><span class="p">,</span>
+            <span class="na">y</span><span class="p">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientY</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">onMouseMove</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleMouseMove</span><span class="p">}</span><span class="o">&gt;</span>
+               <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">children</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">)}</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">Cat</span><span class="p">({}){</span>
+
+<span class="p">}</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span> <span class="nx">MouseTracker</span> <span class="o">&gt;</span>
+<span class="p">{</span>
+    <span class="nx">props</span><span class="o">=&gt;</span><span class="p">(</span>
+        <span class="o">&lt;&gt;</span>
+          <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">移动鼠标</span><span class="o">!&lt;</span><span class="sr">/h1</span><span class="err">&gt;
+</span>          <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">当前的鼠标位置是</span> <span class="p">({</span><span class="nx">props</span><span class="p">.</span><span class="nx">x</span><span class="p">},</span> <span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">y</span><span class="p">})</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="sr">/</span><span class="err">&gt;
+</span>    <span class="p">)</span>
+<span class="p">}</span>
+<span class="o">&lt;</span><span class="sr">/ MouseTracker&gt;, document.getElementById</span><span class="se">(</span><span class="sr">'root'</span><span class="se">))</span><span class="err">;
+</span></code></pre></div></div>
+
+<h3 id="3render-属性">3、render 属性</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MouseTracker</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">0</span> <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="nx">handleMouseMove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+            <span class="na">x</span><span class="p">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientX</span><span class="p">,</span>
+            <span class="na">y</span><span class="p">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientY</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">onMouseMove</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleMouseMove</span><span class="p">}</span><span class="o">&gt;</span>
+               <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">)}</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span> <span class="nx">MouseTracker</span> <span class="nx">render</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="o">=&gt;</span><span class="p">(</span>
+    <span class="o">&lt;&gt;</span>
+      <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">移动鼠标</span><span class="o">!&lt;</span><span class="sr">/h1</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">当前的鼠标位置是</span> <span class="p">({</span><span class="nx">props</span><span class="p">.</span><span class="nx">x</span><span class="p">},</span> <span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">y</span><span class="p">})</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/</span><span class="err">&gt;
+</span><span class="p">)}</span> <span class="sr">/&gt;, document.getElementById</span><span class="se">(</span><span class="sr">'root'</span><span class="se">))</span><span class="err">;
+</span></code></pre></div></div>
+
+<h3 id="4hoc">4、HOC</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MouseTracker</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">0</span> <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="nx">handleMouseMove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+            <span class="na">x</span><span class="p">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientX</span><span class="p">,</span>
+            <span class="na">y</span><span class="p">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientY</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">onMouseMove</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleMouseMove</span><span class="p">}</span><span class="o">&gt;</span>
+               <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">)}</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">withMouse</span><span class="p">(</span><span class="nx">Component</span><span class="p">){</span>
+ <span class="k">return</span> <span class="p">(</span>
+     <span class="p">(</span><span class="nx">props</span><span class="p">)</span><span class="o">=&gt;&lt;</span><span class="nx">MouseTracker</span> <span class="nx">render</span><span class="o">=</span><span class="p">{</span><span class="nx">mouse</span><span class="o">=&gt;&lt;</span><span class="nx">Component</span> <span class="p">{...</span><span class="nx">props</span><span class="p">}</span> <span class="p">{...</span><span class="nx">mouse</span><span class="p">}</span><span class="sr">/&gt;}/</span><span class="o">&gt;</span>
+ <span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">let</span> <span class="nx">App</span> <span class="o">=</span> <span class="nx">withMouse</span><span class="p">(</span><span class="nx">props</span><span class="o">=&gt;</span><span class="p">(</span>
+    <span class="o">&lt;&gt;</span>
+      <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">移动鼠标</span><span class="o">!&lt;</span><span class="sr">/h1</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">当前的鼠标位置是</span> <span class="p">({</span><span class="nx">props</span><span class="p">.</span><span class="nx">x</span><span class="p">},</span> <span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">y</span><span class="p">})</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/</span><span class="err">&gt;
+</span><span class="p">));</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">App</span><span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h2 id="七插槽portals">七、插槽（Portals）</h2>
+<ul>
+  <li>Portals 提供了一种很好的方法，将子节点渲染到父组件 DOM 层次结构之外的 DOM 节点。</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">createPortal</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">container</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>第一个参数（child）是任何可渲染的 React 子元素，例如一个元素，字符串或 片段(fragment)</li>
+  <li>第二个参数（container）则是一个 DOM 元素</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span><span class="p">,{</span><span class="nx">Component</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">class</span> <span class="nx">Modal</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">modal</span><span class="o">=</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#root</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">createPortal</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">modal</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Page</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="o">=</span><span class="p">{</span><span class="na">show</span><span class="p">:</span><span class="kc">false</span><span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">handleClick</span><span class="o">=</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="na">show</span><span class="p">:</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">show</span><span class="p">});</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">显示模态窗口</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">show</span><span class="o">&amp;&amp;&lt;</span><span class="nx">Modal</span><span class="o">&gt;</span>
+                    <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="dl">"</span><span class="s2">modal</span><span class="dl">"</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">modal</span><span class="dl">"</span><span class="o">&gt;</span>
+                        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">modal-content</span><span class="dl">"</span> <span class="nx">id</span><span class="o">=</span><span class="dl">"</span><span class="s2">modal-content</span><span class="dl">"</span><span class="o">&gt;</span>
+                                <span class="nx">内容</span>
+                                <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">关闭</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>                        <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>                    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>                <span class="o">&lt;</span><span class="sr">/Modal</span><span class="err">&gt;
+</span>                <span class="p">}</span>
+            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Page</span><span class="o">/&gt;</span><span class="p">,</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h2 id="八错误边界error-boundaries">八、错误边界（Error Boundaries）</h2>
+<ul>
+  <li>部分 UI 中的 JavaScript 错误不应该破坏整个应用程序</li>
+  <li>为了解决 React 用户的这个问题，React 16引入了一个 错误边界(Error Boundaries)的新概念</li>
+  <li>错误边界是一个组件，这个组件可以用来捕获它的子组件中产生的错误，记录错误日志并在错误发生时，展示一个“回退”或者说是一个错误信息页面，以避免因为局部组件错误而导致的整个组件树崩溃</li>
+  <li>错误边界可以捕获其子组件的渲染、生命周期函数以及构造函数内的错误</li>
+  <li>这个组件是所有子组件发送错误的捕获者，所有子组件的错误到达错误边界组件后，错误信息被拦截并不再向上冒泡，所以这个组件就是错误的一个边界</li>
+  <li>原则上来讲，错误边界是用来保证React可以正常渲染UI的，而不是真的用来捕获异常的</li>
+  <li>自 React 16 开始，任何未被错误边界捕获的错误将会卸载整个 React 组件树</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">ErrorBoundary</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="o">=</span><span class="p">{</span><span class="na">hasError</span><span class="p">:</span><span class="kc">false</span><span class="p">};</span>
+    <span class="p">}</span>
+    <span class="nx">componentDidCatch</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="na">hasError</span><span class="p">:</span> <span class="kc">true</span><span class="p">});</span>
+    <span class="p">}</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">hasError</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Something</span> <span class="nx">Went</span> <span class="nx">Wrong</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
+</span>        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">children</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">Page</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">ErrorBoundary</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="nx">Clock</span><span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="sr">/ErrorBoundary</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nx">Clock</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span><span class="p">{</span>
+    <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="nx">hello</span><span class="p">{</span><span class="kc">null</span><span class="p">.</span><span class="nx">toString</span><span class="p">()}</span><span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Page</span><span class="o">/&gt;</span><span class="p">,</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<p><strong><em>借鉴的文档：</em></strong><br />
+<a href="https://zh-hans.reactjs.org/docs/context.html">React 官方教程</a></p>
+:ET

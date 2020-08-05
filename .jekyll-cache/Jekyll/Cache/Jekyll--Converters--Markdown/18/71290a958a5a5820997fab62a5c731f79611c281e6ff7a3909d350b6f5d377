@@ -1,0 +1,44 @@
+I"-<p>JS中由于对象的灵活性，在构造函数中也可以为类添加成员。不过这样使得代码很复杂，所以使用prototype原型对象来替代，采用这种定义成员的方式。这样function的定义就是类的构造函数，类名和构造函数名是现相同的。
+<!--more--></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//构造函数的定义</span>
+<span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span><span class="nx">age</span><span class="p">){</span>
+	<span class="nx">alert</span><span class="p">(</span><span class="dl">"</span><span class="s2">执行构造函数</span><span class="dl">"</span><span class="p">);</span>
+	<span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+	<span class="k">this</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="nx">age</span><span class="p">;</span>
+<span class="p">}</span>
+ 
+<span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="dl">""</span><span class="p">;</span>
+<span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">showInfo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+	<span class="nx">alert</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//类的使用</span>
+<span class="kd">var</span> <span class="nx">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="dl">"</span><span class="s2">Jeamn</span><span class="dl">"</span><span class="p">,</span><span class="mi">21</span><span class="p">);</span>
+<span class="nx">person</span><span class="p">.</span><span class="nx">showInfo</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>每次都使用prototype，很麻烦，改进……  <br />
+可以使用无类型对象的构造方法来指定prototype对象，从而实现类的成员定义。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//定义一个类class1</span>
+<span class="kd">function</span> <span class="nx">class1</span><span class="err">（）</span><span class="p">{</span>
+    <span class="c1">//构造函数</span>
+<span class="p">}</span>
+
+<span class="c1">//通过指定prototype对象来实现类的成员定义</span>
+<span class="nx">class1</span><span class="p">.</span><span class="nx">prototype</span><span class="o">=</span><span class="p">{</span>
+    <span class="nx">someProperty</span><span class="err">：“</span><span class="nx">sample</span><span class="err">”，</span>
+    <span class="nx">someMethod</span><span class="err">：</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="c1">//方法代码</span>
+    <span class="p">}</span>
+    <span class="p">...</span> <span class="c1">//其他属性和方法</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="注意">注意：</h3>
+<ul>
+  <li>在一个类的成员之间互相引用，必须通过this指针来进行，如：上面的someMethod方法中，如果使用属性someProperty，必须通过this.someProperty的形式，因为在JavaScript中每个属性和方法都是独立的，它们通过this指针联系在一个对象上。</li>
+</ul>
+
+:ET

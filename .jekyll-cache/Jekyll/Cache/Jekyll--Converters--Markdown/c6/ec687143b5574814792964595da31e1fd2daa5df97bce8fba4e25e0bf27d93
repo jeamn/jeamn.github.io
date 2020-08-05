@@ -1,0 +1,478 @@
+I"��<h2 id="依赖收集">依赖收集</h2>
+<p>我们知道 Vue 会把普通对象变成响应式对象，响应式对象 getter 相关的逻辑就是做依赖收集，我们来详细分析这个过程。</p>
+
+<p>上面我们知道，<code class="language-plaintext highlighter-rouge">defineReactive</code> 的功能就是定义一个响应式对象。在这个函数中，首先用 <code class="language-plaintext highlighter-rouge">const dep = new Dep()</code> 实例化了一个 Dep 实例，然后，在 get 函数中通过 <code class="language-plaintext highlighter-rouge">dep.depend()</code> 做依赖收集，接下来看下构造函数 Dep：</p>
+
+<h3 id="1dep">1、Dep</h3>
+<p><code class="language-plaintext highlighter-rouge">Dep</code> 是整个 getter 依赖收集的核心，它定义在 <code class="language-plaintext highlighter-rouge">src/core/observer/dep.js</code> 中，</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* @flow */</span>
+
+<span class="k">import</span> <span class="nx">type</span> <span class="nx">Watcher</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./watcher</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">remove</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../util/index</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">config</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../config</span><span class="dl">'</span>
+
+<span class="kd">let</span> <span class="nx">uid</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="cm">/**
+ * A dep is an observable that can have multiple
+ * directives subscribing to it.
+ */</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">Dep</span> <span class="p">{</span>
+  <span class="kd">static</span> <span class="nx">target</span><span class="p">:</span> <span class="p">?</span><span class="nx">Watcher</span><span class="p">;</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span>
+  <span class="nl">subs</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Watcher</span><span class="o">&gt;</span><span class="p">;</span>
+
+  <span class="kd">constructor</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">uid</span><span class="o">++</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">subs</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="p">}</span>
+
+  <span class="nx">addSub</span> <span class="p">(</span><span class="nx">sub</span><span class="p">:</span> <span class="nx">Watcher</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">subs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">sub</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">removeSub</span> <span class="p">(</span><span class="nx">sub</span><span class="p">:</span> <span class="nx">Watcher</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">remove</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">subs</span><span class="p">,</span> <span class="nx">sub</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">depend</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">addDep</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">notify</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// stabilize the subscriber list first</span>
+    <span class="kd">const</span> <span class="nx">subs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">subs</span><span class="p">.</span><span class="nx">slice</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="k">async</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// subs aren't sorted in scheduler if not running async</span>
+      <span class="c1">// we need to sort them now to make sure they fire in correct</span>
+      <span class="c1">// order</span>
+      <span class="nx">subs</span><span class="p">.</span><span class="nx">sort</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">a</span><span class="p">.</span><span class="nx">id</span> <span class="o">-</span> <span class="nx">b</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">subs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">update</span><span class="p">()</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// The current target watcher being evaluated.</span>
+<span class="c1">// This is globally unique because only one watcher</span>
+<span class="c1">// can be evaluated at a time.</span>
+<span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="kc">null</span>
+<span class="kd">const</span> <span class="nx">targetStack</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">pushTarget</span> <span class="p">(</span><span class="nx">target</span><span class="p">:</span> <span class="p">?</span><span class="nx">Watcher</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">targetStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span>
+  <span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">popTarget</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">targetStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">()</span>
+  <span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">targetStack</span><span class="p">[</span><span class="nx">targetStack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">Dep</code> 是一个 Class，定义了一些属性和方法，它有一个静态属性 <code class="language-plaintext highlighter-rouge">target</code>，这是一个全局唯一 <code class="language-plaintext highlighter-rouge">Watcher</code>，因为在同一时间只能有一个全局的 <code class="language-plaintext highlighter-rouge">Watcher</code> 被计算，另外它的自身属性 <code class="language-plaintext highlighter-rouge">subs</code> 也是 <code class="language-plaintext highlighter-rouge">Watcher</code> 的数组。</p>
+
+<p><code class="language-plaintext highlighter-rouge">Dep</code> 实际上就是对 <code class="language-plaintext highlighter-rouge">Watcher</code> 的一种管理，<code class="language-plaintext highlighter-rouge">Dep</code> 脱离 <code class="language-plaintext highlighter-rouge">Watcher</code> 单独存在是没有意义的，为了完整地理解依赖收集过程，我们可以看一下 <code class="language-plaintext highlighter-rouge">Watcher</code> 的一些相关实现，它的定义在 <code class="language-plaintext highlighter-rouge">src/core/observer/watcher.js</code> 中：</p>
+
+<h3 id="2watcher">2、Watcher</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* @flow */</span>
+
+<span class="k">import</span> <span class="p">{</span>
+  <span class="nx">warn</span><span class="p">,</span>
+  <span class="nx">remove</span><span class="p">,</span>
+  <span class="nx">isObject</span><span class="p">,</span>
+  <span class="nx">parsePath</span><span class="p">,</span>
+  <span class="nx">_Set</span> <span class="k">as</span> <span class="nb">Set</span><span class="p">,</span>
+  <span class="nx">handleError</span><span class="p">,</span>
+  <span class="nx">noop</span>
+<span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../util/index</span><span class="dl">'</span>
+
+<span class="k">import</span> <span class="p">{</span> <span class="nx">traverse</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./traverse</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">queueWatcher</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./scheduler</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">Dep</span><span class="p">,</span> <span class="p">{</span> <span class="nx">pushTarget</span><span class="p">,</span> <span class="nx">popTarget</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./dep</span><span class="dl">'</span>
+
+<span class="k">import</span> <span class="nx">type</span> <span class="p">{</span> <span class="nx">SimpleSet</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../util/index</span><span class="dl">'</span>
+
+<span class="kd">let</span> <span class="nx">uid</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="cm">/**
+ * A watcher parses an expression, collects dependencies,
+ * and fires callback when the expression value changes.
+ * This is used for both the $watch() api and directives.
+ */</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">Watcher</span> <span class="p">{</span>
+  <span class="nl">vm</span><span class="p">:</span> <span class="nx">Component</span><span class="p">;</span>
+  <span class="nl">expression</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+  <span class="nl">cb</span><span class="p">:</span> <span class="nb">Function</span><span class="p">;</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span>
+  <span class="nl">deep</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">;</span>
+  <span class="nl">user</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">;</span>
+  <span class="nl">lazy</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">;</span>
+  <span class="nl">sync</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">;</span>
+  <span class="nl">dirty</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">;</span>
+  <span class="nl">active</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">;</span>
+  <span class="nl">deps</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Dep</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="nl">newDeps</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Dep</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="nl">depIds</span><span class="p">:</span> <span class="nx">SimpleSet</span><span class="p">;</span>
+  <span class="nl">newDepIds</span><span class="p">:</span> <span class="nx">SimpleSet</span><span class="p">;</span>
+  <span class="nl">before</span><span class="p">:</span> <span class="p">?</span><span class="nb">Function</span><span class="p">;</span>
+  <span class="nl">getter</span><span class="p">:</span> <span class="nb">Function</span><span class="p">;</span>
+  <span class="nl">value</span><span class="p">:</span> <span class="nx">any</span><span class="p">;</span>
+
+  <span class="kd">constructor</span> <span class="p">(</span>
+    <span class="nx">vm</span><span class="p">:</span> <span class="nx">Component</span><span class="p">,</span>
+    <span class="nx">expOrFn</span><span class="p">:</span> <span class="nx">string</span> <span class="o">|</span> <span class="nb">Function</span><span class="p">,</span>
+    <span class="nx">cb</span><span class="p">:</span> <span class="nb">Function</span><span class="p">,</span>
+    <span class="nx">options</span><span class="p">?:</span> <span class="p">?</span><span class="nb">Object</span><span class="p">,</span>
+    <span class="nx">isRenderWatcher</span><span class="p">?:</span> <span class="nx">boolean</span>
+  <span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">vm</span> <span class="o">=</span> <span class="nx">vm</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">isRenderWatcher</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">vm</span><span class="p">.</span><span class="nx">_watcher</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="p">}</span>
+    <span class="nx">vm</span><span class="p">.</span><span class="nx">_watchers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="c1">// options</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">deep</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">options</span><span class="p">.</span><span class="nx">deep</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">user</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">options</span><span class="p">.</span><span class="nx">user</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">lazy</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">options</span><span class="p">.</span><span class="nx">lazy</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">options</span><span class="p">.</span><span class="nx">sync</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">before</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">before</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">deep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">user</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">lazy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="kc">false</span>
+    <span class="p">}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">cb</span> <span class="o">=</span> <span class="nx">cb</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="o">++</span><span class="nx">uid</span> <span class="c1">// uid for batching</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">active</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">lazy</span> <span class="c1">// for lazy watchers</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">deps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">depIds</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Set</span><span class="p">()</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Set</span><span class="p">()</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">expression</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span>
+      <span class="p">?</span> <span class="nx">expOrFn</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+      <span class="p">:</span> <span class="dl">''</span>
+    <span class="c1">// parse expression for getter</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">expOrFn</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">getter</span> <span class="o">=</span> <span class="nx">expOrFn</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">getter</span> <span class="o">=</span> <span class="nx">parsePath</span><span class="p">(</span><span class="nx">expOrFn</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">getter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">getter</span> <span class="o">=</span> <span class="nx">noop</span>
+        <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">warn</span><span class="p">(</span>
+          <span class="s2">`Failed watching path: "</span><span class="p">${</span><span class="nx">expOrFn</span><span class="p">}</span><span class="s2">" `</span> <span class="o">+</span>
+          <span class="dl">'</span><span class="s1">Watcher only accepts simple dot-delimited paths. </span><span class="dl">'</span> <span class="o">+</span>
+          <span class="dl">'</span><span class="s1">For full control, use a function instead.</span><span class="dl">'</span><span class="p">,</span>
+          <span class="nx">vm</span>
+        <span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">lazy</span>
+      <span class="p">?</span> <span class="kc">undefined</span>
+      <span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="kd">get</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * Evaluate the getter, and re-collect dependencies.
+   */</span>
+  <span class="kd">get</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">pushTarget</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="kd">let</span> <span class="nx">value</span>
+    <span class="kd">const</span> <span class="nx">vm</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">vm</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="nx">vm</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">handleError</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">vm</span><span class="p">,</span> <span class="s2">`getter for watcher "</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">expression</span><span class="p">}</span><span class="s2">"`</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="nx">e</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+      <span class="c1">// "touch" every property so they are all tracked as</span>
+      <span class="c1">// dependencies for deep watching</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">deep</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">traverse</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+      <span class="p">}</span>
+      <span class="nx">popTarget</span><span class="p">()</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">cleanupDeps</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">value</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * Add a dependency to this directive.
+   */</span>
+  <span class="nx">addDep</span> <span class="p">(</span><span class="nx">dep</span><span class="p">:</span> <span class="nx">Dep</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">dep</span><span class="p">.</span><span class="nx">id</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">dep</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">depIds</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">dep</span><span class="p">.</span><span class="nx">addSub</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * Clean up for dependency collection.
+   */</span>
+  <span class="nx">cleanupDeps</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">deps</span><span class="p">.</span><span class="nx">length</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">dep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">deps</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">dep</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">dep</span><span class="p">.</span><span class="nx">removeSub</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kd">let</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">depIds</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">depIds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span> <span class="o">=</span> <span class="nx">tmp</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span><span class="p">.</span><span class="nx">clear</span><span class="p">()</span>
+    <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">deps</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">deps</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span> <span class="o">=</span> <span class="nx">tmp</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * Subscriber interface.
+   * Will be called when a dependency changes.
+   */</span>
+  <span class="nx">update</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="cm">/* istanbul ignore else */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">lazy</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sync</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">run</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">queueWatcher</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * Scheduler job interface.
+   * Will be called by the scheduler.
+   */</span>
+  <span class="nx">run</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">active</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="kd">get</span><span class="p">()</span>
+      <span class="k">if</span> <span class="p">(</span>
+        <span class="nx">value</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">||</span>
+        <span class="c1">// Deep watchers and watchers on Object/Arrays should fire even</span>
+        <span class="c1">// when the value is the same, because the value may</span>
+        <span class="c1">// have mutated.</span>
+        <span class="nx">isObject</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">||</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">deep</span>
+      <span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// set new value</span>
+        <span class="kd">const</span> <span class="nx">oldValue</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">try</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vm</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span>
+          <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">handleError</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">vm</span><span class="p">,</span> <span class="s2">`callback for watcher "</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">expression</span><span class="p">}</span><span class="s2">"`</span><span class="p">)</span>
+          <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vm</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * Evaluate the value of the watcher.
+   * This only gets called for lazy watchers.
+   */</span>
+  <span class="nx">evaluate</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="kd">get</span><span class="p">()</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">=</span> <span class="kc">false</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * Depend on all deps collected by this watcher.
+   */</span>
+  <span class="nx">depend</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">deps</span><span class="p">.</span><span class="nx">length</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">deps</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">depend</span><span class="p">()</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * Remove self from all dependencies' subscriber list.
+   */</span>
+  <span class="nx">teardown</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">active</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// remove self from vm's watcher list</span>
+      <span class="c1">// this is a somewhat expensive operation so we skip it</span>
+      <span class="c1">// if the vm is being destroyed.</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">vm</span><span class="p">.</span><span class="nx">_isBeingDestroyed</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">remove</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vm</span><span class="p">.</span><span class="nx">_watchers</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+      <span class="p">}</span>
+      <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">deps</span><span class="p">.</span><span class="nx">length</span>
+      <span class="k">while</span> <span class="p">(</span><span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">deps</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">removeSub</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+      <span class="p">}</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">active</span> <span class="o">=</span> <span class="kc">false</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Watcher</code> 是一个 Class 构造函数，在实例化一个 <code class="language-plaintext highlighter-rouge">watcher</code> 时，首先进入构造函数逻辑，会执行它的 <code class="language-plaintext highlighter-rouge">this.get()</code> 方法，进入 <code class="language-plaintext highlighter-rouge">get</code> 函数，
+首先会执行：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">pushTarget</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>该方法定义在 <code class="language-plaintext highlighter-rouge">src/core/observer/dep.js</code> 中：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nx">pushTarget</span> <span class="p">(</span><span class="nx">target</span><span class="p">:</span> <span class="p">?</span><span class="nx">Watcher</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">targetStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span>
+  <span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>实际上就是把 <code class="language-plaintext highlighter-rouge">Dep.target</code> 赋值为当前的渲染 <code class="language-plaintext highlighter-rouge">watcher</code> 并压栈 <code class="language-plaintext highlighter-rouge">targetStack</code>（为了恢复用）。接着又执行了：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="nx">vm</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">this.getter</code> 对应就是 <code class="language-plaintext highlighter-rouge">updateComponent</code> 函数，这实际上就是在执行：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">vm</span><span class="p">.</span><span class="nx">_update</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">_render</span><span class="p">(),</span> <span class="nx">hydrating</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>它会先执行 <code class="language-plaintext highlighter-rouge">vm._render()</code> 方法，因为之前分析过这个方法会生成 渲染 VNode，并且在这个过程中会对 vm 上的数据访问，这个时候就触发了数据对象的 getter。</p>
+
+<p>那么每个对象值的 getter 都持有一个 dep，在触发 getter 的时候会调用 dep.depend() 方法，也就会执行 Dep.target.addDep(this)。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * Add a dependency to this directive.
+ */</span>
+<span class="nx">addDep</span> <span class="p">(</span><span class="nx">dep</span><span class="p">:</span> <span class="nx">Dep</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">dep</span><span class="p">.</span><span class="nx">id</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">dep</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">depIds</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">dep</span><span class="p">.</span><span class="nx">addSub</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这时候会做一些逻辑判断（保证同一数据不会被添加多次）后执行 <code class="language-plaintext highlighter-rouge">dep.addSub(this)</code>，那么就会执行 <code class="language-plaintext highlighter-rouge">this.subs.push(sub)</code>，也就是说把当前的 <code class="language-plaintext highlighter-rouge">watcher</code> 订阅到这个数据持有的 <code class="language-plaintext highlighter-rouge">dep</code> 的 <code class="language-plaintext highlighter-rouge">subs</code> 中，这个目的是为后续数据变化时候能通知到那些订阅者 <code class="language-plaintext highlighter-rouge">subs</code> 做准备。</p>
+
+<p>所以在 <code class="language-plaintext highlighter-rouge">vm._render()</code> 过程中，会触发所有数据的 <code class="language-plaintext highlighter-rouge">getter</code>，这样实际上已经完成了一个依赖收集的过程。</p>
+
+<p>依赖收集完毕之后，代码中有段 finally 执行的：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">finally</span> <span class="p">{</span>
+    <span class="c1">// "touch" every property so they are all tracked as</span>
+    <span class="c1">// dependencies for deep watching</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">deep</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">traverse</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">popTarget</span><span class="p">()</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">cleanupDeps</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">traverse(value)</code> 是递归去访问 <code class="language-plaintext highlighter-rouge">value</code> ，触发它所有子项的 <code class="language-plaintext highlighter-rouge">getter</code> ，代码如下：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * Recursively traverse an object to evoke all converted
+ * getters, so that every nested property inside the object
+ * is collected as a "deep" dependency.
+ */</span>
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">traverse</span> <span class="p">(</span><span class="nx">val</span><span class="p">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">_traverse</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">seenObjects</span><span class="p">)</span>
+  <span class="nx">seenObjects</span><span class="p">.</span><span class="nx">clear</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">_traverse</span> <span class="p">(</span><span class="nx">val</span><span class="p">:</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">seen</span><span class="p">:</span> <span class="nx">SimpleSet</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">keys</span>
+  <span class="kd">const</span> <span class="nx">isA</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">isA</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="o">||</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">isFrozen</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="o">||</span> <span class="nx">val</span> <span class="k">instanceof</span> <span class="nx">VNode</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">.</span><span class="nx">__ob__</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">depId</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">__ob__</span><span class="p">.</span><span class="nx">dep</span><span class="p">.</span><span class="nx">id</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">seen</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">depId</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">seen</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">depId</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">isA</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">i</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">length</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="nx">_traverse</span><span class="p">(</span><span class="nx">val</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">seen</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">keys</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span>
+    <span class="nx">i</span> <span class="o">=</span> <span class="nx">keys</span><span class="p">.</span><span class="nx">length</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="nx">_traverse</span><span class="p">(</span><span class="nx">val</span><span class="p">[</span><span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">]],</span> <span class="nx">seen</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>接下来执行 <code class="language-plaintext highlighter-rouge">popTarget()</code> ，代码在 <code class="language-plaintext highlighter-rouge">src/core/observer/dep.js</code> ，如下：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// The current target watcher being evaluated.</span>
+<span class="c1">// This is globally unique because only one watcher</span>
+<span class="c1">// can be evaluated at a time.</span>
+<span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="kc">null</span>
+<span class="kd">const</span> <span class="nx">targetStack</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">popTarget</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">targetStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">()</span>
+  <span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">targetStack</span><span class="p">[</span><span class="nx">targetStack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>实际上就是把 <code class="language-plaintext highlighter-rouge">Dep.target</code> 恢复成上一个状态，因为当前 vm 的数据依赖收集已经完成，那么对应的渲染 <code class="language-plaintext highlighter-rouge">Dep.target</code> 也需要改变。最后执行：<code class="language-plaintext highlighter-rouge">this.cleanupDeps()</code>，代码如下：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * Clean up for dependency collection.
+ */</span>
+<span class="nx">cleanupDeps</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">deps</span><span class="p">.</span><span class="nx">length</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">dep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">deps</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">dep</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">dep</span><span class="p">.</span><span class="nx">removeSub</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="kd">let</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">depIds</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">depIds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span> <span class="o">=</span> <span class="nx">tmp</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span><span class="p">.</span><span class="nx">clear</span><span class="p">()</span>
+  <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">deps</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">deps</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span> <span class="o">=</span> <span class="nx">tmp</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这里是清空依赖的过程。考虑到 Vue 是数据驱动的，所以每次数据变化都会重新 render，那么 <code class="language-plaintext highlighter-rouge">vm._render()</code> 方法又会再次执行，并再次触发数据的 <code class="language-plaintext highlighter-rouge">getters</code>，所以 <code class="language-plaintext highlighter-rouge">Wathcer</code> 在构造函数中会初始化 2 个 <code class="language-plaintext highlighter-rouge">Dep</code> 实例数组，<code class="language-plaintext highlighter-rouge">newDeps</code> 表示新添加的 <code class="language-plaintext highlighter-rouge">Dep</code> 实例数组，而 <code class="language-plaintext highlighter-rouge">deps</code> 表示上一次添加的 <code class="language-plaintext highlighter-rouge">Dep</code> 实例数组。所以我们可以看到，在 <code class="language-plaintext highlighter-rouge">Watcher</code> 构造函数中，会有一些数据的初始化：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">this</span><span class="p">.</span><span class="nx">deps</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">this</span><span class="p">.</span><span class="nx">depIds</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Set</span><span class="p">()</span>
+<span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Set</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>在执行 <code class="language-plaintext highlighter-rouge">cleanupDeps</code> 函数的时候，会首先遍历 <code class="language-plaintext highlighter-rouge">deps</code>，移除对 <code class="language-plaintext highlighter-rouge">dep.subs</code> 数组中 <code class="language-plaintext highlighter-rouge">Wathcer</code> 的订阅，然后把 <code class="language-plaintext highlighter-rouge">newDepIds</code> 和 <code class="language-plaintext highlighter-rouge">depIds</code> 交换，<code class="language-plaintext highlighter-rouge">newDeps</code> 和 <code class="language-plaintext highlighter-rouge">deps</code> 交换，并把 <code class="language-plaintext highlighter-rouge">newDepIds</code> 和 <code class="language-plaintext highlighter-rouge">newDeps</code> 清空。</p>
+
+<p>那么为什么需要做 <code class="language-plaintext highlighter-rouge">deps</code> 订阅的移除呢，在添加 <code class="language-plaintext highlighter-rouge">deps</code> 的订阅过程，已经能通过 <code class="language-plaintext highlighter-rouge">id</code> 去重避免重复订阅了。</p>
+
+<p>考虑到一种场景，我们的模板会根据 v-if 去渲染不同子模板 a 和 b，当我们满足某种条件的时候渲染 a 的时候，会访问到 a 中的数据，这时候我们对 a 使用的数据添加了 getter，做了依赖收集，那么当我们去修改 a 的数据的时候，理应通知到这些订阅者。那么如果我们一旦改变了条件渲染了 b 模板，又会对 b 使用的数据添加了 getter，如果我们没有依赖移除的过程，那么这时候我去修改 a 模板的数据，会通知 a 数据的订阅的回调，这显然是有浪费的。</p>
+
+<p>因此 Vue 设计了在每次添加完新的订阅，会移除掉旧的订阅，这样就保证了在我们刚才的场景中，如果渲染 b 模板的时候去修改 a 模板的数据，a 数据订阅回调已经被移除了，所以不会有任何浪费。</p>
+
+<h3 id="3总结">3、总结</h3>
+<p>收集依赖的目的是为了当这些响应式数据发生变化，触发它们的 <code class="language-plaintext highlighter-rouge">setter</code> 的时候，能知道应该通知哪些订阅者去做相应的逻辑处理，这个过程叫 <strong>「派发更新」</strong>，其实 <code class="language-plaintext highlighter-rouge">Watcher</code> 和 <code class="language-plaintext highlighter-rouge">Dep</code> 就是一个非常经典的观察者设计模式的实现。</p>
+
+<p><strong><em>参考：</em></strong><br />
+<a href="https://cn.vuejs.org/v2/guide/deployment.html#%E6%A8%A1%E6%9D%BF%E9%A2%84%E7%BC%96%E8%AF%91">Vue 官方教程</a><br />
+<a href="https://github.com/vuejs/vue">Vue 源码</a></p>
+:ET
