@@ -1,4 +1,4 @@
-I"�*<h1 id="git多人协作是怎样的">git多人协作是怎样的？？？</h1>
+I"r*<h1 id="git多人协作是怎样的">git多人协作是怎样的？？？</h1>
 
 <p>git对版本管理的贡献是毋庸置疑的。本文不会全面介绍 git 的各种命令以及它们的使用方法，本文假设你已经有 git 的基础，如果没有的话，建议先看一下以下的这些教程。</p>
 
@@ -31,7 +31,7 @@
 <p>每个参与的小伙伴需要现在本地配置自己的 github 账号，下面是配置方法：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nx">git</span> <span class="nx">config</span> <span class="o">--</span><span class="nb">global</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="dl">"</span><span class="s2">你的用户名</span><span class="dl">"</span>
- <span class="nx">git</span> <span class="nx">config</span> <span class="o">--</span><span class="nb">global</span> <span class="nx">user</span><span class="p">.</span><span class="nx">email</span> <span class="err">你的</span><span class="nx">github</span><span class="err">邮箱</span>
+ <span class="nx">git</span> <span class="nx">config</span> <span class="o">--</span><span class="nb">global</span> <span class="nx">user</span><span class="p">.</span><span class="nx">email</span> <span class="nx">你的github邮箱</span>
 </code></pre></div></div>
 <p>配置完之后，输入命令以下命令打开存放你密钥的文件夹，</p>
 

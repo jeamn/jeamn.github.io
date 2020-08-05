@@ -1,4 +1,4 @@
-I":<h2 id="反射机制">反射机制</h2>
+I":<h2 id="反射机制">反射机制</h2>
 <p>是指程序在运行期间能够获取自身的信息，例如一个对象能够在运行时知道自己拥有哪些方法和属性，并且可以调用这些方法和属性。</p>
 
 <p>先看一段简单的代码：</p>
@@ -135,7 +135,7 @@
 
 <p>在给class2中添加类成员定义时，不能直接给prototype赋值，而只能对其属性赋值。简单说，就是不能写成：</p>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">class2</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span><span class="err">成员定义</span><span class="p">}</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">class2</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span><span class="nx">成员定义</span><span class="p">}</span>
 </code></pre></div></div>
 
 <p>而只能写成：</p>

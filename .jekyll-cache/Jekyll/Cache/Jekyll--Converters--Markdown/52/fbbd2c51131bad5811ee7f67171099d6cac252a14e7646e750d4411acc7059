@@ -1,4 +1,4 @@
-I"L\<h3 id="1-promise含义">1. Promise含义</h3>
+I"K\<h3 id="1-promise含义">1. Promise含义</h3>
 <p>Promise是一个对象，从它可以获取异步操作的消息。</p>
 
 <p>简单说，是一个容器，存放着某个未来才会结束的事件（异步操作）的结果。</p>
@@ -29,7 +29,7 @@ Promise对象特点：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span><span class="nx">reject</span><span class="p">){</span>
     <span class="p">...</span>
-    <span class="k">if</span> <span class="p">(</span><span class="err">异步操作成功</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">异步操作成功</span><span class="p">)</span>
         <span class="nx">resolve</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
     <span class="k">else</span><span class="p">{</span>
         <span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>

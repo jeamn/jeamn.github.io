@@ -1,4 +1,4 @@
-I"�<h2 id="一redux-应用场景">一、Redux 应用场景</h2>
+I"�<h2 id="一redux-应用场景">一、Redux 应用场景</h2>
 <ul>
   <li>在React中，数据在组件中是单向流动的</li>
   <li>数据从一个方向父组件流向子组件(通过props)，由于这个特征，两个非父子关系的组件（或者称作兄弟组件）之间的通信就比较麻烦</li>
@@ -218,7 +218,7 @@
                             <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">INCREMENT</span><span class="dl">'</span> <span class="p">})</span>
                         <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
                     <span class="p">}</span>
-                <span class="p">}</span><span class="o">&gt;</span><span class="mi">1</span><span class="err">秒后加</span><span class="mi">1</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+                <span class="p">}</span><span class="o">&gt;</span><span class="mi">1</span><span class="nx">秒后加1</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
 </span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
 </span>        <span class="p">)</span>
     <span class="p">}</span>

@@ -1,4 +1,4 @@
-I")]<p>本次服务端部署折腾之旅，完全是出于兴趣爱好。主要是有两个方面：</p>
+I"�]<p>本次服务端部署折腾之旅，完全是出于兴趣爱好。主要是有两个方面：</p>
 <ul>
   <li>node接口服务的简单部署，实现前端在后端接口未实现时，自己模拟开发数据辅助开发</li>
   <li>前端静态资源页面的部署</li>
@@ -170,13 +170,13 @@ vue-app-8081.conf 的内容大致如下：</p>
 
 <p>在 <code class="language-plaintext highlighter-rouge">/etc/nginx/conf.d</code> 目录下，新建 <code class="language-plaintext highlighter-rouge">node-server-3001.conf</code> 文件，</p>
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">upstream</span> <span class="nx">node</span><span class="o">-</span><span class="nx">server</span> <span class="p">{</span>
-    <span class="nx">server</span> <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">3001</span><span class="p">;</span> <span class="err">#这里的端口号写你</span><span class="nx">node</span><span class="p">.</span><span class="nx">js</span><span class="err">运行的端口号</span>
+    <span class="nx">server</span> <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">3001</span><span class="p">;</span> <span class="err">#</span><span class="nx">这里的端口号写你node</span><span class="p">.</span><span class="nx">js运行的端口号</span>
     <span class="nx">keepalive</span> <span class="mi">64</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="nx">server</span> <span class="p">{</span>
     <span class="nx">listen</span> <span class="mi">3001</span><span class="p">;</span>
-    <span class="nx">server_name</span> <span class="mf">39.108</span><span class="p">.</span><span class="mf">2.87</span><span class="p">;</span> <span class="err">#这里是你的服务器名称，也就是别人访问你服务的</span><span class="nx">ip</span><span class="err">地址或域名，可以写多个，用空格隔开</span>
+    <span class="nx">server_name</span> <span class="mf">39.108</span><span class="p">.</span><span class="mf">2.87</span><span class="p">;</span> <span class="err">#</span><span class="nx">这里是你的服务器名称</span><span class="err">，</span><span class="nx">也就是别人访问你服务的ip地址或域名</span><span class="err">，</span><span class="nx">可以写多个</span><span class="err">，</span><span class="nx">用空格隔开</span>
 
     <span class="nx">location</span> <span class="o">/</span> <span class="p">{</span>
         <span class="nx">proxy_set_header</span> <span class="nx">X</span><span class="o">-</span><span class="nx">Real</span><span class="o">-</span><span class="nx">IP</span> <span class="nx">$remote_addr</span><span class="p">;</span>

@@ -1,4 +1,4 @@
-I"��<h2 id="一类型变换">一、类型变换</h2>
+I"��<h2 id="一类型变换">一、类型变换</h2>
 <h3 id="1交叉类型">1、交叉类型</h3>
 <ul>
   <li>交叉类型（Intersection Types）表示将多个类型合并为一个类型</li>
@@ -315,7 +315,7 @@ let e:E = null;</p>
   <li>外部枚举用来描述已经存在的枚举类型的形状</li>
 </ul>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">外部枚举用来描述已经存在的枚举类型的形状</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">外部枚举用来描述已经存在的枚举类型的形状</span>
 <span class="nx">declare</span> <span class="kr">enum</span> <span class="nx">Seasons</span> <span class="p">{</span>
     <span class="nx">Spring</span><span class="p">,</span>
     <span class="nx">Summer</span><span class="p">,</span>

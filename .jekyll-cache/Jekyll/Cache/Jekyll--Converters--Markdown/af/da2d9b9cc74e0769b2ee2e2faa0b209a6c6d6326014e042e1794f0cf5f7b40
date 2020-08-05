@@ -1,4 +1,4 @@
-I"��<h2 id="一什么是-react">一、什么是 React</h2>
+I"��<h2 id="一什么是-react">一、什么是 React</h2>
 <ul>
   <li>React 是一个用于构建用户界面的 JavaScript 库，核心专注于视图层，目的实现组件化开发</li>
 </ul>
@@ -138,11 +138,11 @@
             <span class="o">&lt;</span><span class="nx">table</span><span class="o">&gt;</span>
                 <span class="o">&lt;</span><span class="nx">thead</span><span class="o">&gt;</span>
                 <span class="o">&lt;</span><span class="nx">tr</span><span class="o">&gt;</span>
-                    <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="err">姓名</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
-</span>                    <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="err">年龄</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
-</span>                    <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="err">性别</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
-</span>                    <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="err">爱好</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
-</span>                    <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="err">位置</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
+                    <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">姓名</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
+</span>                    <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">年龄</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
+</span>                    <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">性别</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
+</span>                    <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">爱好</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
+</span>                    <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">位置</span><span class="o">&lt;</span><span class="sr">/td</span><span class="err">&gt;
 </span>                <span class="o">&lt;</span><span class="sr">/tr</span><span class="err">&gt;
 </span>                <span class="o">&lt;</span><span class="sr">/thead</span><span class="err">&gt;
 </span>                <span class="o">&lt;</span><span class="nx">tbody</span><span class="o">&gt;</span>
@@ -404,7 +404,7 @@
 <span class="p">}</span>
 <span class="kd">class</span> <span class="nx">SubCounter</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
   <span class="nx">render</span><span class="p">(){</span>
-      <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span><span class="err">子计数器</span><span class="p">:{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/div&gt;</span><span class="err">;
+      <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=&gt;</span><span class="nx">子计数器</span><span class="p">:{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">number</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/div&gt;</span><span class="err">;
 </span>  <span class="p">}</span>
 <span class="p">}</span>
 <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
@@ -585,7 +585,7 @@
       <span class="k">return</span> <span class="p">(</span>
           <span class="o">&lt;&gt;</span>
             <span class="o">&lt;</span><span class="nx">TextInput</span> <span class="nx">ref</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">input</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
-</span>            <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">getFocus</span><span class="p">}</span><span class="o">&gt;</span><span class="err">获得焦点</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">getFocus</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">获得焦点</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
 </span>          <span class="o">&lt;</span><span class="sr">/</span><span class="err">&gt;
 </span>      <span class="p">);</span>
   <span class="p">}</span>
@@ -623,7 +623,7 @@
     <span class="k">return</span> <span class="p">(</span>
         <span class="o">&lt;&gt;</span>
           <span class="o">&lt;</span><span class="nx">TextInput</span> <span class="nx">ref</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">input</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
-</span>          <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">getFocus</span><span class="p">}</span><span class="o">&gt;</span><span class="err">获得焦点</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>          <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">getFocus</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">获得焦点</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
 </span>        <span class="o">&lt;</span><span class="sr">/</span><span class="err">&gt;
 </span>    <span class="p">);</span>
 <span class="p">}</span>
@@ -649,7 +649,7 @@
         <span class="k">return</span> <span class="p">(</span>
             <span class="o">&lt;&gt;</span>
               <span class="o">&lt;</span><span class="nx">TextInput</span> <span class="nx">ref</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">input</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
-</span>              <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">getFocus</span><span class="p">}</span><span class="o">&gt;</span><span class="err">获得焦点</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>              <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">getFocus</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">获得焦点</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
 </span>            <span class="o">&lt;</span><span class="sr">/</span><span class="err">&gt;
 </span>        <span class="p">);</span>
     <span class="p">}</span>
@@ -674,7 +674,7 @@
         <span class="k">return</span> <span class="p">(</span>
             <span class="o">&lt;&gt;</span>
               <span class="o">&lt;</span><span class="nx">TextInput</span> <span class="nx">myref</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">input</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
-</span>              <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">getFocus</span><span class="p">}</span><span class="o">&gt;</span><span class="err">获得焦点</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>              <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">getFocus</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">获得焦点</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
 </span>            <span class="o">&lt;</span><span class="sr">/</span><span class="err">&gt;
 </span>        <span class="p">);</span>
     <span class="p">}</span>
