@@ -1,0 +1,93 @@
+I"�.<p><strong>什么是归并排序？</strong></p>
+
+<p>1）整体是递归，左边排好序+右边排好序+merge让整体有序</p>
+
+<p>2）让其整体有序的过程里用了排外序方法</p>
+
+<p>3）利用master公式来求解时间复杂度</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>T(N) = a * (N/b) + O(N^d)（其中的a、b、d都是常数）
+</code></pre></div></div>
+
+<p>4）也可以用非递归实现</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Code01_MergeSort</span> <span class="o">{</span>
+
+	<span class="c1">// 递归方法实现</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">mergeSort1</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">arr</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">arr</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">arr</span><span class="o">.</span><span class="na">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">return</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="n">process</span><span class="o">(</span><span class="n">arr</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">arr</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+	<span class="o">}</span>
+
+	<span class="c1">// 请把arr[L..R]排有序</span>
+	<span class="c1">// l...r N</span>
+	<span class="c1">// T(N) = 2 * T(N / 2) + O(N)</span>
+	<span class="c1">// O(N * logN)</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">process</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">arr</span><span class="o">,</span> <span class="kt">int</span> <span class="no">L</span><span class="o">,</span> <span class="kt">int</span> <span class="no">R</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="no">L</span> <span class="o">==</span> <span class="no">R</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// base case</span>
+			<span class="k">return</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="no">L</span> <span class="o">+</span> <span class="o">((</span><span class="no">R</span> <span class="o">-</span> <span class="no">L</span><span class="o">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="o">);</span>
+		<span class="n">process</span><span class="o">(</span><span class="n">arr</span><span class="o">,</span> <span class="no">L</span><span class="o">,</span> <span class="n">mid</span><span class="o">);</span>
+		<span class="n">process</span><span class="o">(</span><span class="n">arr</span><span class="o">,</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="no">R</span><span class="o">);</span>
+		<span class="n">merge</span><span class="o">(</span><span class="n">arr</span><span class="o">,</span> <span class="no">L</span><span class="o">,</span> <span class="n">mid</span><span class="o">,</span> <span class="no">R</span><span class="o">);</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">merge</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">arr</span><span class="o">,</span> <span class="kt">int</span> <span class="no">L</span><span class="o">,</span> <span class="kt">int</span> <span class="no">M</span><span class="o">,</span> <span class="kt">int</span> <span class="no">R</span><span class="o">)</span> <span class="o">{</span>
+		<span class="kt">int</span><span class="o">[]</span> <span class="n">help</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="no">R</span> <span class="o">-</span> <span class="no">L</span> <span class="o">+</span> <span class="mi">1</span><span class="o">];</span>
+		<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+		<span class="kt">int</span> <span class="n">p1</span> <span class="o">=</span> <span class="no">L</span><span class="o">;</span>
+		<span class="kt">int</span> <span class="n">p2</span> <span class="o">=</span> <span class="no">M</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+		<span class="k">while</span> <span class="o">(</span><span class="n">p1</span> <span class="o">&lt;=</span> <span class="no">M</span> <span class="o">&amp;&amp;</span> <span class="n">p2</span> <span class="o">&lt;=</span> <span class="no">R</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">help</span><span class="o">[</span><span class="n">i</span><span class="o">++]</span> <span class="o">=</span> <span class="n">arr</span><span class="o">[</span><span class="n">p1</span><span class="o">]</span> <span class="o">&lt;=</span> <span class="n">arr</span><span class="o">[</span><span class="n">p2</span><span class="o">]</span> <span class="o">?</span> <span class="n">arr</span><span class="o">[</span><span class="n">p1</span><span class="o">++]</span> <span class="o">:</span> <span class="n">arr</span><span class="o">[</span><span class="n">p2</span><span class="o">++];</span>
+		<span class="o">}</span>
+		<span class="c1">// 要么p1越界了，要么p2越界了</span>
+		<span class="k">while</span> <span class="o">(</span><span class="n">p1</span> <span class="o">&lt;=</span> <span class="no">M</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">help</span><span class="o">[</span><span class="n">i</span><span class="o">++]</span> <span class="o">=</span> <span class="n">arr</span><span class="o">[</span><span class="n">p1</span><span class="o">++];</span>
+		<span class="o">}</span>
+		<span class="k">while</span> <span class="o">(</span><span class="n">p2</span> <span class="o">&lt;=</span> <span class="no">R</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">help</span><span class="o">[</span><span class="n">i</span><span class="o">++]</span> <span class="o">=</span> <span class="n">arr</span><span class="o">[</span><span class="n">p2</span><span class="o">++];</span>
+		<span class="o">}</span>
+		<span class="k">for</span> <span class="o">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">help</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+			<span class="n">arr</span><span class="o">[</span><span class="no">L</span> <span class="o">+</span> <span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">help</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+	<span class="c1">// 非递归方法实现</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">mergeSort2</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">arr</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">arr</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">arr</span><span class="o">.</span><span class="na">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">return</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="kt">int</span> <span class="no">N</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+		<span class="c1">// 步长</span>
+		<span class="kt">int</span> <span class="n">mergeSize</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+		<span class="k">while</span> <span class="o">(</span><span class="n">mergeSize</span> <span class="o">&lt;</span> <span class="no">N</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// log N</span>
+			<span class="c1">// 当前左组的，第一个位置</span>
+			<span class="kt">int</span> <span class="no">L</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+			<span class="k">while</span> <span class="o">(</span><span class="no">L</span> <span class="o">&lt;</span> <span class="no">N</span><span class="o">)</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">mergeSize</span> <span class="o">&gt;=</span> <span class="no">N</span> <span class="o">-</span> <span class="no">L</span><span class="o">)</span> <span class="o">{</span>
+					<span class="k">break</span><span class="o">;</span>
+				<span class="o">}</span>
+				<span class="kt">int</span> <span class="no">M</span> <span class="o">=</span> <span class="no">L</span> <span class="o">+</span> <span class="n">mergeSize</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+				<span class="kt">int</span> <span class="no">R</span> <span class="o">=</span> <span class="no">M</span> <span class="o">+</span> <span class="nc">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">mergeSize</span><span class="o">,</span> <span class="no">N</span> <span class="o">-</span> <span class="no">M</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+				<span class="n">merge</span><span class="o">(</span><span class="n">arr</span><span class="o">,</span> <span class="no">L</span><span class="o">,</span> <span class="no">M</span><span class="o">,</span> <span class="no">R</span><span class="o">);</span>
+				<span class="no">L</span> <span class="o">=</span> <span class="no">R</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+			<span class="o">}</span>
+			<span class="c1">// 防止溢出</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">mergeSize</span> <span class="o">&gt;</span> <span class="no">N</span> <span class="o">/</span> <span class="mi">2</span><span class="o">)</span> <span class="o">{</span>
+				<span class="k">break</span><span class="o">;</span>
+			<span class="o">}</span>
+			<span class="n">mergeSize</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span><span class="o">;</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+</code></pre></div></div>
+
+<p>为什么选择排序、冒泡排序、插入排序的复杂度是O(n^2)，而归并排序能做到O(n*logN)，本质上是因为前者在大量浪费比较行为，而归并排序则保留了比较行为。</p>
+
+<h3 id="快速排序">快速排序</h3>
+
+<p>partition过程</p>
+
+<p>给定一个数组arr，和一个整数 num，请把小于等于 num 的数在数组的左边，大于 num 的数放在数组的右边。要去额外空间复杂度 O(1)，时间复杂度O(N)。</p>
+:ET

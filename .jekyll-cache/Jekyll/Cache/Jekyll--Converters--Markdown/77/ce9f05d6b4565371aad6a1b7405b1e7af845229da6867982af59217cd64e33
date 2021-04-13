@@ -1,0 +1,170 @@
+I"E<h3 id="评估算法优劣的核心指标是什么">评估算法优劣的核心指标是什么？</h3>
+
+<ul>
+  <li>时间复杂度（流程决定）</li>
+  <li>额外空间复杂度（流程决定）</li>
+  <li>
+    <p>常数项时间（实现细节决定）</p>
+
+    <p>一个操作的执行时间不以具体样本量为转移，每次执行时间都是固定时间。</p>
+
+    <p>常见的常数时间的操作：</p>
+
+    <ul>
+      <li>常见的算术运算（+、-、*、/、%等）</li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>常见的位运算（»、»&gt;、«、</td>
+              <td>、&amp;、^等）</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>赋值、比较、自增、自减操作等</li>
+      <li>数组寻址操作</li>
+    </ul>
+
+    <p><strong>时间复杂度就是用来衡量流程中发生了多少次常数操作。</strong></p>
+  </li>
+</ul>
+
+<h3 id="如何确定算法流程的总操作数量与样本数量之间的表达式关系">如何确定算法流程的总操作数量与样本数量之间的表达式关系？</h3>
+
+<ol>
+  <li>想象该算法流程所处理的数据状况，要按照最差情况来；</li>
+  <li>把整个流程彻底拆分为一个个基本动作，保证每个动作都是常数时间操作；</li>
+  <li>如果数据量为N，看基本动作的数量和N是什么关系。</li>
+</ol>
+
+<p><strong>确定时间复杂度：O（忽略掉系数的高阶项）</strong></p>
+
+<p>以下三个算法复杂度均为 O(n^2)</p>
+
+<p>选择排序：</p>
+
+<p>分别在0~n、1~n、…、n-1~n上找最小，小的放前面。</p>
+
+<p><img src="https://res-static.hc-cdn.cn/fms/img/8a49828fb766e563c64a303c8f4409eb1603443058059.gif" alt="https://res-static.hc-cdn.cn/fms/img/8a49828fb766e563c64a303c8f4409eb1603443058059.gif" /></p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 选择排序</span>
+<span class="kd">function</span> <span class="nx">selectionSort</span><span class="p">(</span><span class="nx">arr</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">arr</span> <span class="o">||</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="kd">let</span> <span class="nx">minIndex</span> <span class="o">=</span> <span class="nx">i</span>
+        <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">){</span>
+            <span class="nx">minIndex</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">minIndex</span><span class="p">]</span> <span class="p">?</span> <span class="nx">j</span> <span class="p">:</span> <span class="nx">minIndex</span>
+        <span class="p">}</span>
+        <span class="nx">swap</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">minIndex</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">arr</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">swap</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">){</span>
+    <span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span>
+<span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">selectionSort</span><span class="p">([</span><span class="mi">9</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+</code></pre></div></div>
+
+<p>冒泡排序：</p>
+
+<p>分别在0~n、0~n-1、…、0~1上，比较相邻的两个数，大的放后面。</p>
+
+<p><img src="https://res-static.hc-cdn.cn/fms/img/e8e30146dc160065b56163ac1aaeb7221603443058058.gif" alt="https://res-static.hc-cdn.cn/fms/img/e8e30146dc160065b56163ac1aaeb7221603443058058.gif" /></p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 冒泡排序</span>
+<span class="kd">function</span> <span class="nx">bubbleSort</span><span class="p">(</span><span class="nx">arr</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">arr</span> <span class="o">||</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">e</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">;</span> <span class="nx">e</span><span class="o">--</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">e</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]){</span>
+                <span class="nx">swap</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">arr</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">swap</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">){</span>
+    <span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">bubbleSort</span><span class="p">([</span><span class="mi">9</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+</code></pre></div></div>
+
+<p>插入排序：</p>
+
+<p>默认第一个已排序，从第二个开始，在排序好的元素序列中从后往前扫描，如果元素（已排序）大于新元素，将该元素移到下一个位置。</p>
+
+<p><img src="https://res-static.hc-cdn.cn/fms/img/263fbc11696ddb33863844611c5d8d9a1603443058059.gif" alt="https://res-static.hc-cdn.cn/fms/img/263fbc11696ddb33863844611c5d8d9a1603443058059.gif" /></p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 插入排序</span>
+<span class="kd">function</span> <span class="nx">insertSort</span><span class="p">(</span><span class="nx">arr</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">arr</span> <span class="o">||</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span> <span class="nx">j</span><span class="o">--</span><span class="p">){</span>
+            <span class="nx">swap</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">arr</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">swap</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">){</span>
+    <span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">insertSort</span><span class="p">([</span><span class="mi">9</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+</code></pre></div></div>
+
+<h3 id="额外空间复杂度">额外空间复杂度</h3>
+
+<p>与实现流程无关，必须开辟其他空间实现的。</p>
+
+<p>注意：作为输出参数的空间和作为输出结果的空间，都不算额外空间。</p>
+
+<h3 id="对数器概念">对数器概念</h3>
+
+<ol>
+  <li>想要测方法a</li>
+  <li>实现复杂度不好但是容易实现的方法b</li>
+  <li>实现一个随机样本产生器</li>
+  <li>把方法a和方法b跑相同的随机样本，看得到的结果是否一样</li>
+  <li>如果有一个随机样本使得对比结果不一致，打印样本进行人工干预，改对方法a和方法b</li>
+  <li>当样本数量很多时比对测试依然正确，可以确定方法a已经正确</li>
+  <li>这就是对数器的思想</li>
+</ol>
+
+<h3 id="认识二分法">认识二分法</h3>
+
+<p><strong>思想：</strong></p>
+
+<ol>
+  <li>在一个有序数组中，找某个数是否存在</li>
+  <li>在一个有序数组中，找≥某个数最左侧的位置</li>
+  <li>在一个有序数组中，找≤某个数最右侧的位置</li>
+  <li>局部最小值问题</li>
+</ol>
+
+<p>只要能正确构建左右两侧的淘汰逻辑，就可以使用二分法。</p>
+
+<p>不一定是有序数组才能使用二分法。</p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">exist</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">num</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">arr</span> <span class="o">||</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> 
+    <span class="kd">let</span> <span class="nx">L</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="kd">let</span> <span class="nx">R</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="kd">let</span> <span class="nx">mid</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span><span class="p">(</span><span class="nx">L</span> <span class="o">&lt;</span> <span class="nx">R</span><span class="p">){</span>
+        <span class="nx">mid</span> <span class="o">=</span> <span class="nx">L</span> <span class="o">+</span> <span class="p">(</span><span class="nx">R</span><span class="o">-</span><span class="nx">L</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">mid</span><span class="p">]</span> <span class="o">===</span> <span class="nx">num</span><span class="p">){</span>
+            <span class="k">return</span> <span class="kc">true</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">mid</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nx">num</span><span class="p">){</span>
+            <span class="nx">R</span> <span class="o">=</span> <span class="nx">mid</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">L</span> <span class="o">=</span> <span class="nx">mid</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">L</span><span class="p">]</span> <span class="o">===</span> <span class="nx">num</span>
+<span class="p">}</span>
+<span class="nx">exist</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span> <span class="mi">8</span><span class="p">)</span>
+</code></pre></div></div>
+:ET
